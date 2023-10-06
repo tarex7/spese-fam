@@ -4,67 +4,52 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-/*require('./bootstrap');
+require('./bootstrap');
 
 window.Vue = require('vue');
 
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);*/
+/**
+ * The following block of code may be used to automatically register your
+ * Vue components. It will recursively scan this directory for the Vue
+ * components and automatically register them with their "basename".
+ *
+ * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
+ */
 
+// const files = require.context('./', true, /\.vue$/i)
+// files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
+Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
-import Vue from 'vue';
-import ExampleComponent from './components/ExampleComponent.vue';
-import DataTableComponent from './components/DataTableComponent.vue';
+/**
+ * Next, we will create a fresh Vue application instance and attach it to
+ * the page. Then, you may begin adding components to this application
+ * or customize the JavaScript scaffolding to fit your unique needs.
+ */
 
-import 'bootstrap/dist/css/bootstrap.css'; // Importa il file CSS di Bootstrap
-import 'bootstrap/dist/js/bootstrap.bundle'; // Importa il file JavaScript di Bootstrap
-
-Vue.component('example-component', ExampleComponent);
-Vue.component('datatable-component', DataTableComponent);
-
-const app = new Vue({
-    el: '#app',
-    mounted() {
-        console.log('App is working')
-        const spese_div = document.getElementById('spese_div')
-    }
+if (!document.getElementById('spese')) {
+    const app = new Vue({
+        el: '#app',
+        mounted() {
+            console.log('App is working');
+        }
+    });
 }
-);
 
-
-if (document.getElementById('spese') != null) {
+if (document.getElementById('spese')) {
     const spese = new Vue({
         el: '#spese',
-        data() {
-            return {
-               
-            }
-        },
-        props: ['catopt'],
-        beforeMount() {
-           
-        },
         mounted() {
-            const addBtn = document.getElementById('addBtn')
-            const add = document.querySelectorAll('.add')
-            addBtn.addEventListener('click', () => {
-
-                add.forEach(a => {
-                    console.log(a)
-                })
-                
-            })
+            console.log('Spese is working')
         },
         methods: {
-           
+            elimina(e) {
+                
+                if (!confirm('Eliminare questa spesa? 🐱')) {
+                e.preventDefault();
+                  
+               }
+            }
         }
-    }
-    );
+    });
 }
-
-
-
-
-
-
-

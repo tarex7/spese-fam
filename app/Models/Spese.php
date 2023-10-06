@@ -7,7 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Spese extends Model
 {
     protected $table = 'spese';
-    protected $fillable = ['data','importo','categorie_id','tipologia_id','attivo'];
+    protected $fillable = ['nome','data','importo','categorie_id','tipologia_id','attivo'];
+
+    const UPDATED_AT = 'modificato';
+    const CREATED_AT = 'creato';
 
     public function categoria()
     {

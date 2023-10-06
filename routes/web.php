@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,10 +13,24 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Auth::routes();
+
+Route::get('/dashboard', 'DashboardController@index')->middleware('auth');
+
+Route::middleware(['auth'])->group(function () {
+
+    Route::get('spese', 'SpeseController@index')->name('spese');
+
+   // Route::any('/spese/salva', 'SpeseController@salva')->name('spese');
+    Route::any('/spese/modifica', 'SpeseController@modifica')->name('spese/modifica');
+    Route::any('/spese/aggiungi', 'SpeseController@aggiungi')->name('spese/aggiungi');
+    Route::any('/spese/elimina/{id}', 'SpeseController@elimina')->name('spese/elimina');
+    
+    Route::get('/categorie', 'CategorieController@index')->name('categorie');
+    //Route::get('/spese/nuovo', 'SpeseController@nuovo')->name('spese/nuovo');
+    
+    
+    Route::get('/home', 'HomeController@index')->name('home');
+});
 
 
-Route::get('/categorie', 'CategorieController@index')->name('categorie');
-Route::get('/', 'SpeseController@index')->name('spese');
-Route::any('/spese/salva', 'SpeseController@salva')->name('spese');
-Route::any('/spese/aggiungi', 'SpeseController@aggiungi')->name('spese/aggiungi');
-//Route::get('/spese/nuovo', 'SpeseController@nuovo')->name('spese/nuovo');
