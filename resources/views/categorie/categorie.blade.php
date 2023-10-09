@@ -33,7 +33,7 @@
 
 
             </div>
-            {!! Form::open(['url' => 'categorie/modifica']) !!}
+            {!! Form::open(['url' => 'categorie/salva']) !!}
 
             <table class="table table-striped ">
                 <thead>

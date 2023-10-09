@@ -22,6 +22,7 @@ class CategorieController extends Controller
 
         $categorie = categorie::select('categorie.*')
             ->where('categorie.attivo', 1)
+
             ->select('categorie.*')
             ->get();
 
@@ -41,37 +42,54 @@ class CategorieController extends Controller
 
 
 
+    public function modifica(Request $request)
+    {
+
+        dd($request->all());
+        $categorie = $request->categorie;
+
+        foreach ($categorie as $s) {
+
+            categorie::where('id', $s['id'])
+                ->update([
+                    'nome' => $s['nome'],
+                    'modificato' => date('Y-m-d H:i:s'),
+                    'modificatore' => auth()->user()->name,
+                ]);
+        }
+        return redirect()->back()->with('success', 'Modifica salvata!');
+    }
+
+    /*  public function modifica(Request $request)
+    {
+
+        // dd($request->all());
+        $spese = $request->spese;
+
+        foreach ($spese as $s) {
+
+            Spese::where('id', $s['id'])
+                ->update([
+                    'nome' => $s['nome'],
+                    'data' => $s['data'],
+                    'importo' => intval($s['importo']),
+                    'categorie_id' => $s['categorie_id'],
+                    'tipologia_id' => $s['tipologia_id'],
+                    'modificato' => date('Y-m-d H:i:s'),
+                    'modificatore' => auth()->user()->name,
+                ]);
+        }
+        return redirect()->back()->with('success', 'Modifica salvata!');
+    }  */
+
+
+
+
+
     public function aggiungi(Request $request)
     {
 
-        // dd($request->all());
-        $categorie = Categorie::where('attivo', 1)->get();
-
-        // dd($categorie);
-        if ($request->nome_add != '') {
-            categorie::create([
-                'nome' => $request->nome_add,
-                'attivo' => 1,
-                'creato' => date('Y-m-d H:i:s'),
-                'creatore' => auth()->user()->name,
-            ]);
-
-            return redirect()->back()->with('success', 'Categoria aggiunta!');
-        } else {
-            return redirect()->route('categorie')->with('error', 'Inserisci un nome valido!');
-        }
-    }
-
-
-
-
-
-
-
-    public function salva(Request $request)
-    {
-
-        // dd($request->all());
+        dd($request->all());
         if ($request->nome_add != '') {
 
             $create = Categorie::create([
