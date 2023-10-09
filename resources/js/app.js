@@ -42,7 +42,8 @@ if (document.getElementById('spese')) {
        
         data() {
             return {
-                categoria_id:this.categoria_id
+                categoria_id: this.categoria_id,
+                meseSelezionato: null
             }
         },
         mounted() {
@@ -64,8 +65,8 @@ if (document.getElementById('spese')) {
                     e.preventDefault();
                 }
             },
-            focus() {
-
+            sendMonth() {
+                console.log('Valore selezionato:', this.meseSelezionato)
             }
         }
     });

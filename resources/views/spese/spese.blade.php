@@ -7,9 +7,20 @@
 
 @section('content')
     <div id="spese">
-        <h1 class="text-center my-3">Spese</h1>
 
-        {{--  <a href="{{route('spese/aggiungi')}}"> <i id="add" class="fa-solid fa-square-plus fa-2x text-primary"></i> </a> --}}
+        <div class="row ">
+            <div class="col-5"></div>
+            <div class="col-7 d-flex align-items-center justify-content-between">
+                <h1 class="text-center my-3">Spese</h1>
+                {!! Form::select('categorie_add', $mesi, date('n'), ['class' => 'form-control w-25 mx-5', '@change' => 'sendMonth']) !!}
+
+
+
+               <a href="{{route('spese/filtra')}}"></a>
+            </div>
+        </div>
+
+
 
         {{-- AGGIUNGI --}}
 
@@ -17,7 +28,7 @@
         {!! Form::button('<i class="fa-solid fa-square-plus mr-2 fa-lg"></i> Aggiungi spesa', [
             'id' => 'addBtn',
             'class' => 'btn btn-primary mb-3',
-            'type' => 'submit'
+            'type' => 'submit',
         ]) !!}
 
 
@@ -62,12 +73,11 @@
                 </tr>
             </thead>
             <tbody id="spese">
-               
+
                 @foreach ($spese as $s)
-               
-                    <tr  @if($spese_id == $s->id)  id="nome_add" @endif>
+                    <tr @if ($spese_id == $s->id) id="nome_add" @endif>
                         <td class="d-flex align-items-center justify-content-center">
-                          
+
                             <a @click="elimina" href={{ route('spese/elimina', $s->id) }}> <i
                                     class="fa-solid fa-trash mx-1 text-danger mt-2"></i></a>
                         </td>
@@ -75,7 +85,7 @@
 
                         <td>{!! Form::text("spese[{$s->id}][nome]", $s->nome, ['class' => 'form-control']) !!}</td>
 
-                        <td>{!! Form::date("spese[{$s->id}][data]" , $s->data, ['class' => 'form-control']) !!}</td>
+                        <td>{!! Form::date("spese[{$s->id}][data]", $s->data, ['class' => 'form-control']) !!}</td>
 
                         <td>
                             <div class="input-group">
@@ -85,14 +95,14 @@
                                 {!! Form::number("spese[{$s->id}][importo]", number_format(intval($s->importo), 2), ['class' => 'form-control']) !!}
                             </div>
                         </td>
-                        
+
 
                         <td>{!! Form::select("spese[{$s->id}][categorie]", $cat, $s->categorie_id, [
                             'class' => 'form-control',
                         ]) !!}</td>
                         <td>{!! Form::select("spese[{$s->id}][tipologia]", $tip, $s->tipologia_id, [
                             'class' => 'form-control',
-                        ]) !!}</td> 
+                        ]) !!}</td>
                     </tr>
                 @endforeach
 

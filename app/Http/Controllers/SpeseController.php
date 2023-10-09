@@ -11,18 +11,34 @@ use Illuminate\Support\Facades\Validator;
 
 class SpeseController extends Controller
 {
-    public function index()
+    public function index($month = null)
     {
 
+       if($month == null) {
         $spese = Spese::select('spese.*')
-            ->where('spese.attivo', 1)
-            ->leftJoin('categorie', 'spese.categorie_id', 'categorie.id')
-            ->leftJoin('tipologia', 'spese.tipologia_id', 'tipologia.id')
-            ->select('spese.*', 'categorie.nome as categoria', 'tipologia.nome as tipologia')
-            ->get();
+        ->where('spese.attivo', 1)
+        ->whereMonth('data', '=', date('n'))
+        ->leftJoin('categorie', 'spese.categorie_id', 'categorie.id')
+        ->leftJoin('tipologia', 'spese.tipologia_id', 'tipologia.id')
+        ->select('spese.*', 'categorie.nome as categoria', 'tipologia.nome as tipologia')
+        ->get();
 
-            //dd($spese)
-        ;
+        //dd($spese)
+    ;
+       } else {
+        $spese = Spese::select('spese.*')
+        ->where('spese.attivo', 1)
+        ->whereMonth('data', '=', $month)
+        ->leftJoin('categorie', 'spese.categorie_id', 'categorie.id')
+        ->leftJoin('tipologia', 'spese.tipologia_id', 'tipologia.id')
+        ->select('spese.*', 'categorie.nome as categoria', 'tipologia.nome as tipologia')
+        ->get();
+
+        //dd($spese)
+    ;
+       }
+
+
         $cat = Categorie::all();
         $cat_opt = array(0 => '--Seleziona--');
         foreach ($cat as $c) {
@@ -35,9 +51,27 @@ class SpeseController extends Controller
             $tip_opt[$c->id] = $c->nome;
         }
 
+        $mesi = [
+           ' 0' => 'Anno',
+            '1' => 'Gennaio',
+            '2' => 'Febbraio',
+            '3' => 'Marzo',
+            '4' => 'Aprile',
+            '5' => 'Maggio',
+            '6' => 'Giugno',
+            '7' => 'Luglio',
+            '8' => 'Agosto',
+            '9' => 'Settembre',
+            '10' => 'Ottobre',
+            '11' => 'Novembre',
+            '12' => 'Dicembre'
+        ];
+        
+
         // dd($spese);
         return view('spese.spese')
             ->with('spese', $spese)
+            ->with('mesi', $mesi)
             ->with('cat', $cat_opt)
             ->with('spese_id', null)
             ->with('tip', $tip_opt);
@@ -122,5 +156,9 @@ class SpeseController extends Controller
 
         return redirect()->route('spese')
             ->with('success', 'Spesa eliminata! 😁👍');
+    }
+
+    public function filtra() {
+        
     }
 }

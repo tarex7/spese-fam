@@ -26,6 +26,7 @@ Route::middleware(['auth'])->group(function () {
     Route::any('/spese/salva', 'SpeseController@salva')->name('spese/salva');
     Route::any('/spese/aggiungi', 'SpeseController@aggiungi')->name('spese/aggiungi');
     Route::any('/spese/elimina/{id}', 'SpeseController@elimina')->name('spese/elimina');
+    Route::any('/spese/filtra/{month?}', 'SpeseController@filtra')->name('spese/filtra');
 
     //CATEGORIE
     Route::get('/categorie', 'CategorieController@index')->name('categorie');
