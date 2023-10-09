@@ -25,8 +25,18 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-    <div style="position: relative" id="app">
-        @include('includes.sidebar')
+    <div id="app">
+        @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+    
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
@@ -78,9 +88,14 @@
             </div>
         </nav>
 
-        <main class="container">
-            @yield('content')
-        </main>
+        <div class="d-flex">
+            @include('includes.sidebar')
+            <main class="container-fluid">
+                @yield('content')
+            </main>
+        </div>
+       
+
     </div>
 </body>
 </html>

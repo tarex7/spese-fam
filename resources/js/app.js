@@ -39,16 +39,33 @@ if (!document.getElementById('spese')) {
 if (document.getElementById('spese')) {
     const spese = new Vue({
         el: '#spese',
+       
+        data() {
+            return {
+                categoria_id:this.categoria_id
+            }
+        },
         mounted() {
             console.log('Spese is working')
+            
+        const elementToFocus = document.getElementById('nome_add');
+          
+       console.log(elementToFocus)
+        if (elementToFocus) {
+            elementToFocus.scrollIntoView();
+            elementToFocus.style.backgroundColor="#ccc"
+            }
         },
+
         methods: {
             elimina(e) {
-                
+
                 if (!confirm('Eliminare questa spesa? 🐱')) {
-                e.preventDefault();
-                  
-               }
+                    e.preventDefault();
+                }
+            },
+            focus() {
+
             }
         }
     });

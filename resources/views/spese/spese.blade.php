@@ -4,17 +4,7 @@
 @section('add')
 <script src="{{ asset('js/add.js') }}" defer></script>
 @endsection --}}
-@if (session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
-@endif
 
-@if (session('error'))
-    <div class="alert alert-danger">
-        {{ session('error') }}
-    </div>
-@endif
 @section('content')
     <div id="spese">
         <h1 class="text-center my-3">Spese</h1>
@@ -24,13 +14,18 @@
         {{-- AGGIUNGI --}}
 
         {!! Form::open(['url' => 'spese/aggiungi']) !!}
-        {!! Form::submit('Aggiungi spesa', ['id' => 'addBtn', 'class' => 'btn btn-primary mb-1']) !!}
+        {!! Form::button('<i class="fa-solid fa-square-plus mr-2 fa-lg"></i> Aggiungi spesa', [
+            'id' => 'addBtn',
+            'class' => 'btn btn-primary mb-3',
+            'type' => 'submit'
+        ]) !!}
+
 
         <div class="border bg-primary p-3 mb-3 rounded">
             <table class="table table-striped bg-light rounded ">
                 <thead>
                     <tr>
-                        <th></th> 
+                        <th></th>
                         <th scope="col">Nome</th>
                         <th scope="col">Data</th>
                         <th scope="col">Importo</th>
@@ -67,22 +62,29 @@
                 </tr>
             </thead>
             <tbody id="spese">
+               
                 @foreach ($spese as $s)
-                    @php $s->importo .= ' €';   @endphp
-                    <tr>
-                        <td>
-                           
+               
+                    <tr  @if($spese_id == $s->id)  id="nome_add" @endif>
+                        <td class="d-flex align-items-center justify-content-center">
+                            {{$s->id,$spese_id}}
                             <a @click="elimina" href={{ route('spese/elimina', $s->id) }}> <i
-                                    class="fa-solid fa-trash mx-1 text-danger"></i></a>
+                                    class="fa-solid fa-trash mx-1 text-danger mt-2"></i></a>
                         </td>
                         {!! Form::hidden('spese[spesa_' . $s->id . '][id]', $s->id) !!}
 
                         <td>{!! Form::text('spese[spesa_' . $s->id . '][nome]', $s->nome, ['class' => 'form-control']) !!}</td>
                         <td>{!! Form::date('spese[spesa_' . $s->id . '][data]', $s->data, ['class' => 'form-control']) !!}</td>
 
-                        <td>{!! Form::number('spese[spesa_' . $s->id . '][importo]', number_format(intval($s->importo), 2), [
-                            'class' => 'form-control',
-                        ]) !!}</td>
+                        <td>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">€</span>
+                                </div>
+                                {!! Form::number('spese[spesa_' . $s->id . '][importo]', number_format(intval($s->importo), 2), ['class' => 'form-control']) !!}
+                            </div>
+                        </td>
+                        
 
                         <td>{!! Form::select('spese[spesa_' . $s->id . '][categorie_id]', $cat, $s->categorie_id, [
                             'class' => 'form-control',
@@ -90,15 +92,12 @@
                         <td>{!! Form::select('spese[spesa_' . $s->id . '][tipologia_id]', $tip, $s->tipologia_id, [
                             'class' => 'form-control',
                         ]) !!}</td>
-
-
-
                     </tr>
                 @endforeach
 
             </tbody>
         </table>
-        {!! Form::submit('Salva', ['class' => 'btn btn-primary']) !!}
+        {!! Form::submit('Salva', ['class' => 'btn btn-primary float-right']) !!}
         {!! Form::close() !!}
 
     </div>

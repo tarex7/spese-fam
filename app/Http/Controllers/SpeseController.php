@@ -24,99 +24,81 @@ class SpeseController extends Controller
             //dd($spese)
         ;
         $cat = Categorie::all();
-        $cat_opt = array(0=>'--Seleziona--');
+        $cat_opt = array(0 => '--Seleziona--');
         foreach ($cat as $c) {
             $cat_opt[$c->id] = $c->nome;
         }
 
         $tip = Tipologia::all();
-        $tip_opt = array(0=>'--Seleziona--');
+        $tip_opt = array(0 => '--Seleziona--');
         foreach ($tip as $c) {
             $tip_opt[$c->id] = $c->nome;
         }
-
-
 
         // dd($spese);
         return view('spese.spese')
             ->with('spese', $spese)
             ->with('cat', $cat_opt)
+            ->with('spese_id', null)
             ->with('tip', $tip_opt);
     }
 
-    public function nuovo()
-    {
-    }
-
-    // public function salva(Request $request)
-    // {
-    //     //dd($request->all());
-    //     foreach ($request->spese as $k => $sp) {
-    //         //dd( $request->spese[$k]);
-    //         Spese::where('id', $request->spese[$k])->update([
-    //             'data' => $request->data[$k],
-    //             'importo' => $request->importo[$k],
-    //             'categorie_id' => $request->categorie[$k],
-    //             'tipologia_id' => $request->tipologia[$k],
-    //             'test' =>  $k
-    //         ]);
-    //     }
-    //     return redirect()->back();
-    // }
 
     public function aggiungi(Request $request)
     {
 
-     // dd($request->all());
-        // Definisci le regole di validazione
+        //dd($request->all());
 
-        // $rules = [
-        //     'data_add' => 'required|date',
-        //     'importo_add' => 'required|numeric',
-        //     'categorie_add' => 'required',
-        //     'tipologia_add' => 'required',
-        // ];
+        if($request->nome != '') {
+            $create = Spese::create([
 
-        // // Definisci i messaggi di errore personalizzati
-        // $messages = [
-        //     'required' => 'Il campo :attribute è obbligatorio.',
-        //     'date' => 'Il campo :attribute deve essere una data valida.',
-        //     'numeric' => 'Il campo :attribute deve essere un valore numerico.',
-        // ];
-
-        // // Esegui la validazione
-        // $validator = Validator::make($request->all(), $rules, $messages);
-
-        // // Verifica se ci sono errori di validazione
-        // if ($validator->fails()) {
-        //     return redirect()->back()
-        //         ->with('errors', 'errore') // Passa gli errori alla vista
-        //         ->withInput(); // Mantieni i dati inseriti dall'utente nei campi del modulo
-        // }
+                'nome' => $request->nome_add,
+                'data' => date('Y-m-d', strtotime($request->data_add)),
+                'importo' => $request->importo_add,
+                'categorie_id' => $request->categorie_add,
+                'tipologia_id' => $request->tipologia_add,
+                'attivo' => 1,
+            ]);
+    
+            $spese = Spese::select('spese.*')
+                ->where('spese.attivo', 1)
+                ->leftJoin('categorie', 'spese.categorie_id', 'categorie.id')
+                ->leftJoin('tipologia', 'spese.tipologia_id', 'tipologia.id')
+                ->select('spese.*', 'categorie.nome as categoria', 'tipologia.nome as tipologia')
+                ->get();
+    
+            $cat = Categorie::all();
+            $cat_opt = array(0 => '--Seleziona--');
+            foreach ($cat as $c) {
+                $cat_opt[$c->id] = $c->nome;
+            }
+    
+            $tip = Tipologia::all();
+            $tip_opt = array(0 => '--Seleziona--');
+            foreach ($tip as $c) {
+                $tip_opt[$c->id] = $c->nome;
+            }
+            return view('spese.spese')
+            ->with('success', 'Spesa aggiunta!')
+            ->with('spese_id', $create->id)
+            ->with('cat', $cat_opt)
+            ->with('spese', $spese)
+            ->with('tip', $tip_opt)
+            ;
+        } else {
+            return redirect()->back()->with('error','Inserisci un nome valido');
+        }
         
-        $create = Spese::create([
-
-            'nome' => $request->nome_add,
-            'data' => date('Y-m-d', strtotime($request->data_add)),
-            'importo' => $request->importo_add,
-            'categorie_id' => $request->categorie_add,
-            'tipologia_id' => $request->tipologia_add,
-            'attivo' => 1,
-        ]);
-
-       
-
-       return redirect()->route('spese')->with('success', 'Spesa aggiunta!');
     }
 
     public function modifica(Request $request)
     {
 
-      // dd($request->all());
+        // dd($request->all());
         $spese = $request->spese;
-       
-       foreach ($spese as $s) {
-         
+
+        foreach ($spese as $s) {
+
             Spese::where('id', $s['id'])
                 ->update([
                     'nome' => $s['nome'],
@@ -128,18 +110,20 @@ class SpeseController extends Controller
                     'modificatore' => auth()->user()->name,
                 ]);
         }
-        return redirect()->back()->with('success','Modifica salvata!');
+        return redirect()->back()->with('success', 'Modifica salvata!');
     }
+
+
 
     public function elimina($id)
     {
 
-        Spese::where('id', $id)->update([
+    Spese::where('id', $id)->update([
             'attivo' => 0,
-            // 'modificato' => date('Y-m-d H:i:s'),
-            // 'modificatore'
+        
         ]);
 
-        return redirect()->route('spese')->with('success','Spesa eliminata! 😁👍');
+        return redirect()->route('spese')
+            ->with('success', 'Spesa eliminata! 😁👍');
     }
 }

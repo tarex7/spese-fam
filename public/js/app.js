@@ -49405,15 +49405,27 @@ if (!document.getElementById('spese')) {
 if (document.getElementById('spese')) {
   var spese = new Vue({
     el: '#spese',
+    data: function data() {
+      return {
+        categoria_id: this.categoria_id
+      };
+    },
     mounted: function mounted() {
       console.log('Spese is working');
+      var elementToFocus = document.getElementById('nome_add');
+      console.log(elementToFocus);
+      if (elementToFocus) {
+        elementToFocus.scrollIntoView();
+        elementToFocus.style.backgroundColor = "#ccc";
+      }
     },
     methods: {
       elimina: function elimina(e) {
         if (!confirm('Eliminare questa spesa? 🐱')) {
           e.preventDefault();
         }
-      }
+      },
+      focus: function focus() {}
     }
   });
 }
