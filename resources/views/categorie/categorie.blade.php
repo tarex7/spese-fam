@@ -5,7 +5,11 @@
 
 
         <div class="w-75">
-            {!! Form::open(['url' => 'categorie/aggiungi', 'id' => $categorie_id]) !!}
+            {!! Form::open([
+                'url' => 'categorie/aggiungi',
+                'id' => isset($categorie_id) ? $categorie_id : null
+            ]) !!}
+            
 
 
 
@@ -45,16 +49,17 @@
                 </thead>
                 <tbody>
                     @foreach ($categorie as $s)
-                        <tr @if ($categorie_id == $s->id) id="nome_add" @endif>
+                        <tr @if (isset($categorie_id) && $categorie_id == $s->id) id="nome_add" @endif>
                             <td class="d-flex align-items-center justify-content-end">
 
                                 <a @click="elimina" href={{ route('categorie/elimina', $s->id) }}> <i
                                         class="fa-solid fa-trash mx-1 text-danger mt-2"></i>
                                 </a>
                             </td>
-                            {!! Form::hidden('categorie[spesa_' . $s->id . '][id]', $s->id) !!}
+                            {{-- {!! Form::hidden('categorie[spesa_' . $s->id . '][id]', $s->id) !!} --}}
 
-                            <td>{!! Form::text('categorie[spesa_' . $s->id . '][nome]', $s->nome, ['class' => 'form-control']) !!}</td>
+                            <td>{!! Form::text("categorie[{$s->id}]", $s->nome, ['class' => 'form-control']) !!}</td>
+
 
 
 

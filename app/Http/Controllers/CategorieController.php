@@ -71,25 +71,24 @@ class CategorieController extends Controller
     public function salva(Request $request)
     {
 
-        // dd($request->all());
-        if ($request->nome_add != '') {
+        //  dd($request->all());
 
-            $create = Categorie::create([
 
-                'nome' => $request->nome_add,
-                'attivo' => 1,
+
+        foreach ($request->categorie as $k => $c) {
+
+            Categorie::where('id', $k)->update([
+                'nome' => $c
             ]);
-            $categorie = new Categorie();
-            $categorie->list();
-
-
-            return view('categorie.categorie')
-                ->with('success', 'Categoria aggiunta!')
-                ->with('categorie_id', $create->id)
-                ->with('categorie', $categorie->get());
-        } else {
-            return redirect()->back()->with('error', 'Inserisci un nome valido!');
         }
+
+        $categorie = Categorie::where('attivo', 1)->get();
+
+
+        return view('categorie.categorie')
+            ->with('success', 'Categoria aggiunta!')
+            ->with('categorie', $categorie)
+            ;
     }
 
 

@@ -23,13 +23,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/', 'SpeseController@index')->name('spese');
 
     // Route::any('/spese/salva', 'SpeseController@salva')->name('spese');
-    Route::any('/spese/modifica', 'SpeseController@modifica')->name('spese/modifica');
+    Route::any('/spese/salva', 'SpeseController@salva')->name('spese/salva');
     Route::any('/spese/aggiungi', 'SpeseController@aggiungi')->name('spese/aggiungi');
     Route::any('/spese/elimina/{id}', 'SpeseController@elimina')->name('spese/elimina');
 
     //CATEGORIE
     Route::get('/categorie', 'CategorieController@index')->name('categorie');
     Route::any('/categorie/elimina/{id}', 'categorieController@elimina')->name('categorie/elimina');
+    Route::any('/categorie/salva', 'CategorieController@salva')->name('categorie/salva');
+
     Route::any('/categorie/aggiungi', 'CategorieController@aggiungi')->name('categorie/aggiungi');
 
     //TIPOLOGIA

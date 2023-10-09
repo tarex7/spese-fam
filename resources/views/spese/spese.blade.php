@@ -49,7 +49,7 @@
 
         {{-- SALVA --}}
 
-        {!! Form::open(['url' => 'spese/modifica']) !!}
+        {!! Form::open(['url' => 'spese/salva']) !!}
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -67,31 +67,32 @@
                
                     <tr  @if($spese_id == $s->id)  id="nome_add" @endif>
                         <td class="d-flex align-items-center justify-content-center">
-                            {{$s->id,$spese_id}}
+                          
                             <a @click="elimina" href={{ route('spese/elimina', $s->id) }}> <i
                                     class="fa-solid fa-trash mx-1 text-danger mt-2"></i></a>
                         </td>
-                        {!! Form::hidden('spese[spesa_' . $s->id . '][id]', $s->id) !!}
+                        {{-- {!! Form::hidden('spese[spesa_' . $s->id . '][id]', $s->id) !!} --}}
 
-                        <td>{!! Form::text('spese[spesa_' . $s->id . '][nome]', $s->nome, ['class' => 'form-control']) !!}</td>
-                        <td>{!! Form::date('spese[spesa_' . $s->id . '][data]', $s->data, ['class' => 'form-control']) !!}</td>
+                        <td>{!! Form::text("spese[{$s->id}][nome]", $s->nome, ['class' => 'form-control']) !!}</td>
+
+                        <td>{!! Form::date("spese[{$s->id}][data]" , $s->data, ['class' => 'form-control']) !!}</td>
 
                         <td>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">€</span>
                                 </div>
-                                {!! Form::number('spese[spesa_' . $s->id . '][importo]', number_format(intval($s->importo), 2), ['class' => 'form-control']) !!}
+                                {!! Form::number("spese[{$s->id}][importo]", number_format(intval($s->importo), 2), ['class' => 'form-control']) !!}
                             </div>
                         </td>
                         
 
-                        <td>{!! Form::select('spese[spesa_' . $s->id . '][categorie_id]', $cat, $s->categorie_id, [
+                        <td>{!! Form::select("spese[{$s->id}][categorie]", $cat, $s->categorie_id, [
                             'class' => 'form-control',
                         ]) !!}</td>
-                        <td>{!! Form::select('spese[spesa_' . $s->id . '][tipologia_id]', $tip, $s->tipologia_id, [
+                        <td>{!! Form::select("spese[{$s->id}][tipologia]", $tip, $s->tipologia_id, [
                             'class' => 'form-control',
-                        ]) !!}</td>
+                        ]) !!}</td> 
                     </tr>
                 @endforeach
 

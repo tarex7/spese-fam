@@ -49,7 +49,7 @@ class SpeseController extends Controller
 
         //dd($request->all());
 
-        if($request->nome != '') {
+        if ($request->nome_add != '') {
             $create = Spese::create([
 
                 'nome' => $request->nome_add,
@@ -59,53 +59,50 @@ class SpeseController extends Controller
                 'tipologia_id' => $request->tipologia_add,
                 'attivo' => 1,
             ]);
-    
+
             $spese = Spese::select('spese.*')
                 ->where('spese.attivo', 1)
                 ->leftJoin('categorie', 'spese.categorie_id', 'categorie.id')
                 ->leftJoin('tipologia', 'spese.tipologia_id', 'tipologia.id')
                 ->select('spese.*', 'categorie.nome as categoria', 'tipologia.nome as tipologia')
                 ->get();
-    
+
             $cat = Categorie::all();
             $cat_opt = array(0 => '--Seleziona--');
             foreach ($cat as $c) {
                 $cat_opt[$c->id] = $c->nome;
             }
-    
+
             $tip = Tipologia::all();
             $tip_opt = array(0 => '--Seleziona--');
             foreach ($tip as $c) {
                 $tip_opt[$c->id] = $c->nome;
             }
-            return view('spese.spese')
-            ->with('success', 'Spesa aggiunta!')
-            ->with('spese_id', $create->id)
-            ->with('cat', $cat_opt)
-            ->with('spese', $spese)
-            ->with('tip', $tip_opt)
-            ;
+
+            return redirect()->route('spese')
+                ->with('success', 'Spesa aggiunta!')
+                ->with('spese_id', $create->id)
+                ->with('cat', $cat_opt)
+                ->with('spese', $spese)
+                ->with('tip', $tip_opt);
         } else {
-            return redirect()->back()->with('error','Inserisci un nome valido');
+            return redirect()->back()->with('error', 'Inserisci un nome valido');
         }
-        
     }
 
-    public function modifica(Request $request)
+    public function salva(Request $request)
     {
 
-        // dd($request->all());
-        $spese = $request->spese;
-
-        foreach ($spese as $s) {
-
-            Spese::where('id', $s['id'])
+      
+        foreach ($request->spese as $k => $s) {
+           
+            Spese::where('id', $k)
                 ->update([
                     'nome' => $s['nome'],
                     'data' => $s['data'],
                     'importo' => intval($s['importo']),
-                    'categorie_id' => $s['categorie_id'],
-                    'tipologia_id' => $s['tipologia_id'],
+                    'categorie_id' => $s['categorie'],
+                    'tipologia_id' => $s['tipologia'],
                     'modificato' => date('Y-m-d H:i:s'),
                     'modificatore' => auth()->user()->name,
                 ]);
@@ -118,9 +115,9 @@ class SpeseController extends Controller
     public function elimina($id)
     {
 
-    Spese::where('id', $id)->update([
+        Spese::where('id', $id)->update([
             'attivo' => 0,
-        
+
         ]);
 
         return redirect()->route('spese')
