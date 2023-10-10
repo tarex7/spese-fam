@@ -19,7 +19,18 @@ window.Vue = require('vue');
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
+
+
+
+import DatePicker from './components/DatePicker.vue'
+
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+//Vue.component('DatePicker', require('./components/DatePicker.vue').default);
+
+Vue.component('Datepicker', DatePicker);
+
+
+
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -29,6 +40,7 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 
 if (!document.getElementById('spese')) {
     const app = new Vue({
+        
         el: '#app',
         mounted() {
             console.log('App is working');

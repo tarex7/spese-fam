@@ -11,32 +11,21 @@ use Illuminate\Support\Facades\Validator;
 
 class SpeseController extends Controller
 {
-    public function index($month = null)
+    public function index()
     {
 
-       if($month == null) {
-        $spese = Spese::select('spese.*')
-        ->where('spese.attivo', 1)
-        ->whereMonth('data', '=', date('n'))
-        ->leftJoin('categorie', 'spese.categorie_id', 'categorie.id')
-        ->leftJoin('tipologia', 'spese.tipologia_id', 'tipologia.id')
-        ->select('spese.*', 'categorie.nome as categoria', 'tipologia.nome as tipologia')
-        ->get();
 
-        //dd($spese)
-    ;
-       } else {
         $spese = Spese::select('spese.*')
-        ->where('spese.attivo', 1)
-        ->whereMonth('data', '=', $month)
-        ->leftJoin('categorie', 'spese.categorie_id', 'categorie.id')
-        ->leftJoin('tipologia', 'spese.tipologia_id', 'tipologia.id')
-        ->select('spese.*', 'categorie.nome as categoria', 'tipologia.nome as tipologia')
-        ->get();
+            ->where('spese.attivo', 1)
+            // ->whereMonth('data', '=', date('n'))
+            ->leftJoin('categorie', 'spese.categorie_id', 'categorie.id')
+            ->leftJoin('tipologia', 'spese.tipologia_id', 'tipologia.id')
+            ->select('spese.*', 'categorie.nome as categoria', 'tipologia.nome as tipologia')
+            ->get();
 
-        //dd($spese)
-    ;
-       }
+            //dd($spese)
+        ;
+
 
 
         $cat = Categorie::all();
@@ -52,7 +41,7 @@ class SpeseController extends Controller
         }
 
         $mesi = [
-           ' 0' => 'Anno',
+            ' 0' => 'Anno',
             '1' => 'Gennaio',
             '2' => 'Febbraio',
             '3' => 'Marzo',
@@ -66,7 +55,7 @@ class SpeseController extends Controller
             '11' => 'Novembre',
             '12' => 'Dicembre'
         ];
-        
+
 
         // dd($spese);
         return view('spese.spese')
@@ -84,6 +73,7 @@ class SpeseController extends Controller
         //dd($request->all());
 
         if ($request->nome_add != '') {
+
             $create = Spese::create([
 
                 'nome' => $request->nome_add,
@@ -127,9 +117,9 @@ class SpeseController extends Controller
     public function salva(Request $request)
     {
 
-      
+
         foreach ($request->spese as $k => $s) {
-           
+
             Spese::where('id', $k)
                 ->update([
                     'nome' => $s['nome'],
@@ -141,7 +131,7 @@ class SpeseController extends Controller
                     'modificatore' => auth()->user()->name,
                 ]);
         }
-        return redirect()->back()->with('success', 'Modifica salvata!');
+        return redirect()->route('spese')->with('success', 'Modifica salvata!');
     }
 
 
@@ -158,7 +148,73 @@ class SpeseController extends Controller
             ->with('success', 'Spesa eliminata! 😁👍');
     }
 
-    public function filtra() {
-        
+    public function filtra(Request $request)
+    {
+
+      //  dd($request->all());
+        $mese = $request->mese;
+        $anno = $request->anno;
+
+
+
+        if ($mese != '') {
+            $spese = Spese::select('spese.*')
+                ->where('spese.attivo', 1)
+                ->whereMonth('data', '=', $mese)
+                ->leftJoin('categorie', 'spese.categorie_id', 'categorie.id')
+                ->leftJoin('tipologia', 'spese.tipologia_id', 'tipologia.id')
+                ->select('spese.*', 'categorie.nome as categoria', 'tipologia.nome as tipologia')
+                ->get();
+        }
+
+
+        if ($anno != '0') {
+           
+            $spese = Spese::where('spese.attivo', 1)
+                ->whereYear('data', '=', $anno)
+                ->leftJoin('categorie', 'spese.categorie_id', 'categorie.id')
+                ->leftJoin('tipologia', 'spese.tipologia_id', 'tipologia.id')
+                ->select('spese.*', 'categorie.nome as categoria', 'tipologia.nome as tipologia')
+                ->get();
+        }
+
+
+
+        //dd($spese);
+
+        $cat = Categorie::all();
+        $cat_opt = array(0 => '--Seleziona--');
+        foreach ($cat as $c) {
+            $cat_opt[$c->id] = $c->nome;
+        }
+
+        $tip = Tipologia::all();
+        $tip_opt = array(0 => '--Seleziona--');
+        foreach ($tip as $c) {
+            $tip_opt[$c->id] = $c->nome;
+        }
+
+        $mesi = [
+            ' 0' => 'Anno',
+            '1' => 'Gennaio',
+            '2' => 'Febbraio',
+            '3' => 'Marzo',
+            '4' => 'Aprile',
+            '5' => 'Maggio',
+            '6' => 'Giugno',
+            '7' => 'Luglio',
+            '8' => 'Agosto',
+            '9' => 'Settembre',
+            '10' => 'Ottobre',
+            '11' => 'Novembre',
+            '12' => 'Dicembre'
+        ];
+
+        return view('spese.spese')
+            ->with('spese', $spese)
+            ->with('mesi', $mesi)
+            ->with('cat', $cat_opt)
+            ->with('spese_id', null)
+            ->with('tip', $tip_opt);
     }
 }

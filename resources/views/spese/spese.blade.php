@@ -1,32 +1,51 @@
 @extends('layouts.app', ['elem_id' => ''])
 
-{{--
-@section('add')
-<script src="{{ asset('js/add.js') }}" defer></script>
-@endsection --}}
 
 @section('content')
     <div id="spese">
 
         <div class="row ">
             <div class="col-5"></div>
+
             <div class="col-7 d-flex align-items-center justify-content-between">
                 <h1 class="text-center my-3">Spese</h1>
-                {!! Form::select('categorie_add', $mesi, date('n'), ['class' => 'form-control w-25 mx-5', '@change' => 'sendMonth']) !!}
 
+                {{-- FILTRA --}}
+                {!! Form::open(['url' => 'spese/filtra']) !!}
+                <div class="d-flex align-items-center">
 
+                    @php
+                        
+                        $anni = range(date('Y') - 10, date('Y') + 10);
+                        $anni = array_combine($anni, $anni);
+                        $years = [0 => 'Seleziona'];
+                        
+                        foreach ($anni as $key => $a) {
+                            $years[$a] = $a;
+                        }
+                        
+                    @endphp
 
-               <a href="{{route('spese/filtra')}}"></a>
+                     {!! Form::select('anno', $years, date('Y'), ['class' => 'form-control mx-1']) !!} 
+
+                   
+                  
+                    {!! Form::select('mese', $mesi, date('n'), ['class' => 'form-control  mx-3']) !!}
+
+                    {!! Form::submit('Filtra', ['class' => 'btn btn-success']) !!}
+                </div>
+
             </div>
         </div>
+        {!! Form::close() !!}
 
 
 
         {{-- AGGIUNGI --}}
 
         {!! Form::open(['url' => 'spese/aggiungi']) !!}
+
         {!! Form::button('<i class="fa-solid fa-square-plus mr-2 fa-lg"></i> Aggiungi spesa', [
-            'id' => 'addBtn',
             'class' => 'btn btn-primary mb-3',
             'type' => 'submit',
         ]) !!}
