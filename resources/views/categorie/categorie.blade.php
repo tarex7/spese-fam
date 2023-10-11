@@ -7,9 +7,9 @@
         <div class="w-75">
             {!! Form::open([
                 'url' => 'categorie/aggiungi',
-                'id' => isset($categorie_id) ? $categorie_id : null
+                'id' => isset($categorie_id) ? $categorie_id : null,
             ]) !!}
-            
+
 
 
 
@@ -42,7 +42,7 @@
             <table class="table table-striped ">
                 <thead>
                     <tr>
-                        <th></th>
+                        <th scope="col"></th>
                         <th scope="col">Nome</th>
 
                     </tr>
@@ -59,10 +59,6 @@
                             {{-- {!! Form::hidden('categorie[spesa_' . $s->id . '][id]', $s->id) !!} --}}
 
                             <td>{!! Form::text("categorie[{$s->id}]", $s->nome, ['class' => 'form-control']) !!}</td>
-
-
-
-
                         </tr>
                     @endforeach
 

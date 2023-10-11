@@ -14,25 +14,13 @@
                 {!! Form::open(['url' => 'spese/filtra']) !!}
                 <div class="d-flex align-items-center">
 
-                    @php
-                        
-                        $anni = range(date('Y') - 10, date('Y') + 10);
-                        $anni = array_combine($anni, $anni);
-                        $years = [0 => 'Seleziona'];
-                        
-                        foreach ($anni as $key => $a) {
-                            $years[$a] = $a;
-                        }
-                        
-                    @endphp
 
-                     {!! Form::select('anno', $years, date('Y'), ['class' => 'form-control mx-1']) !!} 
+                    {!! Form::select('anno', $years, $anno_sel, ['class' => 'form-control mx-1']) !!}
 
-                   
-                  
-                    {!! Form::select('mese', $mesi, date('n'), ['class' => 'form-control  mx-3']) !!}
+                    {!! Form::select('mese', $mesi, $mese_sel, ['class' => 'form-control  mx-3']) !!}
 
-                    {!! Form::submit('Filtra', ['class' => 'btn btn-success']) !!}
+                    {!! Form::submit('Filtra', ['class' => 'btn btn-success mx-2']) !!}
+                    <a class="btn btn-danger form-control" href={{ Route('spese') }}>Rimuovi</a>
                 </div>
 
             </div>
@@ -69,7 +57,8 @@
 
                     <td>{!! Form::text('nome_add', '', ['class' => 'form-control add']) !!}</td>
                     <td>{!! Form::date('data_add', '', ['class' => 'form-control add']) !!}</td>
-                    <td>{!! Form::number('importo_add', '', ['class' => 'form-control add']) !!}</td>
+                    <td>{!! Form::number('importo_add', '', ['class' => 'form-control add', 'step' => '0.01', 'min' => '0.01']) !!}</td>
+
                     <td>{!! Form::select('categorie_add', $cat, '', ['class' => 'form-control add']) !!}</td>
                     <td>{!! Form::select('tipologia_add', $tip, '', ['class' => 'form-control add']) !!}</td>
                 </tr>
@@ -92,11 +81,18 @@
                 </tr>
             </thead>
             <tbody id="spese">
+                <tr>
+                    <th></th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
 
                 @foreach ($spese as $s)
+                    {{-- @php dd($spese_id ); echo('spese_id')@endphp --}}
                     <tr @if ($spese_id == $s->id) id="nome_add" @endif>
                         <td class="d-flex align-items-center justify-content-center">
-
                             <a @click="elimina" href={{ route('spese/elimina', $s->id) }}> <i
                                     class="fa-solid fa-trash mx-1 text-danger mt-2"></i></a>
                         </td>
@@ -111,7 +107,10 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">€</span>
                                 </div>
-                                {!! Form::number("spese[{$s->id}][importo]", number_format(intval($s->importo), 2), ['class' => 'form-control']) !!}
+                                {!! Form::number("spese[{$s->id}][importo]", number_format($s->importo, 2), [
+                                    'class' => 'form-control',
+                                    'step' => '0.01',
+                                ]) !!}
                             </div>
                         </td>
 
@@ -127,6 +126,42 @@
 
             </tbody>
         </table>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                    <th scope="col">Totale</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody id="spese">
+                <tr>
+                    <th></th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                    <th scope="col"><input type="text" value="{{$totale}}"> </th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+
+            </tbody>
+        </table>
+
         {!! Form::submit('Salva', ['class' => 'btn btn-primary float-right']) !!}
         {!! Form::close() !!}
 

@@ -59,15 +59,20 @@ if (document.getElementById('spese')) {
             }
         },
         mounted() {
+
+            document.addEventListener("DOMContentLoaded", function() {
+                const elementToFocus = document.getElementById('nome_add');
+          
+                console.log(elementToFocus)
+                 if (elementToFocus) {
+                     elementToFocus.scrollIntoView();
+                     elementToFocus.style.backgroundColor="#ccc"
+                     }
+                console.log("La pagina è stata completamente caricata.");
+              });
             console.log('Spese is working')
             
-        const elementToFocus = document.getElementById('nome_add');
-          
-       console.log(elementToFocus)
-        if (elementToFocus) {
-            elementToFocus.scrollIntoView();
-            elementToFocus.style.backgroundColor="#ccc"
-            }
+      
         },
 
         methods: {
