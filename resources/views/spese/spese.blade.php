@@ -14,7 +14,6 @@
                 {!! Form::open(['url' => 'spese/filtra']) !!}
                 <div class="d-flex align-items-center">
 
-
                     {!! Form::select('anno', $years, $anno_sel, ['class' => 'form-control mx-1']) !!}
 
                     {!! Form::select('mese', $mesi, $mese_sel, ['class' => 'form-control  mx-3']) !!}
@@ -58,7 +57,6 @@
                     <td>{!! Form::text('nome_add', '', ['class' => 'form-control add']) !!}</td>
                     <td>{!! Form::date('data_add', '', ['class' => 'form-control add']) !!}</td>
                     <td>{!! Form::number('importo_add', '', ['class' => 'form-control add', 'step' => '0.01', 'min' => '0.01']) !!}</td>
-
                     <td>{!! Form::select('categorie_add', $cat, '', ['class' => 'form-control add']) !!}</td>
                     <td>{!! Form::select('tipologia_add', $tip, '', ['class' => 'form-control add']) !!}</td>
                 </tr>
@@ -83,6 +81,7 @@
             <tbody id="spese">
                 <tr>
                     <th></th>
+                    <th scope="col"></th>
                     <th scope="col"></th>
                     <th scope="col"></th>
                     <th scope="col"></th>
@@ -134,18 +133,32 @@
                     <th scope="col"></th>
                     <th scope="col"></th>
                     <th scope="col"></th>
-                    <th scope="col">Totale</th>
+                    <th scope="col">
+                        Totale
+                    </th>
                     <th scope="col"></th>
                     <th scope="col"></th>
                 </tr>
             </thead>
             <tbody id="spese">
                 <tr>
-                    <th></th>
+                    <th scope="col" style="width:5%"></th>
+                    <th scope="col" style="width:10%"></th>
+                    <th scope="col" style="width:12.5%"></th>
                     <th scope="col"></th>
-                    <th scope="col"></th>
-                    <th scope="col"></th>
-                    <th scope="col"><input type="text" value="{{$totale}}"> </th>
+                    <th scope="col" style="width:25%">
+                        <div class="input-group">
+                            
+                            <div class="input-group-prepend">
+                                <span class="input-group-text font-weight-bold">€</span>
+                            </div>
+                            {!! Form::text("spese[{$s->id}][importo]", $totale, [
+                                'class' => 'form-control font-weight-bold',
+                                'step' => '0.01',
+                                'disabled'
+                            ]) !!}
+                        </div>
+                     </th>
                     <th scope="col"></th>
                     <th scope="col"></th>
                 </tr>
@@ -162,7 +175,7 @@
             </tbody>
         </table>
 
-        {!! Form::submit('Salva', ['class' => 'btn btn-primary float-right']) !!}
+        {!! Form::submit('Salva', ['class' => 'btn btn-primary float-right mr-5 px-5']) !!}
         {!! Form::close() !!}
 
     </div>

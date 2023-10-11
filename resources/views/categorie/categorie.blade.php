@@ -24,7 +24,7 @@
                 <table class="table table-striped bg-light rounded">
 
                     <tr>
-                        <th></th>
+                        <th style="width:15%"></th>
                         <th>
                             <label>Nome</label>
                             {!! Form::text('nome_add', '', ['class' => 'form-control add w-50']) !!}
@@ -42,7 +42,7 @@
             <table class="table table-striped ">
                 <thead>
                     <tr>
-                        <th scope="col"></th>
+                        <th scope="col" ></th>
                         <th scope="col">Nome</th>
 
                     </tr>
@@ -64,7 +64,7 @@
 
                 </tbody>
             </table>
-            {!! Form::submit('Salva', ['class' => 'btn btn-primary float-right']) !!}
+            {!! Form::submit('Salva', ['class' => 'btn btn-primary float-right  px-5']) !!}
             {!! Form::close() !!}
         </div>
 

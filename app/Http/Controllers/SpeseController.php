@@ -85,6 +85,15 @@ class SpeseController extends Controller
     }
 
 
+
+
+
+
+
+
+
+
+
     public function aggiungi(Request $request)
     {
 
@@ -100,6 +109,8 @@ class SpeseController extends Controller
                 'categorie_id' => $request->categorie_add,
                 'tipologia_id' => $request->tipologia_add,
                 'attivo' => 1,
+                'creatore' => auth()->user()->name,
+                'creato' => date('Y-m-d'),
             ]);
 
             $spese = Spese::select('spese.*')
@@ -167,6 +178,13 @@ class SpeseController extends Controller
         }
     }
 
+
+
+
+
+
+
+
     public function salva(Request $request)
     {
 
@@ -189,6 +207,10 @@ class SpeseController extends Controller
 
 
 
+
+
+
+
     public function elimina($id)
     {
 
@@ -200,6 +222,11 @@ class SpeseController extends Controller
         return redirect()->route('spese')
             ->with('success', 'Spesa eliminata! 😁👍');
     }
+
+
+
+
+
 
     public function filtra(Request $request)
     {
@@ -231,6 +258,9 @@ class SpeseController extends Controller
         }
 
         $ris = $spese->paginate();
+
+        $totale = $ris->sum('importo');
+
 
         //dd($spese);
 
@@ -279,6 +309,7 @@ class SpeseController extends Controller
             ->with('anno_sel', $anno_sel)
             ->with('mese_sel', $mese_sel)
             ->with('cat', $cat_opt)
+            ->with('totale', $totale)
             ->with('spese_id', null)
             ->with('tip', $tip_opt);
     }

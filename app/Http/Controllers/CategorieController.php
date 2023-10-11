@@ -44,12 +44,12 @@ class CategorieController extends Controller
     public function aggiungi(Request $request)
     {
 
-        // dd($request->all());
+         //dd($request->all());
         $categorie = Categorie::where('attivo', 1)->get();
 
         // dd($categorie);
         if ($request->nome_add != '') {
-            categorie::create([
+            Categorie::create([
                 'nome' => $request->nome_add,
                 'attivo' => 1,
                 'creato' => date('Y-m-d H:i:s'),
@@ -78,7 +78,10 @@ class CategorieController extends Controller
         foreach ($request->categorie as $k => $c) {
 
             Categorie::where('id', $k)->update([
-                'nome' => $c
+                'nome' => $c,
+                'modificatore' => auth()->user()->name,
+                'modificato' => date('Y-m-d'),
+
             ]);
         }
 
@@ -108,6 +111,6 @@ class CategorieController extends Controller
         ]);
 
         return redirect()->route('categorie')
-            ->with('success', 'Spesa eliminata! 😁👍');
+            ->with('success', 'Categoria eliminata! 😁👍');
     }
 }
