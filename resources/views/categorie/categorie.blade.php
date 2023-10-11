@@ -13,7 +13,7 @@
 
 
 
-            <h1 class="text-center my-3">Categorie</h1>
+            <h1 class="text-center my-3">Categorie spese</h1>
             {!! Form::button('<i class="fa-solid fa-square-plus mr-2 fa-lg"></i> Aggiungi categoria', [
                 'id' => 'addBtn',
                 'class' => 'btn btn-primary mb-3',

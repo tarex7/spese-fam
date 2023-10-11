@@ -1,18 +1,18 @@
 
-    
-        
+
+
             <!-- Menu Laterale -->
-            <nav class="col-1 pl-1 bg-primary sidebar" style="height: 50vh;margin-top:1px;min-width:160px">
+            <nav class="col-1 pl-1 bg-primary sidebar" style="height: 50vh;margin-top:1px;min-width:200px">
                 <div class="position-sticky">
                     <ul class="nav flex-column py-4">
-                        {{-- <li class="nav-item">
-                            <a class="nav-link active text-white d-flex align-items-center" href="{{route('tipologia')}}">
-                               <i class="fa-solid fa-list mr-2"></i> <p class="m-0"> Tipologia</p> 
-                            </a>
-                        </li> --}}
-                        <li class="nav-item">
+                         <li class="nav-item">
                             <a class="nav-link active text-white d-flex align-items-center" href="{{route('categorie')}}">
-                                <i class="fa-regular fa-rectangle-list mr-2"></i> <p class="m-0"> Categorie</p> 
+                               <i class="fa-solid fa-list mr-2"></i> <p class="m-0"> Categorie spese</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active text-white d-flex align-items-center" href="{{route('categorie_entrate')}}">
+                                <i class="fa-regular fa-rectangle-list mr-2"></i> <p class="m-0"> Categorie entrate</p>
                              </a>
                         </li>
                         {{-- <li class="nav-item">
@@ -25,8 +25,8 @@
                 </div>
             </nav>
 
-          
-       
-    
 
-    
+
+
+
+
