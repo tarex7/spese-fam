@@ -23,16 +23,11 @@ class SpeseController extends Controller
             ->select('spese.*', 'categorie.nome as categoria', 'tipologia.nome as tipologia')
             ->get();
 
-            $totale = $spese->sum('importo');
-
-           
-
-            //dd($spese)
+        $totale = $spese->sum('importo');//dd($spese)
         ;
 
 
-
-        $cat = Categorie::all();
+        $cat = Categorie::where('attivo', 1)->orderBy('nome', 'ASC')->get();
         $cat_opt = array(0 => '--Seleziona--');
         foreach ($cat as $c) {
             $cat_opt[$c->id] = $c->nome;
@@ -85,15 +80,6 @@ class SpeseController extends Controller
     }
 
 
-
-
-
-
-
-
-
-
-
     public function aggiungi(Request $request)
     {
 
@@ -123,7 +109,7 @@ class SpeseController extends Controller
             $totale = $spese->sum('importo');
 
 
-            $cat = Categorie::all();
+            $cat = Categorie::where('attivo', 1)->orderBy('nome', 'ASC')->get();
             $cat_opt = array(0 => '--Seleziona--');
             foreach ($cat as $c) {
                 $cat_opt[$c->id] = $c->nome;
@@ -170,19 +156,12 @@ class SpeseController extends Controller
                 ->with('anno_sel', $anno_sel)
                 ->with('mese_sel', $mese_sel)
                 ->with('spese_id', $create->id)
-            ->with('totale', $totale)
-
+                ->with('totale', $totale)
                 ->with('tip', $tip_opt);
         } else {
             return redirect()->back()->with('error', 'Inserisci un nome valido');
         }
     }
-
-
-
-
-
-
 
 
     public function salva(Request $request)
@@ -206,11 +185,6 @@ class SpeseController extends Controller
     }
 
 
-
-
-
-
-
     public function elimina($id)
     {
 
@@ -222,10 +196,6 @@ class SpeseController extends Controller
         return redirect()->route('spese')
             ->with('success', 'Spesa eliminata! 😁👍');
     }
-
-
-
-
 
 
     public function filtra(Request $request)
@@ -264,7 +234,7 @@ class SpeseController extends Controller
 
         //dd($spese);
 
-        $cat = Categorie::all();
+        $cat = Categorie::where('attivo', 1)->orderBy('nome', 'ASC')->get();
         $cat_opt = array(0 => '--Seleziona--');
         foreach ($cat as $c) {
             $cat_opt[$c->id] = $c->nome;
@@ -312,5 +282,61 @@ class SpeseController extends Controller
             ->with('totale', $totale)
             ->with('spese_id', null)
             ->with('tip', $tip_opt);
+    }
+
+
+    public function elenco()
+    {
+
+        $spese = Spese::where('spese.attivo', 1)
+            ->leftJoin('categorie', 'categorie.id', 'spese.categorie_id')
+            ->select('spese.*', 'categorie.nome as categoria')
+            ->whereIn('categorie_id', [1])
+            ->get();
+
+        // dd($spese);
+
+        foreach ($spese as $s) {
+            $data = $s->data;
+            $data_obj = new \DateTime($data);
+            $mese = $data_obj->format('m');
+
+            $mutuo = array(
+                'gen' => '',
+                'feb' => '',
+                'mar' => '',
+                'apr' => '',
+                'mag' => '',
+                'giu' => '',
+                'lug' => '',
+                'ago' => '',
+                'set' => '',
+                'ott' => '',
+                'nov' => '',
+                'dic' => '',
+            );
+
+            
+
+            /*
+                        switch ($mese) {
+                            case 1:
+                                $s->gen = $s->importo;
+                                break;
+                            case 2:
+                                $s->feb = $s->importo;
+                                break;
+                            case 3:
+                                $s->mar = $s->importo;
+                                break;
+                            case 4:
+                                $s->apr = $s->importo;
+                                break;
+                        }*/
+
+
+        }
+
+        return view('spese.elenco')->with('spese', $spese);
     }
 }

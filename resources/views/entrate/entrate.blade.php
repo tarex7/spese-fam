@@ -1,25 +1,25 @@
 @extends('layouts.app', ['elem_id' => ''])
+
+
 @section('content')
     <div id="spese">
 
         <div class="row ">
             <div class="col-5"></div>
-            <h1 class="text-center my-3">Spese</h1>
 
-            <div class="col-12 d-flex  justify-content-end ">
+            <div class="col-7 d-flex align-items-center justify-content-between">
+                <h1 class="text-center my-3">Entrate</h1>
 
                 {{-- FILTRA --}}
-                {!! Form::open(['url' => 'spese/filtra']) !!}
-                <div class="d-flex float-right my-4">
-
-                    <a class="btn btn-primary form-control mr-5" href={{ Route('spese/elenco') }}>Elenco</a>
+                {!! Form::open(['url' => 'entrate/filtra']) !!}
+                <div class="d-flex align-items-center">
 
                     {!! Form::select('anno', $years, $anno_sel, ['class' => 'form-control mx-1']) !!}
 
                     {!! Form::select('mese', $mesi, $mese_sel, ['class' => 'form-control  mx-3']) !!}
 
                     {!! Form::submit('Filtra', ['class' => 'btn btn-success mx-2']) !!}
-                    <a class="btn btn-danger form-control" href={{ Route('spese') }}>Rimuovi</a>
+                    <a class="btn btn-danger form-control" href={{ Route('entrate') }}>Rimuovi</a>
                 </div>
 
             </div>
@@ -30,9 +30,9 @@
 
         {{-- AGGIUNGI --}}
 
-        {!! Form::open(['url' => 'spese/aggiungi']) !!}
+        {!! Form::open(['url' => 'entrate/aggiungi']) !!}
 
-        {!! Form::button('<i class="fa-solid fa-square-plus mr-2 fa-lg"></i> Aggiungi spesa', [
+        {!! Form::button('<i class="fa-solid fa-square-plus mr-2 fa-lg"></i> Aggiungi entrata', [
             'class' => 'btn btn-primary mb-3',
             'type' => 'submit',
         ]) !!}
@@ -51,8 +51,8 @@
                 </tr>
                 </thead>
                 <tr>
-                    <td></td>
-                    {!! Form::hidden('spese_add', '') !!}
+                    <td> </td>
+                    {!! Form::hidden('entrate_add', '') !!}
 
                     <td>{!! Form::text('nome_add', '', ['class' => 'form-control add']) !!}</td>
                     <td>{!! Form::date('data_add', '', ['class' => 'form-control add']) !!}</td>
@@ -66,7 +66,7 @@
 
         {{-- SALVA --}}
 
-        {!! Form::open(['url' => 'spese/salva']) !!}
+        {!! Form::open(['url' => 'entrate/salva']) !!}
         <table class="table table-striped">
             <thead>
             <tr>
@@ -78,7 +78,7 @@
                 <th scope="col">Tipologia</th>
             </tr>
             </thead>
-            <tbody id="spese">
+            <tbody id="entrate">
             <tr>
                 <th></th>
                 <th scope="col"></th>
@@ -88,25 +88,25 @@
                 <th scope="col"></th>
             </tr>
 
-            @foreach ($spese as $s)
-                {{-- @php dd($spese_id ); echo('spese_id')@endphp --}}
-                <tr @if ($spese_id == $s->id) id="nome_add" @endif>
+            @foreach ($entrate as $s)
+                {{-- @php dd($entrate_id ); echo('entrate_id')@endphp --}}
+                <tr @if ($entrate_id == $s->id) id="nome_add" @endif>
                     <td class="d-flex align-items-center justify-content-center">
-                        <a @click="elimina" href={{ route('spese/elimina', $s->id) }}> <i
+                        <a @click="elimina" href={{ route('entrate/elimina', $s->id) }}> <i
                                 class="fa-solid fa-trash mx-1 text-danger mt-2"></i></a>
                     </td>
-                    {{-- {!! Form::hidden('spese[spesa_' . $s->id . '][id]', $s->id) !!} --}}
+                    {{-- {!! Form::hidden('entrate[entrata_' . $s->id . '][id]', $s->id) !!} --}}
 
-                    <td>{!! Form::text("spese[{$s->id}][nome]", $s->nome, ['class' => 'form-control']) !!}</td>
+                    <td>{!! Form::text("entrate[{$s->id}][nome]", $s->nome, ['class' => 'form-control']) !!}</td>
 
-                    <td>{!! Form::date("spese[{$s->id}][data]", $s->data, ['class' => 'form-control']) !!}</td>
+                    <td>{!! Form::date("entrate[{$s->id}][data]", $s->data, ['class' => 'form-control']) !!}</td>
 
                     <td>
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text">€</span>
                             </div>
-                            {!! Form::number("spese[{$s->id}][importo]", number_format($s->importo, 2), [
+                            {!! Form::number("entrate[{$s->id}][importo]", number_format($s->importo, 2), [
                                 'class' => 'form-control',
                                 'step' => '0.01',
                             ]) !!}
@@ -114,10 +114,10 @@
                     </td>
 
 
-                    <td>{!! Form::select("spese[{$s->id}][categorie]", $cat, $s->categorie_id, [
+                    <td>{!! Form::select("entrate[{$s->id}][categorie]", $cat, $s->categorie_id, [
                             'class' => 'form-control',
                         ]) !!}</td>
-                    <td>{!! Form::select("spese[{$s->id}][tipologia]", $tip, $s->tipologia_id, [
+                    <td>{!! Form::select("entrate[{$s->id}][tipologia]", $tip, $s->tipologia_id, [
                             'class' => 'form-control',
                         ]) !!}</td>
                 </tr>
@@ -140,7 +140,7 @@
                 <th scope="col"></th>
             </tr>
             </thead>
-            <tbody id="spese">
+            <tbody id="entrate">
             <tr>
                 <th scope="col" style="width:5%"></th>
                 <th scope="col" style="width:10%"></th>
@@ -152,7 +152,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text font-weight-bold">€</span>
                         </div>
-                        {!! Form::text("spese[{$s->id}][importo]", $totale, [
+                        {!! Form::text("entrate[{$s->id}][importo]", $totale, [
                             'class' => 'form-control font-weight-bold',
                             'step' => '0.01',
                             'disabled'
