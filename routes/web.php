@@ -28,7 +28,7 @@ Route::middleware(['auth'])->group(function () {
     Route::any('/spese/aggiungi', 'SpeseController@aggiungi')->name('spese/aggiungi');
     Route::any('/spese/elimina/{id}', 'SpeseController@elimina')->name('spese/elimina');
     Route::any('/spese/filtra/{month?}', 'SpeseController@filtra')->name('spese/filtra');
-    Route::any('/spese/elenco', 'SpeseController@elenco')->name('spese/elenco');
+    Route::any('/spese/elenco/{year?}', 'SpeseController@elenco')->name('spese/elenco');
 
     //ENTRATE
     Route::get('entrate', 'EntrateController@index')->name('entrate');

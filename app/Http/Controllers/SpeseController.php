@@ -288,15 +288,59 @@ class SpeseController extends Controller
 
 
 
-    public function elenco()
+
+
+
+    public function elenco(Request $request)
     {
+        $year = $request->anno;
+        $speseMensili = array();
+
+        for ($i = 1; $i <= 12; $i++) {
+
+            $spe = array();
+            $sp = Spese::where('attivo', 1)->whereMonth('data', $i)->whereYear('data', $year)->select('importo')->get();
+
+            foreach ($sp as $s) {
+                array_push($spe, $s->importo);
+            }
+            //dd($spe);
+
+            $speseMensili[$i] = array_sum($spe);
+        }
+        //dd($speseMensili);
 
         $spesePerCategoria = Spese::join('categorie', 'spese.categorie_id', '=', 'categorie.id')
             ->select('categorie.nome as categoria', DB::raw('MONTH(data) as mese'), DB::raw('SUM(importo) as importo'))
             ->groupBy('categorie.id', 'mese')
+            ->whereYear('data', date('Y'))
             ->get();
 
-        // dd($spesePerCategoria);
+        if ($year != null) {
+            $spesePerCategoria = Spese::join('categorie', 'spese.categorie_id', '=', 'categorie.id')
+                ->select('categorie.nome as categoria', DB::raw('MONTH(data) as mese'), DB::raw('SUM(importo) as importo'))
+                ->groupBy('categorie.id', 'mese')
+                ->whereYear('data', $year)
+                ->get();
+            // dd($spesePerCategoria);
+
+
+
+        }
+
+
+        $anni = range(date('Y') - 10, date('Y') + 10);
+        $anni = array_combine($anni, $anni);
+        $years = [0 => 'Seleziona'];
+
+        $anno_sel = $year;
+        
+
+        foreach ($anni as $key => $a) {
+            $years[$a] = $a;
+        }
+
+        //dd($spesePerCategoria);
         $speseRaggruppate = [];
 
         foreach ($spesePerCategoria as $spesa) {
@@ -305,15 +349,31 @@ class SpeseController extends Controller
             $mese = $spesa->mese;
             $importo = $spesa->importo;
 
+
+
             if (!isset($speseRaggruppate[$categoria])) {
                 $speseRaggruppate[$categoria] = [];
             }
+            if ($mese != null) {
 
-            $speseRaggruppate[$categoria][$mese] = $importo;
+                $speseRaggruppate[$categoria][$mese] = $importo;
+            }
         }
 
-        dd($speseRaggruppate);
+       // dd($speseRaggruppate, $speseMensili);
+        if (count($spesePerCategoria) == 0) {
+            $speseRaggruppate = array(
+                '' => array(
+                    1 => 0
+                )
 
-        return view('spese.elenco')->with('speseRaggruppate', $speseRaggruppate);
+            );
+        }
+
+        return view('spese.elenco')
+            ->with('years', $years)
+            ->with('anno_sel', $anno_sel)
+            ->with('speseRaggruppate', $speseRaggruppate)
+            ->with('spese_mensili', $speseMensili);
     }
 }
