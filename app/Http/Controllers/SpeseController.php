@@ -6,6 +6,7 @@ use App\Models\Spese;
 use App\Models\Categorie;
 use App\Models\Tipologia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -23,7 +24,7 @@ class SpeseController extends Controller
             ->select('spese.*', 'categorie.nome as categoria', 'tipologia.nome as tipologia')
             ->get();
 
-        $totale = $spese->sum('importo');//dd($spese)
+        $totale = $spese->sum('importo'); //dd($spese)
         ;
 
 
@@ -85,94 +86,91 @@ class SpeseController extends Controller
 
         //dd($request->all());
 
-        if ($request->nome_add != '') {
-
-            $create = Spese::create([
-
-                'nome' => $request->nome_add,
-                'data' => date('Y-m-d', strtotime($request->data_add)),
-                'importo' => $request->importo_add,
-                'categorie_id' => $request->categorie_add,
-                'tipologia_id' => $request->tipologia_add,
-                'attivo' => 1,
-                'creatore' => auth()->user()->name,
-                'creato' => date('Y-m-d'),
-            ]);
-
-            $spese = Spese::select('spese.*')
-                ->where('spese.attivo', 1)
-                ->leftJoin('categorie', 'spese.categorie_id', 'categorie.id')
-                ->leftJoin('tipologia', 'spese.tipologia_id', 'tipologia.id')
-                ->select('spese.*', 'categorie.nome as categoria', 'tipologia.nome as tipologia')
-                ->get();
-
-            $totale = $spese->sum('importo');
 
 
-            $cat = Categorie::where('attivo', 1)->orderBy('nome', 'ASC')->get();
-            $cat_opt = array(0 => '--Seleziona--');
-            foreach ($cat as $c) {
-                $cat_opt[$c->id] = $c->nome;
-            }
+        $create = Spese::create([
 
-            $tip = Tipologia::all();
-            $tip_opt = array(0 => '--Seleziona--');
-            foreach ($tip as $c) {
-                $tip_opt[$c->id] = $c->nome;
-            }
+            'nome' => $request->nome_add,
+            'data' => date('Y-m-d', strtotime($request->data_add)),
+            'importo' => $request->importo_add,
+            'categorie_id' => $request->categorie_add,
+            'tipologia_id' => $request->tipologia_add,
+            'attivo' => 1,
+            'creatore' => auth()->user()->name,
+            'creato' => date('Y-m-d'),
+        ]);
 
-            $anni = range(date('Y') - 10, date('Y') + 10);
-            $anni = array_combine($anni, $anni);
-            $years = [0 => 'Seleziona'];
-            foreach ($anni as $key => $a) {
-                $years[$a] = $a;
-            }
-            $anno_sel = date('Y');
-            $mese_sel = date('n');
+        $spese = Spese::select('spese.*')
+            ->where('spese.attivo', 1)
+            ->leftJoin('categorie', 'spese.categorie_id', 'categorie.id')
+            ->leftJoin('tipologia', 'spese.tipologia_id', 'tipologia.id')
+            ->select('spese.*', 'categorie.nome as categoria', 'tipologia.nome as tipologia')
+            ->get();
 
-            $mesi = [
-                ' 0' => '--Seleziona--',
-                '1' => 'Gennaio',
-                '2' => 'Febbraio',
-                '3' => 'Marzo',
-                '4' => 'Aprile',
-                '5' => 'Maggio',
-                '6' => 'Giugno',
-                '7' => 'Luglio',
-                '8' => 'Agosto',
-                '9' => 'Settembre',
-                '10' => 'Ottobre',
-                '11' => 'Novembre',
-                '12' => 'Dicembre'
-            ];
+        $totale = $spese->sum('importo');
 
-            //dd($create->id);
-            return view('spese.spese')
-                ->with('success', 'Spesa aggiunta!')
-                ->with('cat', $cat_opt)
-                ->with('spese', $spese)
-                ->with('years', $years)
-                ->with('mesi', $mesi)
-                ->with('anno_sel', $anno_sel)
-                ->with('mese_sel', $mese_sel)
-                ->with('spese_id', $create->id)
-                ->with('totale', $totale)
-                ->with('tip', $tip_opt);
-        } else {
-            return redirect()->back()->with('error', 'Inserisci un nome valido');
+
+        $cat = Categorie::where('attivo', 1)->orderBy('nome', 'ASC')->get();
+        $cat_opt = array(0 => '--Seleziona--');
+        foreach ($cat as $c) {
+            $cat_opt[$c->id] = $c->nome;
         }
+
+        $tip = Tipologia::all();
+        $tip_opt = array(0 => '--Seleziona--');
+        foreach ($tip as $c) {
+            $tip_opt[$c->id] = $c->nome;
+        }
+
+        $anni = range(date('Y') - 10, date('Y') + 10);
+        $anni = array_combine($anni, $anni);
+        $years = [0 => 'Seleziona'];
+        foreach ($anni as $key => $a) {
+            $years[$a] = $a;
+        }
+        $anno_sel = date('Y');
+        $mese_sel = date('n');
+
+        $mesi = [
+            ' 0' => '--Seleziona--',
+            '1' => 'Gennaio',
+            '2' => 'Febbraio',
+            '3' => 'Marzo',
+            '4' => 'Aprile',
+            '5' => 'Maggio',
+            '6' => 'Giugno',
+            '7' => 'Luglio',
+            '8' => 'Agosto',
+            '9' => 'Settembre',
+            '10' => 'Ottobre',
+            '11' => 'Novembre',
+            '12' => 'Dicembre'
+        ];
+
+        //dd($create->id);
+        return view('spese.spese')
+            ->with('success', 'Spesa aggiunta!')
+            ->with('cat', $cat_opt)
+            ->with('spese', $spese)
+            ->with('years', $years)
+            ->with('mesi', $mesi)
+            ->with('anno_sel', $anno_sel)
+            ->with('mese_sel', $mese_sel)
+            ->with('spese_id', $create->id)
+            ->with('totale', $totale)
+            ->with('tip', $tip_opt);
     }
 
 
     public function salva(Request $request)
     {
 
-//dd($request->all());
+        //dd($request->all());
         foreach ($request->spese as $k => $s) {
 
             Spese::where('id', $k)
                 ->update([
-                    'nome' => $s['nome'],
+                    // 'nome' => $s['nome'],
                     'data' => $s['data'],
                     'importo' => $s['importo'],
                     'categorie_id' => $s['categorie'],
@@ -272,6 +270,8 @@ class SpeseController extends Controller
         foreach ($anni as $key => $a) {
             $years[$a] = $a;
         }
+
+        // dd($ris);
         return view('spese.spese')
             ->with('spese', $ris)
             ->with('mesi', $mesi)
@@ -285,58 +285,35 @@ class SpeseController extends Controller
     }
 
 
+
+
+
     public function elenco()
     {
 
-        $spese = Spese::where('spese.attivo', 1)
-            ->leftJoin('categorie', 'categorie.id', 'spese.categorie_id')
-            ->select('spese.*', 'categorie.nome as categoria')
-            ->whereIn('categorie_id', [1])
+        $spesePerCategoria = Spese::join('categorie', 'spese.categorie_id', '=', 'categorie.id')
+            ->select('categorie.nome as categoria', DB::raw('MONTH(data) as mese'), DB::raw('SUM(importo) as importo'))
+            ->groupBy('categorie.id', 'mese')
             ->get();
 
-        // dd($spese);
+        // dd($spesePerCategoria);
+        $speseRaggruppate = [];
 
-        foreach ($spese as $s) {
-            $data = $s->data;
-            $data_obj = new \DateTime($data);
-            $mese = $data_obj->format('m');
+        foreach ($spesePerCategoria as $spesa) {
 
-            $mutuo = array(
-                'gen' => '',
-                'feb' => '',
-                'mar' => '',
-                'apr' => '',
-                'mag' => '',
-                'giu' => '',
-                'lug' => '',
-                'ago' => '',
-                'set' => '',
-                'ott' => '',
-                'nov' => '',
-                'dic' => '',
-            );
+            $categoria = $spesa->categoria;
+            $mese = $spesa->mese;
+            $importo = $spesa->importo;
 
-            
+            if (!isset($speseRaggruppate[$categoria])) {
+                $speseRaggruppate[$categoria] = [];
+            }
 
-            /*
-                        switch ($mese) {
-                            case 1:
-                                $s->gen = $s->importo;
-                                break;
-                            case 2:
-                                $s->feb = $s->importo;
-                                break;
-                            case 3:
-                                $s->mar = $s->importo;
-                                break;
-                            case 4:
-                                $s->apr = $s->importo;
-                                break;
-                        }*/
-
-
+            $speseRaggruppate[$categoria][$mese] = $importo;
         }
 
-        return view('spese.elenco')->with('spese', $spese);
+        dd($speseRaggruppate);
+
+        return view('spese.elenco')->with('speseRaggruppate', $speseRaggruppate);
     }
 }

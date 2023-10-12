@@ -41,23 +41,23 @@
         <div class="border bg-primary p-3 mb-3 rounded">
             <table class="table table-striped bg-light rounded ">
                 <thead>
-                <tr>
-                    <th></th>
-                    <th scope="col">Nome</th>
-                    <th scope="col">Data</th>
-                    <th scope="col">Importo</th>
-                    <th scope="col">Categoria</th>
-                    <th scope="col">Tipologia</th>
-                </tr>
+                    <tr>
+                        <th></th>
+                        {{-- <th scope="col">Nome</th> --}}
+                        <th scope="col">Categoria</th>
+                        <th scope="col">Data</th>
+                        <th scope="col">Importo</th>
+                        <th scope="col">Tipologia</th>
+                    </tr>
                 </thead>
                 <tr>
                     <td></td>
                     {!! Form::hidden('spese_add', '') !!}
 
-                    <td>{!! Form::text('nome_add', '', ['class' => 'form-control add']) !!}</td>
+                    {{-- <td>{!! Form::text('nome_add', '', ['class' => 'form-control add']) !!}</td> --}}
+                    <td>{!! Form::select('categorie_add', $cat, '', ['class' => 'form-control add']) !!}</td>
                     <td>{!! Form::date('data_add', '', ['class' => 'form-control add']) !!}</td>
                     <td>{!! Form::number('importo_add', '', ['class' => 'form-control add', 'step' => '0.01', 'min' => '0.01']) !!}</td>
-                    <td>{!! Form::select('categorie_add', $cat, '', ['class' => 'form-control add']) !!}</td>
                     <td>{!! Form::select('tipologia_add', $tip, '', ['class' => 'form-control add']) !!}</td>
                 </tr>
             </table>
@@ -69,108 +69,110 @@
         {!! Form::open(['url' => 'spese/salva']) !!}
         <table class="table table-striped">
             <thead>
-            <tr>
-                <th></th>
-                <th scope="col">Nome</th>
-                <th scope="col">Data</th>
-                <th scope="col">Importo</th>
-                <th scope="col">Categoria</th>
-                <th scope="col">Tipologia</th>
-            </tr>
+                <tr>
+                    <th></th>
+                    {{-- <th scope="col">Nome</th> --}}
+                    <th scope="col">Categoria</th>
+                    <th scope="col">Data</th>
+                    <th scope="col">Importo</th>
+                    <th scope="col">Tipologia</th>
+                </tr>
             </thead>
             <tbody id="spese">
-            <tr>
-                <th></th>
-                <th scope="col"></th>
-                <th scope="col"></th>
-                <th scope="col"></th>
-                <th scope="col"></th>
-                <th scope="col"></th>
-            </tr>
-
-            @foreach ($spese as $s)
-                {{-- @php dd($spese_id ); echo('spese_id')@endphp --}}
-                <tr @if ($spese_id == $s->id) id="nome_add" @endif>
-                    <td class="d-flex align-items-center justify-content-center">
-                        <a @click="elimina" href={{ route('spese/elimina', $s->id) }}> <i
-                                class="fa-solid fa-trash mx-1 text-danger mt-2"></i></a>
-                    </td>
-                    {{-- {!! Form::hidden('spese[spesa_' . $s->id . '][id]', $s->id) !!} --}}
-
-                    <td>{!! Form::text("spese[{$s->id}][nome]", $s->nome, ['class' => 'form-control']) !!}</td>
-
-                    <td>{!! Form::date("spese[{$s->id}][data]", $s->data, ['class' => 'form-control']) !!}</td>
-
-                    <td>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">€</span>
-                            </div>
-                            {!! Form::number("spese[{$s->id}][importo]", number_format($s->importo, 2), [
-                                'class' => 'form-control',
-                                'step' => '0.01',
-                            ]) !!}
-                        </div>
-                    </td>
-
-
-                    <td>{!! Form::select("spese[{$s->id}][categorie]", $cat, $s->categorie_id, [
-                            'class' => 'form-control',
-                        ]) !!}</td>
-                    <td>{!! Form::select("spese[{$s->id}][tipologia]", $tip, $s->tipologia_id, [
-                            'class' => 'form-control',
-                        ]) !!}</td>
+                <tr>
+                    <th></th>
+                    {{-- <th scope="col"></th> --}}
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
                 </tr>
-            @endforeach
+
+                @foreach ($spese as $s)
+                
+                    {{-- @php dd($spese_id ); echo('spese_id')@endphp --}}
+                    <tr @if ($spese_id == $s->id) id="nome_add" @endif>
+                        <td class="d-flex align-items-center justify-content-center">
+                            <a @click="elimina" href={{ route('spese/elimina', $s->id) }}> <i
+                                    class="fa-solid fa-trash mx-1 text-danger mt-2"></i></a>
+                        </td>
+                        {{-- {!! Form::hidden('spese[spesa_' . $s->id . '][id]', $s->id) !!} --}}
+
+                        {{-- <td>{!! Form::text("spese[{$s->id}][nome]", $s->nome, ['class' => 'form-control']) !!}</td> --}}
+
+
+                        <td>{!! Form::select("spese[{$s->id}][categorie]", $cat, $s->categorie_id, [
+                            'class' => 'form-control',
+                        ]) !!}</td>
+                        <td>{!! Form::date("spese[{$s->id}][data]", $s->data, ['class' => 'form-control']) !!}</td>
+
+                        <td>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">€</span>
+                                </div>
+                                {!! Form::number("spese[{$s->id}][importo]", number_format($s->importo, 2), [
+                                    'class' => 'form-control',
+                                    'step' => '0.01',
+                                ]) !!}
+                            </div>
+                        </td>
+
+
+                        <td>{!! Form::select("spese[{$s->id}][tipologia]", $tip, $s->tipologia_id, [
+                            'class' => 'form-control',
+                        ]) !!}</td>
+                    </tr>
+                @endforeach
 
             </tbody>
         </table>
 
         <table class="table table-striped">
             <thead>
-            <tr>
-                <th></th>
-                <th scope="col"></th>
-                <th scope="col"></th>
-                <th scope="col"></th>
-                <th scope="col">
-                    Totale
-                </th>
-                <th scope="col"></th>
-                <th scope="col"></th>
-            </tr>
+                <tr>
+                    <th></th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                    <th scope="col">
+                        Totale
+                    </th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
             </thead>
             <tbody id="spese">
-            <tr>
-                <th scope="col" style="width:5%"></th>
-                <th scope="col" style="width:10%"></th>
-                <th scope="col" style="width:12.5%"></th>
-                <th scope="col"></th>
-                <th scope="col" style="width:25%">
-                    <div class="input-group">
+                <tr>
+                    <th scope="col" style="width:5%"></th>
+                    <th scope="col" style="width:10%"></th>
+                    <th scope="col" style="width:12.5%"></th>
+                    <th scope="col"></th>
+                    <th scope="col" style="width:25%">
+                        <div class="input-group">
 
-                        <div class="input-group-prepend">
-                            <span class="input-group-text font-weight-bold">€</span>
+                            <div class="input-group-prepend">
+                                <span class="input-group-text font-weight-bold">€</span>
+                            </div>
+                            {!! Form::text("totale", $totale, [
+                                'class' => 'form-control font-weight-bold',
+                                'step' => '0.01',
+                                'disabled',
+                            ]) !!}
                         </div>
-                        {!! Form::text("spese[{$s->id}][importo]", $totale, [
-                            'class' => 'form-control font-weight-bold',
-                            'step' => '0.01',
-                            'disabled'
-                        ]) !!}
-                    </div>
-                </th>
-                <th scope="col"></th>
-                <th scope="col"></th>
-            </tr>
+                    </th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
 
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
 
             </tbody>
         </table>
