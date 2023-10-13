@@ -7,8 +7,13 @@ use App\Models\Categorie;
 use App\Models\Tipologia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SpeseController extends Controller
 {
@@ -26,7 +31,7 @@ class SpeseController extends Controller
             ->leftJoin('categorie', 'spese.categorie_id', 'categorie.id')
             ->leftJoin('tipologia', 'spese.tipologia_id', 'tipologia.id')
             ->select('spese.*', 'categorie.nome as categoria', 'tipologia.nome as tipologia')
-            ->get();
+            ->paginate(10);
 
         $totale = $spese->sum('importo'); //dd($spese)
         ;
@@ -99,7 +104,7 @@ class SpeseController extends Controller
             'categorie_id' => $request->categorie_add,
             'tipologia_id' => $request->tipologia_add,
             'attivo' => 1,
-            'creatore' => auth()->user()->name,
+            'creatore' => Auth::user()->name,
             'creato' => date('Y-m-d'),
         ]);
 
@@ -179,7 +184,7 @@ class SpeseController extends Controller
                     'categorie_id' => $s['categorie'],
                     'tipologia_id' => $s['tipologia'],
                     'modificato' => date('Y-m-d H:i:s'),
-                    'modificatore' => auth()->user()->name,
+                    'modificatore' => Auth::user()->name,
                 ]);
         }
         return redirect()->route('spese')->with('success', 'Modifica salvata!');
@@ -202,10 +207,10 @@ class SpeseController extends Controller
     public function filtra(Request $request)
     {
 
-        //dd($request->all());
+        //  dd($request->all());
         $mese = $request->mese;
         $anno = $request->anno;
-
+        $mese_sel = 0;
         $spese = Spese::select('spese.*')
             ->where('spese.attivo', 1)
             ->leftJoin('categorie', 'spese.categorie_id', 'categorie.id')
@@ -213,7 +218,7 @@ class SpeseController extends Controller
             ->select('spese.*', 'categorie.nome as categoria', 'tipologia.nome as tipologia');
 
 
-        if ($mese != '') {
+        if ($mese != '0') {
 
             $spese->whereMonth('data', '=', $mese);
             $mese_sel = $mese;
@@ -228,9 +233,7 @@ class SpeseController extends Controller
             // dd($anno_sel);
         }
 
-        $ris = $spese->paginate();
 
-        $totale = $ris->sum('importo');
 
 
         //dd($spese);
@@ -274,6 +277,15 @@ class SpeseController extends Controller
             $years[$a] = $a;
         }
 
+        //dd($spese->get());
+        // dd($request->query());
+
+        $ris = $spese->where('importo', '!=', 0)->where('importo','!=',null)->paginate(10)->appends($request->query());
+        $totale = $ris->sum('importo');
+
+
+
+
         // dd($ris);
         return view('spese.spese')
             ->with('spese', $ris)
@@ -299,9 +311,9 @@ class SpeseController extends Controller
         }
         $speseMensili = array();
         // dd($request->all());
-          //dd($year);
+        //dd($year);
         for ($i = 1; $i <= 12; $i++) {
-//
+            //
             $spe = array();
             $sp = Spese::where('attivo', 1)->whereMonth('data', $i)->whereYear('data', $year)->select('importo')->get();
 
@@ -326,7 +338,6 @@ class SpeseController extends Controller
                 ->whereYear('data', $year)
                 ->get();
             // dd($spesePerCategoria);
-
 
         }
 
@@ -363,11 +374,22 @@ class SpeseController extends Controller
             }
         }
 
-        // dd($speseRaggruppate, $speseMensili);
+        // dd($speseRaggruppate, $speseMensili,$spesePerCategoria);
         if (count($spesePerCategoria) == 0) {
             $speseRaggruppate = array(
                 '' => array(
-                    1 => 0
+                    1 => 0,
+                    2 => 0,
+                    3 => 0,
+                    4 => 0,
+                    5 => 0,
+                    6 => 0,
+                    7 => 0,
+                    8 => 0,
+                    9 => 0,
+                    10 => 0,
+                    11 => 0,
+                    12 => 0,
                 )
 
             );
@@ -378,5 +400,138 @@ class SpeseController extends Controller
             ->with('anno_sel', $anno_sel)
             ->with('speseRaggruppate', $speseRaggruppate)
             ->with('spese_mensili', $speseMensili);
+    }
+
+
+
+
+    public function importa()
+    {
+        return view('spese/importa');
+    }
+
+
+    public function carica_file(Request $request)
+    {
+
+        $anno = $request->anno;
+        // $request->validate([
+        //     'excel_file' => 'required|mimes:xls,xlsx',
+        // ]);
+
+        $file = $request->file('excel_file');
+
+        // Carica il file Excel utilizzando Maatwebsite/Excel
+        $data = Excel::toCollection([], $file);
+
+        //dd($data);
+
+        foreach ($data as $sheet) {
+            //dd($sheet);
+
+            foreach ($sheet as $row) {
+                // dd($row);
+
+                for ($i = 1; $i < count($row); $i++) {
+
+                    if ($row[$i] == null) {
+                        //dd($row[$i]);
+                        $row[$i] = 0.00;
+                    }
+
+                    // dd($row);
+                    switch ($i) {
+                        case 1:
+                            $mese = "01";
+                            break;
+                        case 2:
+                            $mese = "02";
+                            break;
+                        case 3:
+                            $mese = "03";
+                            break;
+                        case 4:
+                            $mese = "04";
+                            break;
+                        case 5:
+                            $mese = "05";
+                            break;
+                        case 6:
+                            $mese = "06";
+                            break;
+                        case 7:
+                            $mese = "07";
+                            break;
+                        case 8:
+                            $mese = "08";
+                            break;
+                        case 9:
+                            $mese = "09";
+                            break;
+                        case 10:
+                            $mese = "10";
+                            break;
+                        case 11:
+                            $mese = "11";
+                            break;
+                        case 12:
+                            $mese = "12";
+                            break;
+                    }
+
+                    //dd($row[$i]);
+                    $categoria = strtolower($row[0]);
+
+                    $categorie_esistenti = array();
+                    $categorie_esistenti_query = Categorie::where('attivo', 1)->pluck('nome');
+                    foreach ($categorie_esistenti_query as $c) {
+                        array_push($categorie_esistenti, $c);
+                    }
+
+                    // dd($categorie_esistenti);
+
+                    $cat_id = null;
+                    if (!in_array($categoria, $categorie_esistenti)) {
+                        $cat = Categorie::create([
+                            'nome' => strtolower($categoria),
+                            'attivo' => 1,
+                            'creatore' => Auth::user()->name,
+                            'creato' => date('Y-m-d'),
+                        ]);
+                        $cat_id = $cat->id;
+                    } else {
+                        $cat_id = Categorie::where('nome', $categoria)->first()->id;
+                        //dd($cat_id);
+                    }
+
+                    //dd($cat_id);
+
+                    Spese::create([
+                        'nome' => $categoria,
+                        'importo' => $row[$i],
+                        'categorie_id' => $cat_id,
+                        'data' => $anno . '-' . $mese . '-01',
+                        'attivo' => 1,
+                        'creatore' => Auth::user()->name,
+                        'creato' => date('Y-m-d'),
+                    ]);
+                }
+                //dd($row);
+
+            }
+        }
+
+        // Il risultato è una collezione di fogli Excel, uno per ogni foglio nel file
+        // $firstSheet = $data->first();
+
+        // Ora puoi lavorare con i dati Excel utilizzando le collezioni Laravel
+        // if ($firstSheet instanceof Collection) {
+        //     $headerRow = $firstSheet->shift();
+
+        //     // Esempio: stampa l'header e le prime 5 righe di dati
+        //     dd($headerRow, $firstSheet->take(5));
+        // }
+
+        return redirect()->route('spese/importa')->with('success', 'File Excel elaborato con successo');
     }
 }

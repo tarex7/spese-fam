@@ -29,6 +29,8 @@ Route::middleware(['auth'])->group(function () {
     Route::any('/spese/elimina/{id}', 'SpeseController@elimina')->name('spese/elimina');
     Route::any('/spese/filtra/{month?}', 'SpeseController@filtra')->name('spese/filtra');
     Route::any('/spese/elenco/{year?}', 'SpeseController@elenco')->name('spese/elenco');
+    Route::any('/spese/importa', 'SpeseController@importa')->name('spese/importa');
+    Route::any('/spese/carica_file', 'SpeseController@carica_file')->name('spese/carica_file');
 
     //ENTRATE
     Route::get('entrate', 'EntrateController@index')->name('entrate');

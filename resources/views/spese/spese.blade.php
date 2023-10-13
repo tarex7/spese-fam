@@ -9,7 +9,8 @@
             <div class="col-12 d-flex  justify-content-end ">
 
                 {{-- FILTRA --}}
-                {!! Form::open(['url' => 'spese/filtra']) !!}
+                {!! Form::open(['url' => 'spese/filtra', 'method' => 'get']) !!}
+
                 <div class="d-flex float-right my-4">
 
                     <a class="btn btn-primary form-control mr-5" href={{ Route('spese/elenco') }}>Elenco</a>
@@ -176,6 +177,8 @@
 
             </tbody>
         </table>
+
+        {{ $spese->links() }}
 
         {!! Form::submit('Salva', ['class' => 'btn btn-primary float-right mr-5 px-5']) !!}
         {!! Form::close() !!}

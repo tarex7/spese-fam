@@ -39,26 +39,30 @@
         </thead>
         <tbody>
             @foreach ($speseRaggruppate as $categoria => $importiMensili)
-
+{{-- @dd($importiMensili) --}}
                 <tr>
-                    <td  class="font-weight-bold">{{ $categoria }}</td>
+                    <td  class="font-weight-bold bg-secondary text-white">{{ $categoria }}</td>
                     @for ($mese = 1; $mese <= 12; $mese++)
-                        <td>{{ $importiMensili[$mese] ?? 0 }} €</td>
+                        <td>
+                          
+                            {{ number_format($importiMensili[$mese],2,',','.') ?? 0 }} € 
+                        </td>
                     @endfor
-                    <td class="font-weight-bold bg-warning text-dark">{{array_sum($importiMensili)}} €</td>
+                    <td class="font-weight-bold bg-warning text-dark">{{number_format(array_sum($importiMensili),2,',','.')}} €</td>
                 </tr>
             @endforeach
-           <thead class="bg-primary text-white">
+           <thead class="bg-secondary text-white">
             <tr>
                 <td>
                     Totale
                 </td>
                 @foreach ($spese_mensili as $sp)
-                    <td>
+                    <td >
+                        {{--  --}}
                         {{ $sp }} €
                     </td>
                 @endforeach
-                <td class="font-weight-bold bg-success text-white">{{array_sum($spese_mensili)}} €</td>
+                <td  class="font-weight-bold bg-success  text-white">{{number_format(array_sum($spese_mensili),2,',','.')}} €</td>
             </tr>
            </thead>
         </tbody>

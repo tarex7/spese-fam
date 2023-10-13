@@ -15,11 +15,11 @@
                                 <i class="fa-regular fa-rectangle-list mr-2"></i> <p class="m-0"> Categorie entrate</p>
                              </a>
                         </li>
-                        {{-- <li class="nav-item">
-                            <a class="nav-link text-white" href="#">
-                                Pagina 2
+                       <li class="nav-item">
+                            <a class="nav-link text-white" href="{{route('spese/importa')}}">
+                                <i class="fa-solid fa-file-import mr-2"></i>  Importa
                             </a>
-                        </li> --}}
+                        </li> 
                         <!-- Aggiungi altre voci di menu secondo le tue esigenze -->
                     </ul>
                 </div>
