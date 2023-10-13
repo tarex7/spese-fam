@@ -1,13 +1,20 @@
 @extends('layouts.app', ['elem_id' => ''])
 @section('content')
-   <h1 class="text-center my-3">Elenco spese</h1>
+<!--    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            @breadcrumbs
+        </ol>
+    </nav>-->
+
+
+    <h1 class="text-center my-3">Elenco spese</h1>
    <div class="float-right mx-1 mb-4 d-flex">
 
     {!! Form::open(['url' => 'spese/elenco']) !!}
    <div class="d-flex">
     {!! Form::select('anno', $years, $anno_sel, ['class' => 'form-control mx-1 w-100']) !!}
     {!! Form::submit('Filtra', ['class' => 'btn btn-success mx-2']) !!}
-    <a class="btn btn-danger form-control" href={{ Route('spese/elenco',) }}>Rimuovi</a>
+    <a class="btn btn-danger form-control" href={{ Route('spese/elenco') }}>Rimuovi</a>
    </div>
 
    </div>
@@ -32,13 +39,13 @@
         </thead>
         <tbody>
             @foreach ($speseRaggruppate as $categoria => $importiMensili)
-           
+
                 <tr>
                     <td  class="font-weight-bold">{{ $categoria }}</td>
                     @for ($mese = 1; $mese <= 12; $mese++)
                         <td>{{ $importiMensili[$mese] ?? 0 }} €</td>
                     @endfor
-                    <td class="font-weight-bold bg-dark text-danger">{{array_sum($importiMensili)}} €</td>
+                    <td class="font-weight-bold bg-warning text-dark">{{array_sum($importiMensili)}} €</td>
                 </tr>
             @endforeach
            <thead class="bg-primary text-white">
@@ -51,7 +58,7 @@
                         {{ $sp }} €
                     </td>
                 @endforeach
-                <td class="font-weight-bold bg-dark text-danger">{{array_sum($spese_mensili)}} €</td>
+                <td class="font-weight-bold bg-success text-white">{{array_sum($spese_mensili)}} €</td>
             </tr>
            </thead>
         </tbody>

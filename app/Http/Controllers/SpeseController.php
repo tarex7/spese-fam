@@ -14,11 +14,15 @@ class SpeseController extends Controller
 {
     public function index()
     {
-
+        /*  breadcrumbs(function (BreadcrumbsGenerator $trail) use ($category, $product) {
+              $trail->parent('spese', $category);
+              $trail->push($product->name, route('product.show', $product));
+          });*/
 
         $spese = Spese::select('spese.*')
             ->where('spese.attivo', 1)
-            // ->whereMonth('data', '=', date('n'))
+            ->whereMonth('data', '=', date('n'))
+            ->whereYear('data', '=', date('Y'))
             ->leftJoin('categorie', 'spese.categorie_id', 'categorie.id')
             ->leftJoin('tipologia', 'spese.tipologia_id', 'tipologia.id')
             ->select('spese.*', 'categorie.nome as categoria', 'tipologia.nome as tipologia')
@@ -85,7 +89,6 @@ class SpeseController extends Controller
     {
 
         //dd($request->all());
-
 
 
         $create = Spese::create([
@@ -285,45 +288,44 @@ class SpeseController extends Controller
     }
 
 
-
-
-
-
-
-
     public function elenco(Request $request)
     {
-        $year = $request->anno;
+        //dd($request->all());
+        $year = date('Y');
+
+        if ($request->anno != null) {
+
+            $year = $request->anno;
+        }
         $speseMensili = array();
-
+        // dd($request->all());
+          //dd($year);
         for ($i = 1; $i <= 12; $i++) {
-
+//
             $spe = array();
             $sp = Spese::where('attivo', 1)->whereMonth('data', $i)->whereYear('data', $year)->select('importo')->get();
 
             foreach ($sp as $s) {
                 array_push($spe, $s->importo);
             }
-            //dd($spe);
 
             $speseMensili[$i] = array_sum($spe);
         }
-        //dd($speseMensili);
+        // dd($speseMensili);
 
         $spesePerCategoria = Spese::join('categorie', 'spese.categorie_id', '=', 'categorie.id')
             ->select('categorie.nome as categoria', DB::raw('MONTH(data) as mese'), DB::raw('SUM(importo) as importo'))
-            ->groupBy('categorie.id', 'mese')
+            ->groupBy('categorie.nome', 'mese')
             ->whereYear('data', date('Y'))
             ->get();
 
         if ($year != null) {
             $spesePerCategoria = Spese::join('categorie', 'spese.categorie_id', '=', 'categorie.id')
                 ->select('categorie.nome as categoria', DB::raw('MONTH(data) as mese'), DB::raw('SUM(importo) as importo'))
-                ->groupBy('categorie.id', 'mese')
+                ->groupBy('categorie.nome', 'mese')
                 ->whereYear('data', $year)
                 ->get();
             // dd($spesePerCategoria);
-
 
 
         }
@@ -333,8 +335,10 @@ class SpeseController extends Controller
         $anni = array_combine($anni, $anni);
         $years = [0 => 'Seleziona'];
 
-        $anno_sel = $year;
-        
+        $anno_sel = date('Y');
+        if ($year != null) {
+            $anno_sel = $year;
+        }
 
         foreach ($anni as $key => $a) {
             $years[$a] = $a;
@@ -350,7 +354,6 @@ class SpeseController extends Controller
             $importo = $spesa->importo;
 
 
-
             if (!isset($speseRaggruppate[$categoria])) {
                 $speseRaggruppate[$categoria] = [];
             }
@@ -360,7 +363,7 @@ class SpeseController extends Controller
             }
         }
 
-       // dd($speseRaggruppate, $speseMensili);
+        // dd($speseRaggruppate, $speseMensili);
         if (count($spesePerCategoria) == 0) {
             $speseRaggruppate = array(
                 '' => array(
