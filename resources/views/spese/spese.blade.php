@@ -4,7 +4,7 @@
 
         <div class="row ">
             <div class="col-5"></div>
-            <h1 class="text-center my-3">Spese</h1>
+            <div class=" bg-primary"><h1 class="text-center text-white my-3">Spese</h1></div>
 
             <div class="col-12 d-flex  justify-content-end ">
 
@@ -20,7 +20,7 @@
                     {!! Form::select('mese', $mesi, $mese_sel, ['class' => 'form-control  mx-3']) !!}
 
                     {!! Form::submit('Filtra', ['class' => 'btn btn-success mx-2']) !!}
-                    <a class="btn btn-danger form-control" href={{ Route('spese') }}>Rimuovi</a>
+                    <a class="btn btn-danger  mx-2" href={{ Route('spese') }}>Rimuovi</a>
                 </div>
 
             </div>
@@ -43,7 +43,7 @@
             <table class="table table-striped bg-light rounded ">
                 <thead>
                     <tr>
-                        <th></th>
+                        <th scope="col"></th>
                         {{-- <th scope="col">Nome</th> --}}
                         <th scope="col">Categoria</th>
                         <th scope="col">Data</th>
@@ -93,13 +93,11 @@
 
                     {{-- @php dd($spese_id ); echo('spese_id')@endphp --}}
                     <tr @if ($spese_id == $s->id) id="nome_add" @endif>
-                        <td class="d-flex align-items-center justify-content-center">
+
+                        <td class="d-flex align-items-center justify-content-center border-0">
                             <a @click="elimina" href={{ route('spese/elimina', $s->id) }}> <i
                                     class="fa-solid fa-trash mx-1 text-danger mt-2"></i></a>
                         </td>
-                        {{-- {!! Form::hidden('spese[spesa_' . $s->id . '][id]', $s->id) !!} --}}
-
-                        {{-- <td>{!! Form::text("spese[{$s->id}][nome]", $s->nome, ['class' => 'form-control']) !!}</td> --}}
 
 
                         <td>{!! Form::select("spese[{$s->id}][categorie]", $cat, $s->categorie_id, [
@@ -135,21 +133,19 @@
                     <th></th>
                     <th scope="col"></th>
                     <th scope="col"></th>
-                    <th scope="col"></th>
-                    <th scope="col">
-                        Totale
-                    </th>
+                    <th scope="col" style="width: 23.4%"></th>
+                    <th scope="col">Totale</th>
                     <th scope="col"></th>
                     <th scope="col"></th>
                 </tr>
             </thead>
-            <tbody id="spese">
+            <tbody>
                 <tr>
                     <th scope="col" style="width:5%"></th>
                     <th scope="col" style="width:10%"></th>
                     <th scope="col" style="width:12.5%"></th>
                     <th scope="col"></th>
-                    <th scope="col" style="width:25%">
+                    <th scope="col" style="width:33%">
                         <div class="input-group">
 
                             <div class="input-group-prepend">

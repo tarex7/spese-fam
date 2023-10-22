@@ -39,7 +39,8 @@ Route::middleware(['auth'])->group(function () {
     Route::any('/entrate/elimina/{id}', 'EntrateController@elimina')->name('entrate/elimina');
     Route::any('/entrate/filtra/{month?}', 'EntrateController@filtra')->name('entrate/filtra');
     Route::any('/entrate/elenco/{year?}', 'EntrateController@elenco')->name('entrate/elenco');
-
+    Route::any('/entrate/importa', 'EntrateController@importa')->name('entrate/importa');
+    Route::any('/entrate/carica_file', 'EntrateController@carica_file')->name('entrate/carica_file');
     //CATEGORIE
     Route::get('/categorie', 'CategorieController@index')->name('categorie');
     Route::any('/categorie/elimina/{id}', 'categorieController@elimina')->name('categorie/elimina');

@@ -4,7 +4,8 @@
 
         <div class="row ">
             <div class="col-5"></div>
-            <h1 class="text-center my-3">Entrate</h1>
+            <div class=" bg-primary"><h1 class="text-center text-white my-3">Entrate</h1></div>
+
 
             <div class="col-12 d-flex  justify-content-end ">
 
@@ -136,10 +137,8 @@
                 <th></th>
                 <th scope="col"></th>
                 <th scope="col"></th>
-                <th scope="col"></th>
-                <th scope="col">
-                    Totale
-                </th>
+                <th scope="col" style="width: 23.4%"></th>
+                <th scope="col">Totale</th>
                 <th scope="col"></th>
                 <th scope="col"></th>
             </tr>
@@ -150,7 +149,7 @@
                 <th scope="col" style="width:10%"></th>
                 <th scope="col" style="width:12.5%"></th>
                 <th scope="col"></th>
-                <th scope="col" style="width:25%">
+                <th scope="col" style="width:33%">
                     <div class="input-group">
 
                         <div class="input-group-prepend">
