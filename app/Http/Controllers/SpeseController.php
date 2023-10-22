@@ -6,13 +6,9 @@ use App\Models\Spese;
 use App\Models\Categorie;
 use App\Models\Tipologia;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Facades\Excel;
 
 class SpeseController extends Controller
@@ -331,6 +327,10 @@ class SpeseController extends Controller
             ->whereYear('data', date('Y'))
             ->get();
 
+        foreach ($spesePerCategoria as $sp) {
+
+        }
+
         if ($year != null) {
             $spesePerCategoria = Spese::join('categorie', 'spese.categorie_id', '=', 'categorie.id')
                 ->select('categorie.nome as categoria', DB::raw('MONTH(data) as mese'), DB::raw('SUM(importo) as importo'))
@@ -371,8 +371,18 @@ class SpeseController extends Controller
             if ($mese != null) {
 
                 $speseRaggruppate[$categoria][$mese] = $importo;
+
+               for($i = 1;$i <= 12;$i++) {
+
+                   if(!isset($speseRaggruppate[$categoria][$i])) {
+
+                       $speseRaggruppate[$categoria][$i] = 0;
+                   }
+               }
             }
         }
+
+
 
         // dd($speseRaggruppate, $speseMensili,$spesePerCategoria);
         if (count($spesePerCategoria) == 0) {

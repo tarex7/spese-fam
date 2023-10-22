@@ -90,7 +90,7 @@
                 </tr>
 
                 @foreach ($spese as $s)
-                
+
                     {{-- @php dd($spese_id ); echo('spese_id')@endphp --}}
                     <tr @if ($spese_id == $s->id) id="nome_add" @endif>
                         <td class="d-flex align-items-center justify-content-center">
@@ -180,7 +180,7 @@
 
         {{ $spese->links() }}
 
-        {!! Form::submit('Salva', ['class' => 'btn btn-primary float-right mr-5 px-5']) !!}
+        {!! Form::submit('Salva', ['class' => 'btn btn-primary float-right mr-5 px-5 mb-5']) !!}
         {!! Form::close() !!}
 
     </div>

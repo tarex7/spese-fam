@@ -43,9 +43,9 @@
                 <tr>
                     <td  class="font-weight-bold bg-secondary text-white">{{ $categoria }}</td>
                     @for ($mese = 1; $mese <= 12; $mese++)
-                        <td>
-                          
-                            {{ number_format($importiMensili[$mese],2,',','.') ?? 0 }} € 
+                        <td class="@if($importiMensili[$mese] == 0) text-muted @endif">
+
+                            {{ number_format($importiMensili[$mese],2,',','.') ?? 0 }} €
                         </td>
                     @endfor
                     <td class="font-weight-bold bg-warning text-dark">{{number_format(array_sum($importiMensili),2,',','.')}} €</td>
