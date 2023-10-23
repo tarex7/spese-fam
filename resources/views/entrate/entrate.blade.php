@@ -10,18 +10,18 @@
             <div class="col-12 d-flex  justify-content-end ">
 
                 {{-- FILTRA --}}
-                {!! Form::open(['url' => 'entrate/filtra', 'method' => 'get']) !!}
+                {!! Form::open(['url' => 'spese/filtra', 'method' => 'get']) !!}
 
                 <div class="d-flex float-right my-4">
 
-                    <a class="btn btn-primary form-control mr-5" href={{ Route('entrate/elenco') }}>Elenco</a>
+                    <a class="btn btn-primary  mr-5" href={{ Route('spese/elenco') }}>Elenco</a>
 
                     {!! Form::select('anno', $years, $anno_sel, ['class' => 'form-control mx-1']) !!}
 
                     {!! Form::select('mese', $mesi, $mese_sel, ['class' => 'form-control  mx-3']) !!}
 
                     {!! Form::submit('Filtra', ['class' => 'btn btn-success mx-2']) !!}
-                    <a class="btn btn-danger form-control" href={{ Route('entrate') }}>Rimuovi</a>
+                    <a class="btn btn-danger  mx-2" href={{ Route('entrate') }}>Rimuovi</a>
                 </div>
 
             </div>
@@ -93,23 +93,18 @@
 
             @foreach ($entrate as $s)
 
-                {{-- @php dd($entrate_id ); echo('entrate_id')@endphp --}}
                 <tr @if ($entrate_id == $s->id) id="nome_add" @endif>
-                    <td class="d-flex align-items-center justify-content-center">
+                    <td class="d-flex align-items-center justify-content-center border-0">
                         <a @click="elimina" href={{ route('entrate/elimina', $s->id) }}> <i
                                 class="fa-solid fa-trash mx-1 text-danger mt-2"></i></a>
                     </td>
-                    {{-- {!! Form::hidden('entrate[spesa_' . $s->id . '][id]', $s->id) !!} --}}
 
-                    {{-- <td>{!! Form::text("entrate[{$s->id}][nome]", $s->nome, ['class' => 'form-control']) !!}</td> --}}
-
-
-                    <td>{!! Form::select("entrate[{$s->id}][categorie]", $cat, $s->categorie_id, [
+                    <td class="border-0"> {!! Form::select("entrate[{$s->id}][categorie]", $cat, $s->categorie_id, [
                             'class' => 'form-control',
                         ]) !!}</td>
-                    <td>{!! Form::date("entrate[{$s->id}][data]", $s->data, ['class' => 'form-control']) !!}</td>
+                    <td class="border-0">{!! Form::date("entrate[{$s->id}][data]", $s->data, ['class' => 'form-control']) !!}</td>
 
-                    <td>
+                    <td class="border-0">
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text">€</span>
@@ -122,7 +117,7 @@
                     </td>
 
 
-                    <td>{!! Form::select("entrate[{$s->id}][tipologia]", $tip, $s->tipologia_id, [
+                    <td class="border-0">{!! Form::select("entrate[{$s->id}][tipologia]", $tip, $s->tipologia_id, [
                             'class' => 'form-control',
                         ]) !!}</td>
                 </tr>

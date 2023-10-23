@@ -1,8 +1,8 @@
 <!-- Menu Laterale -->
 <nav class="col-1 pl-1 bg-primary sidebar" style="height: 100vh;min-width:200px">
-    <div class="position-sticky">
-        <ul class="nav flex-column py-4">
-            <li class="nav-item">
+    <div class="position-sticky ">
+        <ul class="nav flex-column py-4 mt-5 ">
+            <li class="nav-item ">
                 <a class="nav-link active text-white d-flex align-items-center" href="{{route('entrate')}}">
                     <i class="fa-solid fa-circle-dollar-to-slot mr-2"></i>
                     <p class="m-0"> Entrate</p>

@@ -13,7 +13,7 @@
 
                 <div class="d-flex float-right my-4">
 
-                    <a class="btn btn-primary form-control mr-5" href={{ Route('spese/elenco') }}>Elenco</a>
+                    <a class="btn btn-primary  mr-5" href={{ Route('spese/elenco') }}>Elenco</a>
 
                     {!! Form::select('anno', $years, $anno_sel, ['class' => 'form-control mx-1']) !!}
 
@@ -91,7 +91,7 @@
 
                 @foreach ($spese as $s)
 
-                    {{-- @php dd($spese_id ); echo('spese_id')@endphp --}}
+
                     <tr @if ($spese_id == $s->id) id="nome_add" @endif>
 
                         <td class="d-flex align-items-center justify-content-center border-0">
@@ -100,12 +100,12 @@
                         </td>
 
 
-                        <td>{!! Form::select("spese[{$s->id}][categorie]", $cat, $s->categorie_id, [
+                        <td class="border-0">{!! Form::select("spese[{$s->id}][categorie]", $cat, $s->categorie_id, [
                             'class' => 'form-control',
                         ]) !!}</td>
-                        <td>{!! Form::date("spese[{$s->id}][data]", $s->data, ['class' => 'form-control']) !!}</td>
+                        <td class="border-0">{!! Form::date("spese[{$s->id}][data]", $s->data, ['class' => 'form-control']) !!}</td>
 
-                        <td>
+                        <td class="border-0">
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">€</span>
@@ -118,7 +118,7 @@
                         </td>
 
 
-                        <td>{!! Form::select("spese[{$s->id}][tipologia]", $tip, $s->tipologia_id, [
+                        <td class="border-0">{!! Form::select("spese[{$s->id}][tipologia]", $tip, $s->tipologia_id, [
                             'class' => 'form-control',
                         ]) !!}</td>
                     </tr>
