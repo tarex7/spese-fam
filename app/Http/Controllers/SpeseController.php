@@ -6,6 +6,7 @@ use App\Models\Spese;
 use App\Models\Categorie;
 use App\Models\Tipologia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -13,38 +14,28 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class SpeseController extends Controller
 {
-    public function index()
+
+    private function SpeseQuery()
     {
-        /*  breadcrumbs(function (BreadcrumbsGenerator $trail) use ($category, $product) {
-              $trail->parent('spese', $category);
-              $trail->push($product->name, route('product.show', $product));
-          });*/
-
-        $spese = Spese::select('spese.*')
+        return Spese::select('spese.*', 'categorie.nome as categoria', 'tipologia.nome as tipologia')
             ->where('spese.attivo', 1)
-            ->whereMonth('data', '=', date('n'))
-            ->whereYear('data', '=', date('Y'))
-            ->leftJoin('categorie', 'spese.categorie_id', 'categorie.id')
-            ->leftJoin('tipologia', 'spese.tipologia_id', 'tipologia.id')
-            ->select('spese.*', 'categorie.nome as categoria', 'tipologia.nome as tipologia')
-            ->paginate(10);
+            ->leftJoin('categorie', 'spese.categorie_id', '=', 'categorie.id')
+            ->leftJoin('tipologia', 'spese.tipologia_id', '=', 'tipologia.id');
+    }
 
-        $totale = $spese->sum('importo'); //dd($spese)
-        ;
+    public function getYearsOptions() {
+        $anni = range(date('Y') - 10, date('Y') + 10);
+        $anni = array_combine($anni, $anni);
 
+        $years = [0 => 'Seleziona'];
 
-        $cat = Categorie::where('attivo', 1)->orderBy('nome', 'ASC')->get();
-        $cat_opt = array(0 => '--Seleziona--');
-        foreach ($cat as $c) {
-            $cat_opt[$c->id] = $c->nome;
+        foreach ($anni as $key => $a) {
+            $years[$a] = $a;
         }
+        return $years;
+    }
 
-        $tip = Tipologia::all();
-        $tip_opt = array(0 => '--Seleziona--');
-        foreach ($tip as $c) {
-            $tip_opt[$c->id] = $c->nome;
-        }
-
+    public function getMesiOptions() {
         $mesi = [
             ' 0' => '--Seleziona--',
             '1' => 'Gennaio',
@@ -61,35 +52,44 @@ class SpeseController extends Controller
             '12' => 'Dicembre'
         ];
 
-        $anni = range(date('Y') - 10, date('Y') + 10);
-        $anni = array_combine($anni, $anni);
-        $years = [0 => 'Seleziona'];
+        return $mesi;
+    }
+
+    public function index()
+    {
+        /*  breadcrumbs(function (BreadcrumbsGenerator $trail) use ($category, $product) {
+              $trail->parent('spese', $category);
+              $trail->push($product->name, route('product.show', $product));
+          });*/
+
+        $spese = $this->SpeseQuery()
+            ->whereMonth('data', '=', date('n'))
+            ->whereYear('data', '=', date('Y'))
+            ->paginate(10);
+
+        $totale = $spese->sum('importo');
 
         $anno_sel = date('Y');
         $mese_sel = date('n');
 
-        foreach ($anni as $key => $a) {
-            $years[$a] = $a;
-        }
 
-        // dd($spese);
         return view('spese.spese')
             ->with('spese', $spese)
-            ->with('mesi', $mesi)
             ->with('anno_sel', $anno_sel)
             ->with('mese_sel', $mese_sel)
-            ->with('years', $years)
-            ->with('cat', $cat_opt)
+            ->with('years', $this->getYearsOptions())
+            ->with('mesi', $this->getMesiOptions())
+            ->with('cat', Spese::getCategorieOptions())
+            ->with('tip', Spese::getTipologiaOptions())
             ->with('spese_id', null)
-            ->with('totale', $totale)
-            ->with('tip', $tip_opt);
+            ->with('totale', $totale);
     }
 
 
     public function aggiungi(Request $request)
     {
 
-        //dd($request->all());
+       //dd($request->all());
 
 
         $create = Spese::create([
@@ -104,65 +104,19 @@ class SpeseController extends Controller
             'creato' => date('Y-m-d'),
         ]);
 
-        $spese = Spese::select('spese.*')
-            ->where('spese.attivo', 1)
-            ->leftJoin('categorie', 'spese.categorie_id', 'categorie.id')
-            ->leftJoin('tipologia', 'spese.tipologia_id', 'tipologia.id')
-            ->select('spese.*', 'categorie.nome as categoria', 'tipologia.nome as tipologia')
-            ->get();
 
-        $totale = $spese->sum('importo');
-
-
-        $cat = Categorie::where('attivo', 1)->orderBy('nome', 'ASC')->get();
-        $cat_opt = array(0 => '--Seleziona--');
-        foreach ($cat as $c) {
-            $cat_opt[$c->id] = $c->nome;
-        }
-
-        $tip = Tipologia::all();
-        $tip_opt = array(0 => '--Seleziona--');
-        foreach ($tip as $c) {
-            $tip_opt[$c->id] = $c->nome;
-        }
+        $spese = $this->SpeseQuery()
+            ->paginate(10);
 
         $anni = range(date('Y') - 10, date('Y') + 10);
         $anni = array_combine($anni, $anni);
+
         $years = [0 => 'Seleziona'];
         foreach ($anni as $key => $a) {
             $years[$a] = $a;
         }
-        $anno_sel = date('Y');
-        $mese_sel = date('n');
 
-        $mesi = [
-            ' 0' => '--Seleziona--',
-            '1' => 'Gennaio',
-            '2' => 'Febbraio',
-            '3' => 'Marzo',
-            '4' => 'Aprile',
-            '5' => 'Maggio',
-            '6' => 'Giugno',
-            '7' => 'Luglio',
-            '8' => 'Agosto',
-            '9' => 'Settembre',
-            '10' => 'Ottobre',
-            '11' => 'Novembre',
-            '12' => 'Dicembre'
-        ];
-
-        //dd($create->id);
-        return view('spese.spese')
-            ->with('success', 'Spesa aggiunta!')
-            ->with('cat', $cat_opt)
-            ->with('spese', $spese)
-            ->with('years', $years)
-            ->with('mesi', $mesi)
-            ->with('anno_sel', $anno_sel)
-            ->with('mese_sel', $mese_sel)
-            ->with('spese_id', $create->id)
-            ->with('totale', $totale)
-            ->with('tip', $tip_opt);
+        return redirect()->route('spese');
     }
 
 
@@ -200,6 +154,8 @@ class SpeseController extends Controller
     }
 
 
+
+
     public function filtra(Request $request)
     {
 
@@ -207,107 +163,62 @@ class SpeseController extends Controller
         $mese = $request->mese;
         $anno = $request->anno;
         $mese_sel = 0;
-        $spese = Spese::select('spese.*')
-            ->where('spese.attivo', 1)
-            ->leftJoin('categorie', 'spese.categorie_id', 'categorie.id')
-            ->leftJoin('tipologia', 'spese.tipologia_id', 'tipologia.id')
-            ->select('spese.*', 'categorie.nome as categoria', 'tipologia.nome as tipologia');
 
-
+        $spese = $this->SpeseQuery();
         if ($mese != '0') {
-
             $spese->whereMonth('data', '=', $mese);
             $mese_sel = $mese;
         }
 
-
         if ($anno != '0') {
-
             $spese->whereYear('data', '=', $anno);
-
             $anno_sel = $anno;
-            // dd($anno_sel);
         }
 
+        $totale = $spese->sum('importo'); // Calcola il totale prima della paginazione
 
+        $ris = $spese->paginate(10)->appends($request->query());
 
-
-        //dd($spese);
-
-        $cat = Categorie::where('attivo', 1)->orderBy('nome', 'ASC')->get();
-        $cat_opt = array(0 => '--Seleziona--');
-        foreach ($cat as $c) {
-            $cat_opt[$c->id] = $c->nome;
-        }
-
-        $tip = Tipologia::all();
-        $tip_opt = array(0 => '--Seleziona--');
-        foreach ($tip as $c) {
-            $tip_opt[$c->id] = $c->nome;
-        }
-
-        $mesi = [
-            ' 0' => '--Seleziona--',
-            '1' => 'Gennaio',
-            '2' => 'Febbraio',
-            '3' => 'Marzo',
-            '4' => 'Aprile',
-            '5' => 'Maggio',
-            '6' => 'Giugno',
-            '7' => 'Luglio',
-            '8' => 'Agosto',
-            '9' => 'Settembre',
-            '10' => 'Ottobre',
-            '11' => 'Novembre',
-            '12' => 'Dicembre'
-        ];
-
-        $anni = range(date('Y') - 10, date('Y') + 10);
-        $anni = array_combine($anni, $anni);
-        $years = [0 => 'Seleziona'];
-
-        // $anno_sel = date('Y');
-        // $mese_sel = date('n');
-
-        foreach ($anni as $key => $a) {
-            $years[$a] = $a;
-        }
-
-        //dd($spese->get());
-        // dd($request->query());
-
-        $ris = $spese->where('importo', '!=', 0)->where('importo','!=',null)->paginate(10)->appends($request->query());
-        $totale = $ris->sum('importo');
-
-
-
-
-        // dd($ris);
         return view('spese.spese')
             ->with('spese', $ris)
-            ->with('mesi', $mesi)
-            ->with('years', $years)
+            ->with('mesi' , $this->getMesiOptions())
+            ->with('years', $this->getYearsOptions())
+            ->with('cat', Spese::getCategorieOptions())
+            ->with('tip', Spese::getTipologiaOptions())
             ->with('anno_sel', $anno_sel)
             ->with('mese_sel', $mese_sel)
-            ->with('cat', $cat_opt)
             ->with('totale', $totale)
-            ->with('spese_id', null)
-            ->with('tip', $tip_opt);
+            ->with('spese_id', null);
     }
+
+    public function calcolaSpeseMensili($year) {
+        return Spese::where('attivo', 1)
+            ->whereYear('data', $year)
+            ->get()
+            ->groupBy(function($data) {
+                return Carbon::parse($data->data)->format('m'); // raggruppa per mese
+            })
+            ->mapWithKeys(function ($item, $key) {
+                return [$key => $item->sum('importo')]; // calcola la somma per ogni mese
+            });
+    }
+
 
 
     public function elenco(Request $request)
     {
         //dd($request->all());
-        $year = date('Y');
+
+        // Ottiene l'anno dalla request o usa l'anno corrente
+        $year = $request->anno ?? date('Y');
 
         if ($request->anno != null) {
 
             $year = $request->anno;
         }
-        $speseMensili = array();
-        // dd($request->all());
-        //dd($year);
+       /* $speseMensili = array();*/
+
+       // $speseMensili = $this->calcolaSpeseMensili($year);
         for ($i = 1; $i <= 12; $i++) {
             //
             $spe = array();
@@ -320,6 +231,10 @@ class SpeseController extends Controller
             $speseMensili[$i] = array_sum($spe);
         }
         // dd($speseMensili);
+
+
+
+
 
         $spesePerCategoria = Spese::join('categorie', 'spese.categorie_id', '=', 'categorie.id')
             ->select('categorie.nome as categoria', DB::raw('MONTH(data) as mese'), DB::raw('SUM(importo) as importo'))
@@ -337,8 +252,6 @@ class SpeseController extends Controller
                 ->groupBy('categorie.nome', 'mese')
                 ->whereYear('data', $year)
                 ->get();
-            // dd($spesePerCategoria);
-
         }
 
 
@@ -382,9 +295,6 @@ class SpeseController extends Controller
             }
         }
 
-
-
-        // dd($speseRaggruppate, $speseMensili,$spesePerCategoria);
         if (count($spesePerCategoria) == 0) {
             $speseRaggruppate = array(
                 '' => array(

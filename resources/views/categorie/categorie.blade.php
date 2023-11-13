@@ -1,19 +1,17 @@
 @extends('layouts.app')
 @section('content')
-    <div id="spese" class="d-flex justify-content-center w-100 border"
+    <div id="spese" class="d-flex  w-100"
         @if (isset($categorie_id)) data-categoria_id="$categoria_id" @endif>
 
+        <div class="row w-100">
 
-        <div class="w-75">
             {!! Form::open([
                 'url' => 'categorie/aggiungi',
                 'id' => isset($categorie_id) ? $categorie_id : null,
             ]) !!}
 
+            <div class=" bg-primary"><h1 class="text-center text-white py-3">Categorie spese</h1></div>
 
-
-
-            <h1 class="text-center my-3">Categorie spese</h1>
             {!! Form::button('<i class="fa-solid fa-square-plus mr-2 fa-lg"></i> Aggiungi categoria', [
                 'id' => 'addBtn',
                 'class' => 'btn btn-primary mb-3',

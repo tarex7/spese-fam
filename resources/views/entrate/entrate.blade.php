@@ -4,10 +4,10 @@
 
         <div class="row ">
             <div class="col-5"></div>
-            <div class=" bg-primary"><h1 class="text-center text-white my-3">Entrate</h1></div>
+            <div class=" bg-primary"><h1 class="text-center text-white my-3">Entrate 💰</h1></div>
 
 
-            <div class="col-12 d-flex  justify-content-end ">
+            <div class="col-12 d-flex  justify-content-end border my-3 ">
 
                 {{-- FILTRA --}}
                 {!! Form::open(['url' => 'spese/filtra', 'method' => 'get']) !!}
@@ -162,6 +162,7 @@
             </tr>
 
             <tr>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>

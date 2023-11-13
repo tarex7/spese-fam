@@ -16,4 +16,24 @@ class Spese extends Model
     {
         return $this->belongsTo(Categorie::class, 'categorie_id');
     }
+
+    public static function getCategorieOptions() {
+        $cat = Categorie::where('attivo', 1)->orderBy('nome', 'ASC')->get();
+        $cat_opt = ['0' => '--Seleziona--'];
+        foreach ($cat as $c) {
+            $cat_opt[$c->id] = $c->nome;
+        }
+        return $cat_opt;
+    }
+
+    public static function getTipologiaOptions() {
+        $tip = Tipologia::all();
+        $tip_opt = ['0' => '--Seleziona--'];
+        foreach ($tip as $c) {
+            $tip_opt[$c->id] = $c->nome;
+        }
+        return $tip_opt;
+    }
+
+
 }
