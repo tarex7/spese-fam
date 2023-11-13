@@ -17,10 +17,8 @@ class SpeseController extends Controller
 
     private function SpeseQuery()
     {
-        return Spese::select('spese.*', 'categorie.nome as categoria', 'tipologia.nome as tipologia')
-            ->where('spese.attivo', 1)
-            ->leftJoin('categorie', 'spese.categorie_id', '=', 'categorie.id')
-            ->leftJoin('tipologia', 'spese.tipologia_id', '=', 'tipologia.id');
+        return Spese::with(['categoria', 'tipologia'])
+            ->where('attivo', 1);
     }
 
     public function getYearsOptions() {
@@ -29,7 +27,7 @@ class SpeseController extends Controller
 
         $years = [0 => 'Seleziona'];
 
-        foreach ($anni as $key => $a) {
+        foreach ($anni as $a) {
             $years[$a] = $a;
         }
         return $years;
@@ -57,10 +55,8 @@ class SpeseController extends Controller
 
     public function index()
     {
-        /*  breadcrumbs(function (BreadcrumbsGenerator $trail) use ($category, $product) {
-              $trail->parent('spese', $category);
-              $trail->push($product->name, route('product.show', $product));
-          });*/
+        $anno_sel = date('Y');
+        $mese_sel = date('n');
 
         $spese = $this->SpeseQuery()
             ->whereMonth('data', '=', date('n'))
@@ -68,10 +64,6 @@ class SpeseController extends Controller
             ->paginate(10);
 
         $totale = $spese->sum('importo');
-
-        $anno_sel = date('Y');
-        $mese_sel = date('n');
-
 
         return view('spese.spese')
             ->with('spese', $spese)
@@ -88,8 +80,22 @@ class SpeseController extends Controller
 
     public function aggiungi(Request $request)
     {
-
        //dd($request->all());
+
+        $request->validate([
+
+            'categorie_add' => 'required|exists:categorie,id',
+            'data_add' => 'required|date',
+            'importo_add' => 'required|numeric',
+            'tipologia_add' => 'required|exists:tipologia,id',
+        ],[
+            'categorie_add.required' => 'Scegli una categoria',
+            'categorie_add.exists' => 'La categoria selezionata non è valida',
+            'data_add.required' => 'Inserisci la data',
+            'importo_add.required' => 'Inserisci un importo',
+            'tipologia_add.required' => 'Scegli una tipologia',
+            'tipologia_add.exists' => 'La tipologia selezionata non è valida',
+        ]);
 
 
         $create = Spese::create([

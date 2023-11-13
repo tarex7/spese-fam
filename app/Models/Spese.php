@@ -17,6 +17,11 @@ class Spese extends Model
         return $this->belongsTo(Categorie::class, 'categorie_id');
     }
 
+    public function tipologia()
+    {
+        return $this->belongsTo(Tipologia::class, 'tipologia_id');
+    }
+
     public static function getCategorieOptions() {
         $cat = Categorie::where('attivo', 1)->orderBy('nome', 'ASC')->get();
         $cat_opt = ['0' => '--Seleziona--'];

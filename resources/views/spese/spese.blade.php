@@ -1,12 +1,21 @@
 @extends('layouts.app', ['elem_id' => ''])
 @section('content')
-    <div id="spese">
 
+
+    <div id="spese">
         <div class="row ">
             <div class="col-5"></div>
 
             <div class=" bg-primary"><h1 class="text-center text-white my-3">Spese 💸</h1></div>
-
+            @if ($errors->any())
+                <div class="alert alert-danger rounded-0">
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             <div class="col-12 d-flex  justify-content-end border my-3 ">
 
                 {{-- FILTRA --}}
@@ -90,8 +99,7 @@
                     <th scope="col"></th>
                 </tr>
 
-                @foreach ($spese as $s)
-
+              @foreach ($spese as $s)
 
                     <tr @if ($spese_id == $s->id) id="nome_add" @endif>
 
