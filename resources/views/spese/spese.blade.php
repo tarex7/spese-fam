@@ -25,9 +25,9 @@
 
                     <a class="btn btn-primary  mr-5" href={{ Route('spese/elenco') }}>Elenco</a>
 
-                    {!! Form::select('anno', $years, $anno_sel, ['class' => 'form-control mx-1']) !!}
+                    {!! Form::select('anno', $years, $anno, ['class' => 'form-control mx-1']) !!}
 
-                    {!! Form::select('mese', $mesi, $mese_sel, ['class' => 'form-control  mx-3']) !!}
+                    {!! Form::select('mese', $mesi, $mese, ['class' => 'form-control  mx-3']) !!}
 
                     {!! Form::submit('Filtra', ['class' => 'btn btn-success mx-2']) !!}
                     <a class="btn btn-danger  mx-2" href={{ Route('spese') }}>Rimuovi</a>
@@ -122,6 +122,7 @@
                                 {!! Form::number("spese[{$s->id}][importo]", number_format($s->importo, 2), [
                                     'class' => 'form-control',
                                     'step' => '0.01',
+                                    'min' => '0.00',
                                 ]) !!}
                             </div>
                         </td>
