@@ -64,7 +64,7 @@
 
                 </tbody>
             </table>
-            {!! Form::submit('Salva', ['class' => 'btn btn-primary float-right  px-5']) !!}
+            {!! Form::submit('Modifica', ['class' => 'btn btn-primary float-right  px-5']) !!}
             {!! Form::close() !!}
         </div>
 

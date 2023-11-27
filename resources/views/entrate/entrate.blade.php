@@ -10,15 +10,15 @@
             <div class="col-12 d-flex  justify-content-end border my-3 ">
 
                 {{-- FILTRA --}}
-                {!! Form::open(['url' => 'spese/filtra', 'method' => 'get']) !!}
+                {!! Form::open(['url' => 'entrate/filtra', 'method' => 'get']) !!}
 
                 <div class="d-flex float-right my-4">
 
-                    <a class="btn btn-primary  mr-5" href={{ Route('spese/elenco') }}>Elenco</a>
+                    <a class="btn btn-primary  mr-5" href={{ Route('entrate/elenco') }}>Elenco</a>
 
-                    {!! Form::select('anno', $years, $anno_sel, ['class' => 'form-control mx-1']) !!}
+                    {!! Form::select('anno', $years, $anno, ['class' => 'form-control mx-1']) !!}
 
-                    {!! Form::select('mese', $mesi, $mese_sel, ['class' => 'form-control  mx-3']) !!}
+                    {!! Form::select('mese', $mesi, $mese, ['class' => 'form-control  mx-3']) !!}
 
                     {!! Form::submit('Filtra', ['class' => 'btn btn-success mx-2']) !!}
                     <a class="btn btn-danger  mx-2" href={{ Route('entrate') }}>Rimuovi</a>
@@ -33,7 +33,7 @@
 
         {!! Form::open(['url' => 'entrate/aggiungi']) !!}
 
-        {!! Form::button('<i class="fa-solid fa-square-plus mr-2 fa-lg"></i> Aggiungi spesa', [
+        {!! Form::button('<i class="fa-solid fa-square-plus mr-2 fa-lg"></i> Aggiungi entrata', [
             'class' => 'btn btn-primary mb-3',
             'type' => 'submit',
         ]) !!}

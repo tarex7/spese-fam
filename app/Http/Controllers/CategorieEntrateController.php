@@ -18,20 +18,22 @@ class CategorieEntrateController extends Controller
 
         // dd($categorie_entrate);
         return view('categorie_entrate.categorie_entrate')
-            ->with('categorie_entrate', $categorie_entrate)
-            ->with('categorie_entrate_id', null);
+            ->with('categorie_entrate', $categorie_entrate);
+           // ->with('categorie_entrate_id', null);
     }
 
 
     public function aggiungi(Request $request)
     {
 
-        //dd($request->all());
+       //dd($request->all());
 
          //dd( $categorie_entrate);
         // dd($categorie_entrate);
 
         if ($request->nome_add != '') {
+           // dd($request->all());
+
             CategorieEntrate::create([
                 'nome' => $request->nome_add,
                 'attivo' => 1,

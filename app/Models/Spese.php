@@ -57,6 +57,40 @@ class Spese extends Model
         ]);
     }
 
+    public static function getYearsOptions()
+    {
+        $anni = range(date('Y') - 10, date('Y') + 10);
+        $anni = array_combine($anni, $anni);
+
+        $years = [0 => 'Seleziona'];
+
+        foreach ($anni as $a) {
+            $years[$a] = $a;
+        }
+        return $years;
+    }
+
+    public static function getMesiOptions()
+    {
+        $mesi = [
+            ' 0' => '--Seleziona--',
+            '1' => 'Gennaio',
+            '2' => 'Febbraio',
+            '3' => 'Marzo',
+            '4' => 'Aprile',
+            '5' => 'Maggio',
+            '6' => 'Giugno',
+            '7' => 'Luglio',
+            '8' => 'Agosto',
+            '9' => 'Settembre',
+            '10' => 'Ottobre',
+            '11' => 'Novembre',
+            '12' => 'Dicembre'
+        ];
+
+        return $mesi;
+    }
+
 
 
 

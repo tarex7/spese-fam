@@ -37,7 +37,7 @@ class CategorieController extends Controller
     public function aggiungi(Request $request)
     {
 
-         //dd($request->all());
+        //dd($request->all());
         $categorie = Categorie::where('attivo', 1)->get();
 
         // dd($categorie);
@@ -49,7 +49,7 @@ class CategorieController extends Controller
                 'creatore' => auth()->user()->name,
             ]);
 
-            return redirect()->back()->with('success', 'Categoria aggiunta!');
+            return redirect()->route('categorie')->with('success', 'Categoria aggiunta!');
         } else {
             return redirect()->route('categorie')->with('error', 'Inserisci un nome valido!');
         }
@@ -64,7 +64,7 @@ class CategorieController extends Controller
     public function salva(Request $request)
     {
 
-        //  dd($request->all());
+       //  dd($request->all());
 
 
 
