@@ -1,0 +1,39 @@
+<template>
+    <!-- Il tuo template va qui -->
+    <!-- Assicurati che i select per anno e mese utilizzino v-model per legare i loro valori -->
+    <select class="form-control mx-1" v-model="formData.anno">
+        <option v-for="(label, value) in years_opt" :key="value" :value="value">
+            {{ label }}
+        </option>
+    </select>
+
+    <select class="form-control mx-1" v-model="formData.mese">
+        <option>--Seleziona--</option>
+        <option v-for="(label, value) in months_opt" :key="value" :value="value">
+            {{ label }}
+        </option>
+    </select>
+
+    <a class="btn btn-success mx-2" @click.prevent="filtra">Filtra</a>
+    <!-- Resto del template -->
+</template>
+
+<script>
+export default {
+    // props e data come prima
+    methods: {
+        filtra() {
+            axios.post('/spese/filtra', this.formData)
+                .then(response => {
+                    // Aggiorna i dati del componente con la risposta
+                    // Ad esempio, se la risposta contiene le spese filtrate:
+                    this.spese = response.data.spese;
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+    },
+    // Resto dello script
+}
+</script>

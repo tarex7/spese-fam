@@ -17,11 +17,10 @@ class SpeseController extends Controller
 
     private function SpeseQuery()
     {
-        return Spese::with(['categoria', 'tipologia'])
-            ->where('attivo', 1);
+        return Spese::where('attivo', 1)->where('importo', '>', 0);
     }
 
-    
+
 
     public function index()
     {
@@ -31,10 +30,10 @@ class SpeseController extends Controller
         $mese_sel = $now->month;
 
         $spese = $this->SpeseQuery()
-            ->whereMonth('data', '=', date('n'))
-            ->whereYear('data', '=', date('Y'))
-            ->paginate(10);
-
+            // ->whereMonth('data', '=', date('n'))
+            // ->whereYear('data', '=', date('Y'))
+            
+            ->get();
 
         $totale = $spese->sum('importo');
 
@@ -95,10 +94,12 @@ class SpeseController extends Controller
 
     public function filtra(Request $request)
     {
-        //  dd($request->all());
+        // dd($request->all());
         $mese = $request->mese ?? 0;
         $anno = $request->anno ?? 0;
-
+        $page = $request->page ?? 1;
+        $limit = $request->limit ?? 10;
+    
         $spese = $this->SpeseQuery()
             ->when($mese != 0, function ($query) use ($mese) {
                 return $query->whereMonth('data', '=', $mese);
@@ -106,24 +107,12 @@ class SpeseController extends Controller
             ->when($anno != 0, function ($query) use ($anno) {
                 return $query->whereYear('data', '=', $anno);
             });
-
-
-        $totale = $spese->sum('importo');
-
-        $ris = $spese->paginate(10)->appends($request->query());
-
-        return view('spese.spese')
-            ->with('spese', $ris)
-            ->with('mesi', $this->getMesiOptions())
-            ->with('years', $this->getYearsOptions())
-            ->with('cat', Spese::getCategorieOptions())
-            ->with('tip', Spese::getTipologiaOptions())
-            ->with('anno', $anno)
-            ->with('mese', $mese)
-            ->with('totale', $totale)
-            ->with('spese_id', null);
+    
+        return $spese->paginate($limit, ['*'], 'page', $page);
     }
 
+
+    
     public function calcolaSpeseMensili($year)
     {
         return Spese::where('attivo', 1)
@@ -188,52 +177,51 @@ class SpeseController extends Controller
 
 
     public function carica_file(Request $request)
-{
-    $anno = $request->anno;
-    $request->validate([
-        'excel_file' => 'required|mimes:xls,xlsx',
-    ]);
+    {
+        $anno = $request->anno;
+        $request->validate([
+            'excel_file' => 'required|mimes:xls,xlsx',
+        ]);
 
-    $file = $request->file('excel_file');
-    $data = Excel::toCollection([], $file);
+        $file = $request->file('excel_file');
+        $data = Excel::toCollection([], $file);
 
-    $categorieEsistenti = Categorie::where('attivo', 1)->pluck('nome')->all();
-    $mesi = array_flip(['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']);
+        $categorieEsistenti = Categorie::where('attivo', 1)->pluck('nome')->all();
+        $mesi = array_flip(['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']);
 
-    foreach ($data as $sheet) {
-        foreach ($sheet as $row) {
-            for ($i = 1; $i < count($row); $i++) {
-                $row[$i] = $row[$i] ?? 0.00;
-                $mese = $mesi[$i] ?? '01';
-                $categoria = strtolower($row[0]);
+        foreach ($data as $sheet) {
+            foreach ($sheet as $row) {
+                for ($i = 1; $i < count($row); $i++) {
+                    $row[$i] = $row[$i] ?? 0.00;
+                    $mese = $mesi[$i] ?? '01';
+                    $categoria = strtolower($row[0]);
 
-                if (!in_array($categoria, $categorieEsistenti)) {
-                    $cat = Categorie::create([
+                    if (!in_array($categoria, $categorieEsistenti)) {
+                        $cat = Categorie::create([
+                            'nome' => $categoria,
+                            'attivo' => 1,
+                            'creatore' => Auth::user()->name,
+                            'creato' => date('Y-m-d'),
+                        ]);
+                        $categorieEsistenti[] = $categoria;
+                        $cat_id = $cat->id;
+                    } else {
+                        $cat_id = Categorie::where('nome', $categoria)->first()->id;
+                    }
+
+                    Spese::create([
                         'nome' => $categoria,
+                        'importo' => $row[$i],
+                        'categorie_id' => $cat_id,
+                        'data' => $anno . '-' . $mese . '-01',
                         'attivo' => 1,
                         'creatore' => Auth::user()->name,
                         'creato' => date('Y-m-d'),
                     ]);
-                    $categorieEsistenti[] = $categoria;
-                    $cat_id = $cat->id;
-                } else {
-                    $cat_id = Categorie::where('nome', $categoria)->first()->id;
                 }
-
-                Spese::create([
-                    'nome' => $categoria,
-                    'importo' => $row[$i],
-                    'categorie_id' => $cat_id,
-                    'data' => $anno . '-' . $mese . '-01',
-                    'attivo' => 1,
-                    'creatore' => Auth::user()->name,
-                    'creato' => date('Y-m-d'),
-                ]);
             }
         }
+
+        return redirect()->route('spese/importa')->with('success', 'File Excel elaborato con successo');
     }
-
-    return redirect()->route('spese/importa')->with('success', 'File Excel elaborato con successo');
 }
-}
-

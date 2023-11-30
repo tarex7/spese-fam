@@ -26,7 +26,7 @@ class Spese extends Model
     public static function getCategorieOptions()
     {
         $cat = Categorie::where('attivo', 1)->orderBy('nome', 'ASC')->get();
-        $cat_opt = ['0' => '--Seleziona--'];
+        $cat_opt = [];
         foreach ($cat as $c) {
             $cat_opt[$c->id] = $c->nome;
         }
@@ -36,7 +36,7 @@ class Spese extends Model
     public static function getTipologiaOptions()
     {
         $tip = Tipologia::all();
-        $tip_opt = ['0' => '--Seleziona--'];
+        $tip_opt = [];
         foreach ($tip as $c) {
             $tip_opt[$c->id] = $c->nome;
         }

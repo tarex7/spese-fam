@@ -23,12 +23,16 @@ window.Vue = require('vue');
 
 
 import DatePicker from './components/DatePicker.vue'
+import ExampleComponent from './components/ExampleComponent.vue'
+import BudgetForm from './components/BudgetFormComponent.vue'
+import Pagination from 'vue-pagination-2';
 
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
-//Vue.component('DatePicker', require('./components/DatePicker.vue').default);
+Vue.component('example-component', ExampleComponent);
+
 
 Vue.component('Datepicker', DatePicker);
-
+Vue.component('budget-form-component', BudgetForm);
+Vue.component('pagination', Pagination);
 
 
 
@@ -40,10 +44,21 @@ Vue.component('Datepicker', DatePicker);
 
 if (!document.getElementById('spese')) {
     const app = new Vue({
-        
+
         el: '#app',
         mounted() {
             console.log('App is working');
+        },
+        methods: {
+            elimina(e) {
+
+                if (!confirm('Eliminare questa spesa? 🐱')) {
+                    e.preventDefault();
+                }
+            },
+            sendMonth() {
+                console.log('Valore selezionato:', this.meseSelezionato)
+            }
         }
     });
 }
@@ -51,7 +66,7 @@ if (!document.getElementById('spese')) {
 if (document.getElementById('spese')) {
     const spese = new Vue({
         el: '#spese',
-       
+
         data() {
             return {
                 categoria_id: this.categoria_id,
@@ -60,19 +75,19 @@ if (document.getElementById('spese')) {
         },
         mounted() {
 
-            document.addEventListener("DOMContentLoaded", function() {
+            document.addEventListener("DOMContentLoaded", function () {
                 const elementToFocus = document.getElementById('nome_add');
-          
+
                 console.log(elementToFocus)
-                 if (elementToFocus) {
-                     elementToFocus.scrollIntoView();
-                     elementToFocus.style.backgroundColor="#ccc"
-                     }
+                if (elementToFocus) {
+                    elementToFocus.scrollIntoView();
+                    elementToFocus.style.backgroundColor = "#ccc"
+                }
                 console.log("La pagina è stata completamente caricata.");
-              });
+            });
             console.log('Spese is working')
-            
-      
+
+
         },
 
         methods: {

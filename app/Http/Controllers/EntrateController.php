@@ -98,10 +98,11 @@ class entrateController extends Controller
 
     public function filtra(Request $request)
     {
-        //  dd($request->all());
         $mese = $request->mese ?? 0;
         $anno = $request->anno ?? 0;
-
+        $page = $request->page ?? 1;
+        $limit = $request->limit ?? 10;
+    
         $entrate = $this->entrateQuery()
             ->when($mese != 0, function ($query) use ($mese) {
                 return $query->whereMonth('data', '=', $mese);
@@ -109,22 +110,8 @@ class entrateController extends Controller
             ->when($anno != 0, function ($query) use ($anno) {
                 return $query->whereYear('data', '=', $anno);
             });
-
-
-        $totale = $entrate->sum('importo');
-
-        $ris = $entrate->paginate(10)->appends($request->query());
-
-        return view('entrate.entrate')
-            ->with('entrate', $ris)
-            ->with('mesi', $this->getMesiOptions())
-            ->with('years', $this->getYearsOptions())
-            ->with('cat', entrate::getCategorieOptions())
-            ->with('tip', entrate::getTipologiaOptions())
-            ->with('anno', $anno)
-            ->with('mese', $mese)
-            ->with('totale', $totale)
-            ->with('entrate_id', null);
+    
+        return $entrate->paginate($limit, ['*'], 'page', $page);
     }
 
     public function calcolaentrateMensili($year)
