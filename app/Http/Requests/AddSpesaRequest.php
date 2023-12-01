@@ -24,7 +24,7 @@ class AddSpesaRequest extends FormRequest
     public function rules()
     {
         return [
-            'categorie_add' => 'required|exists:categorie,id',
+            'categoriespese_add' => 'required|exists:categorie_spese,id',
             'data_add' => 'required|date',
             'importo_add' => 'required|numeric',
             'tipologia_add' => 'required|exists:tipologia,id',
@@ -34,8 +34,8 @@ class AddSpesaRequest extends FormRequest
     public function messages()
     {
         return [
-            'categorie_add.required' => 'Scegli una categoria',
-            'categorie_add.exists' => 'La categoria selezionata non è valida',
+            'categoriespese_add.required' => 'Scegli una categoria',
+            'categoriespese_add.exists' => 'La categoria selezionata non è valida',
             'data_add.required' => 'Inserisci la data',
             'importo_add.required' => 'Inserisci un importo',
             'tipologia_add.required' => 'Scegli una tipologia',

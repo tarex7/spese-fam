@@ -50,7 +50,7 @@ class Entrate extends Model
             //'nome' => $request->nome_add,
             'data' => date('Y-m-d', strtotime($request->data_add)),
             'importo' => $request->importo_add,
-            'categorieentrate_id' => $request->categorie_add,
+            'categorieentrate_id' => $request->categorieentrate_add,
             'tipologia_id' => $request->tipologia_add,
             'attivo' => 1,
             'creatore' => Auth::user()->name,

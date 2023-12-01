@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Spese;
-use App\Models\Categorie;
+use App\Models\CategorieSpese;
 use App\Models\Tipologia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +23,7 @@ class SpeseController extends Controller
 
             //dd($spese)
         ;
-        $cat = Categorie::all();
+        $cat = CategorieSpese::all();
         $cat_opt = array(0 => '--Seleziona--');
         foreach ($cat as $c) {
             $cat_opt[$c->id] = $c->nome;
@@ -59,20 +59,20 @@ class SpeseController extends Controller
                 'tipologia_id' => $request->tipologia_add,
                 'attivo' => 1,
             ]);
-    
+
             $spese = Spese::select('spese.*')
                 ->where('spese.attivo', 1)
                 ->leftJoin('categorie', 'spese.categorie_id', 'categorie.id')
                 ->leftJoin('tipologia', 'spese.tipologia_id', 'tipologia.id')
                 ->select('spese.*', 'categorie.nome as categoria', 'tipologia.nome as tipologia')
                 ->get();
-    
-            $cat = Categorie::all();
+
+            $cat = CategorieSpese::all();
             $cat_opt = array(0 => '--Seleziona--');
             foreach ($cat as $c) {
                 $cat_opt[$c->id] = $c->nome;
             }
-    
+
             $tip = Tipologia::all();
             $tip_opt = array(0 => '--Seleziona--');
             foreach ($tip as $c) {
@@ -88,7 +88,7 @@ class SpeseController extends Controller
         } else {
             return redirect()->back()->with('error','Inserisci un nome valido');
         }
-        
+
     }
 
     public function modifica(Request $request)
@@ -120,7 +120,7 @@ class SpeseController extends Controller
 
     Spese::where('id', $id)->update([
             'attivo' => 0,
-        
+
         ]);
 
         return redirect()->route('spese')

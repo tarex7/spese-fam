@@ -9,7 +9,7 @@
 
         <!-- FILTRA -->
         <div class="col-12 d-flex  justify-content-end border my-3 ">
-            <form action="spese/filtra" method="get">
+            <form :action="`${type}/filtra`" method="get">
                 <div class="d-flex float-right my-4">
 
                     <a class="btn btn-primary  mr-5" href="">Elenco</a>
@@ -33,9 +33,10 @@
             </form>
 
         </div>
+
         <!-- AGGIUNGI -->
         <div>
-            <form action="spese/aggiungi" method="get">
+            <form :action="`${type}/aggiungi`" method="get">
 
                 <button class="btn btn-primary mb-3" type="submit">
                     <i class="fa-solid fa-square-plus mr-2 fa-lg"></i> Aggiungi spesa
@@ -55,8 +56,8 @@
                         <tr>
                             <td></td>
                             <td>
-                                <select class="form-control add">
-                                    <option>--Seleziona--</option>
+                                <select class="form-control add" :name="`categorie${type}_add`">
+                                    <option value="0">--Seleziona--</option>
                                     <option v-for="(label, value) in cat_opt" :key="value" :value="value">
                                         {{ label }}
                                     </option>
@@ -64,16 +65,16 @@
                             </td>
 
                             <td>
-                                <input type="date" class="form-control add">
+                                <input type="date" class="form-control add" name="data_add">
                             </td>
 
                             <td>
-                                <input type="number" class="form-control add" step="0.01" min="0.01" placeholder="0.00">
+                                <input type="number" class="form-control add" step="0.01" min="0.01" placeholder="0.00" name="importo_add">
                             </td>
 
                             <td>
-                                <select class="form-control add">
-                                    <option>--Seleziona--</option>
+                                <select class="form-control add" name="tipologia_add">
+                                    <option value="0">--Seleziona--</option>
 
                                     <option v-for="(option, key) in tip_opt" :key="key" :value="key">{{ option }}</option>
                                 </select>
@@ -87,7 +88,8 @@
         </div>
 
         <!-- TABLE -->
-        <form action="spese/salva" method="get">
+        <form :action="`${type}/salva`" method="get">
+            <input type="hidden" v-model="anno" name="anno_sel">
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -98,7 +100,7 @@
                         <th scope="col">Tipologia</th>
                     </tr>
                 </thead>
-                <tbody id="spese">
+                <tbody :id="`${type}`">
                     <tr>
                         <th></th>
                         <th scope="col"></th>
@@ -106,22 +108,22 @@
                         <th scope="col"></th>
                         <th scope="col"></th>
                     </tr>
+                    <tr v-for="s in dati" :key="s.id" :id="s.id === s.id ? 'nome_add' : ''">
 
-                    <tr v-for="s in data" :key="s.id" :id="data_id === s.id ? 'nome_add' : ''">
                         <td class="d-flex align-items-center justify-content-center border-0">
-                            <a @click.prevent="elimina(s.id)" href="#">
+                            <a @click="elimina" :href="`/${type}/elimina/${s.id}`">
                                 <i class="fa-solid fa-trash mx-1 text-danger mt-2"></i>
                             </a>
                         </td>
 
                         <td class="border-0">
-                            <select v-model="s.categorieentrate_id" class="form-control">
+                            <select v-model="s[selectedCategory]" class="form-control" :name="`${type}[${s.id}][categorie${type}]`">
                                 <option v-for="(label, value) in cat_opt" :key="value" :value="value">{{ label }}</option>
                             </select>
                         </td>
 
                         <td class="border-0">
-                            <input type="date" class="form-control" v-model="s.data">
+                            <input type="date" class="form-control" v-model="s.data" :name="`${type}[${s.id}][data]`">
                         </td>
 
                         <td class="border-0">
@@ -129,12 +131,12 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">€</span>
                                 </div>
-                                <input type="number" class="form-control" v-model="s.importo" step="0.01" min="0.00">
+                                <input type="number" class="form-control" v-model="s.importo" step="0.01" min="0.00" :name="`${type}[${s.id}][importo]`">
                             </div>
                         </td>
 
                         <td class="border-0">
-                            <select v-model="s.tipologia_id" class="form-control">
+                            <select v-model="s.tipologia_id" class="form-control" :name="`${type}[${s.id}][tipologia]`">
                                 <option v-for="(label, value) in tip_opt" :key="value" :value="value">{{ label }}</option>
                             </select>
                         </td>
@@ -179,7 +181,7 @@
 
                 </tr>
             </table>
-            <button type="submit" class="btn btn-primary float-right mr-5 px-5 mb-5" @click.prevent="salvaForm">
+            <button type="submit" class="btn btn-primary float-right mr-5 px-5 mb-5">
                 Salva
             </button>
 
@@ -193,9 +195,13 @@
 </template>
 
 <script>
+import ConfirmModal from './ConfirmModal.vue';
 //import Pagination from 'vue-pagination-2';
 
 export default {
+    components: {
+        ConfirmModal
+    },
 
     props: {
         title: [String],
@@ -203,15 +209,20 @@ export default {
         months_opt: [Object],
         cat_opt: [Array, Object],
         tip_opt: [Array, Object],
-        url:[String]
+        getdataurl: [String],
+        delete: [String],
+        type: [String],
+        vmodel: [String],
+        anno: [String, Number]
+
     },
     data() {
         return {
             categorie_add: "--Seleziona--",
-            anno: new Date().getFullYear(),
+            year: this.anno,
             mese: new Date().getMonth() + 1,
-            spese_id: null,
-            data: {},
+
+            dati: {},
             totale: 0,
             currentPage: 1,
             itemsPerPage: 10,
@@ -219,8 +230,14 @@ export default {
 
         }
     },
+    computed: {
+        selectedCategory() {
+            return 'categorie' + this.type + '_id';
+        }
+    },
+
     watch: {
-        data: {
+        dati: {
             handler(newValue) {
                 this.calcolaTotale();
             },
@@ -235,18 +252,18 @@ export default {
                 page: this.currentPage,
                 limit: this.itemsPerPage,
             }
-            axios.post(this.url, formData)
+            axios.post(this.getdataurl, formData)
                 .then(
                     res => {
-                        console.log(res.data)
-                        this.spese = res.data.data;
+                        this.dati = res.data.data;
+                        console.log(this.dati)
                         this.totalRecords = res.data.total
                     }
                 )
         },
         calcolaTotale() {
             let somma = 0;
-            this.data.forEach(spesa => {
+            this.dati.forEach(spesa => {
                 somma += parseFloat(spesa.importo);
             });
             this.totale = somma.toFixed(2); // Arrotonda a due cifre decimali
@@ -256,11 +273,19 @@ export default {
             this.currentPage = page;
             this.filtra(); // Richiama il metodo di filtraggio per ottenere i dati della nuova pagina
         },
+        elimina(id, e) {
+            if (!confirm('eliminare?')) {
+                e.preventDefault();
+
+            }
+        }
     },
     beforeMount() {
         this.filtra()
     },
-    mounted() {}
+    mounted() {
+        console.log(this.anno)
+    }
 }
 </script>
 

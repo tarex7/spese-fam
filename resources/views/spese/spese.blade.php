@@ -11,18 +11,17 @@
                 </ul>
             </div>
         @endif
-       
-        <budget-form-component 
-        title="Spese 💸"
-        url="/spese/filtra"
-        :anno="{{ $anno }}"
-        :mese="{{ $mese }}" 
-        :cat_opt="{{ json_encode($cat) }}"
-        :months_opt="{{ json_encode($mesi) }}" 
-        :years_opt="{{ json_encode($years) }}" 
-        :tip_opt="{{ json_encode($tip) }}"
-        :data="{{ json_encode($spese) }}" 
-        :totale="{{ $totale }}" />
+
+        <budget-form-component
+         title="Spese 💸" 
+         type="spese" 
+         getdataurl="/spese/filtra"
+         :anno="{{ $anno }}" 
+         :mese="{{ $mese }}"
+         :cat_opt="{{ json_encode($cat) }}" 
+         :months_opt="{{ json_encode($mesi) }}" :years_opt="{{ json_encode($years) }}"
+         :tip_opt="{{ json_encode($tip) }}" 
+         :totale="{{ $totale }}" />
 
 
     @endsection

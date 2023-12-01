@@ -2,20 +2,21 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\CategorieSpese;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Model;
 
 class Spese extends Model
 {
     protected $table = 'spese';
-    protected $fillable = ['nome', 'data', 'importo', 'categorie_id', 'tipologia_id', 'attivo'];
+    protected $fillable = ['nome', 'data', 'importo', 'categoriespese_id', 'tipologia_id', 'attivo'];
 
     const UPDATED_AT = 'modificato';
     const CREATED_AT = 'creato';
 
     public function categoria()
     {
-        return $this->belongsTo(Categorie::class, 'categorie_id');
+        return $this->belongsTo(CategorieSpese::class, 'categoriespese_id');
     }
 
     public function tipologia()
@@ -23,9 +24,9 @@ class Spese extends Model
         return $this->belongsTo(Tipologia::class, 'tipologia_id');
     }
 
-    public static function getCategorieOptions()
+    public static function getCategorieSpeseOptions()
     {
-        $cat = Categorie::where('attivo', 1)->orderBy('nome', 'ASC')->get();
+        $cat = CategorieSpese::where('attivo', 1)->orderBy('nome', 'ASC')->get();
         $cat_opt = [];
         foreach ($cat as $c) {
             $cat_opt[$c->id] = $c->nome;
@@ -45,11 +46,12 @@ class Spese extends Model
 
     public static function creaDaRichiesta($request)
     {
+       //dd($request);
         return static::create([
-            'nome' => $request->nome_add,
+            //'nome' => $request->nome_add,
             'data' => date('Y-m-d', strtotime($request->data_add)),
             'importo' => $request->importo_add,
-            'categorie_id' => $request->categorie_add,
+            'categoriespese_id' => $request->categoriespese_add,
             'tipologia_id' => $request->tipologia_add,
             'attivo' => 1,
             'creatore' => Auth::user()->name,
