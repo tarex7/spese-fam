@@ -15,7 +15,7 @@ class Spese extends Model
 
     public function categoria()
     {
-        return $this->belongsTo(Categorie::class, 'categorie_id');
+        return $this->belongsTo(CategorieSpese::class, 'categorie_id');
     }
 
     public function tipologia()
@@ -25,7 +25,7 @@ class Spese extends Model
 
     public static function getCategorieOptions()
     {
-        $cat = Categorie::where('attivo', 1)->orderBy('nome', 'ASC')->get();
+        $cat = CategorieSpese::where('attivo', 1)->orderBy('nome', 'ASC')->get();
         $cat_opt = [];
         foreach ($cat as $c) {
             $cat_opt[$c->id] = $c->nome;
