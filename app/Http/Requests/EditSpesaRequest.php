@@ -14,7 +14,7 @@ class EditSpesaRequest extends FormRequest
     public function rules()
     {
         return [
-            'spese.*.categorie' => 'required|exists:categorie,id',
+            'spese.*.categoriespese' => 'required|exists:categorie_spese,id',
             'spese.*.data' => 'required|date',
             'spese.*.importo' => 'required|numeric',
             'spese.*.tipologia' => 'required|exists:tipologia,id',

@@ -1908,32 +1908,45 @@ module.exports = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _ConfirmModal_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ConfirmModal.vue */ "./resources/js/components/ConfirmModal.vue");
+
 //import Pagination from 'vue-pagination-2';
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    ConfirmModal: _ConfirmModal_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
   props: {
     title: [String],
     years_opt: [Object],
     months_opt: [Object],
     cat_opt: [Array, Object],
     tip_opt: [Array, Object],
-    url: [String]
+    getdataurl: [String],
+    "delete": [String],
+    type: [String],
+    vmodel: [String],
+    anno: [String, Number]
   },
   data: function data() {
     return {
       categorie_add: "--Seleziona--",
-      anno: new Date().getFullYear(),
+      year: this.anno,
       mese: new Date().getMonth() + 1,
-      spese_id: null,
-      data: {},
+      dati: {},
       totale: 0,
       currentPage: 1,
       itemsPerPage: 10,
       totalRecords: 0
     };
   },
+  computed: {
+    selectedCategory: function selectedCategory() {
+      return 'categorie' + this.type + '_id';
+    }
+  },
   watch: {
-    data: {
+    dati: {
       handler: function handler(newValue) {
         this.calcolaTotale();
       },
@@ -1950,15 +1963,21 @@ __webpack_require__.r(__webpack_exports__);
         page: this.currentPage,
         limit: this.itemsPerPage
       };
+<<<<<<< HEAD
       axios.post(this.url, formData).then(function (res) {
         _this.data = res.data.data;
         console.log(_this.data);
+=======
+      axios.post(this.getdataurl, formData).then(function (res) {
+        _this.dati = res.data.data;
+        console.log(_this.dati);
+>>>>>>> eae543d0cd15aceaf298ce0e0dc6130ff680e6b0
         _this.totalRecords = res.data.total;
       });
     },
     calcolaTotale: function calcolaTotale() {
       var somma = 0;
-      this.data.forEach(function (spesa) {
+      this.dati.forEach(function (spesa) {
         somma += parseFloat(spesa.importo);
       });
       this.totale = somma.toFixed(2); // Arrotonda a due cifre decimali
@@ -1967,12 +1986,45 @@ __webpack_require__.r(__webpack_exports__);
       console.log();
       this.currentPage = page;
       this.filtra(); // Richiama il metodo di filtraggio per ottenere i dati della nuova pagina
+    },
+    elimina: function elimina(id, e) {
+      if (!confirm('eliminare?')) {
+        e.preventDefault();
+      }
     }
   },
   beforeMount: function beforeMount() {
     this.filtra();
   },
-  mounted: function mounted() {}
+  mounted: function mounted() {
+    console.log(this.anno);
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/ConfirmModal.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/ConfirmModal.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['show'],
+  methods: {
+    confirm: function confirm() {
+      this.$emit('confirm');
+    },
+    cancel: function cancel() {
+      this.$emit('close');
+    }
+  },
+  mounted: function mounted() {
+    console.log('show', this.show);
+  }
 });
 
 /***/ }),
@@ -2058,7 +2110,7 @@ var render = function render() {
     staticClass: "col-12 d-flex justify-content-end border my-3"
   }, [_c("form", {
     attrs: {
-      action: "spese/filtra",
+      action: "".concat(_vm.type, "/filtra"),
       method: "get"
     }
   }, [_c("div", {
@@ -2122,7 +2174,7 @@ var render = function render() {
     }, [_vm._v("\r\n                            " + _vm._s(label) + "\r\n                        ")]);
   })], 2)])])]), _vm._v(" "), _c("div", [_c("form", {
     attrs: {
-      action: "spese/aggiungi",
+      action: "".concat(_vm.type, "/aggiungi"),
       method: "get"
     }
   }, [_vm._m(0), _vm._v(" "), _c("div", {
@@ -2130,8 +2182,15 @@ var render = function render() {
   }, [_c("table", {
     staticClass: "table table-striped bg-light rounded"
   }, [_vm._m(1), _vm._v(" "), _c("tr", [_c("td"), _vm._v(" "), _c("td", [_c("select", {
-    staticClass: "form-control add"
-  }, [_c("option", [_vm._v("--Seleziona--")]), _vm._v(" "), _vm._l(_vm.cat_opt, function (label, value) {
+    staticClass: "form-control add",
+    attrs: {
+      name: "categorie".concat(_vm.type, "_add")
+    }
+  }, [_c("option", {
+    attrs: {
+      value: "0"
+    }
+  }, [_vm._v("--Seleziona--")]), _vm._v(" "), _vm._l(_vm.cat_opt, function (label, value) {
     return _c("option", {
       key: value,
       domProps: {
@@ -2139,8 +2198,15 @@ var render = function render() {
       }
     }, [_vm._v("\r\n                                        " + _vm._s(label) + "\r\n                                    ")]);
   })], 2)]), _vm._v(" "), _vm._m(2), _vm._v(" "), _vm._m(3), _vm._v(" "), _c("td", [_c("select", {
-    staticClass: "form-control add"
-  }, [_c("option", [_vm._v("--Seleziona--")]), _vm._v(" "), _vm._l(_vm.tip_opt, function (option, key) {
+    staticClass: "form-control add",
+    attrs: {
+      name: "tipologia_add"
+    }
+  }, [_c("option", {
+    attrs: {
+      value: "0"
+    }
+  }, [_vm._v("--Seleziona--")]), _vm._v(" "), _vm._l(_vm.tip_opt, function (option, key) {
     return _c("option", {
       key: key,
       domProps: {
@@ -2149,16 +2215,36 @@ var render = function render() {
     }, [_vm._v(_vm._s(option))]);
   })], 2)])])])])])]), _vm._v(" "), _c("form", {
     attrs: {
-      action: "spese/salva",
+      action: "".concat(_vm.type, "/salva"),
       method: "get"
     }
-  }, [_c("table", {
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.anno,
+      expression: "anno"
+    }],
+    attrs: {
+      type: "hidden",
+      name: "anno_sel"
+    },
+    domProps: {
+      value: _vm.anno
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.anno = $event.target.value;
+      }
+    }
+  }), _vm._v(" "), _c("table", {
     staticClass: "table table-striped"
   }, [_vm._m(4), _vm._v(" "), _c("tbody", {
     attrs: {
-      id: "spese"
+      id: "".concat(_vm.type)
     }
-  }, [_vm._m(5), _vm._v(" "), _vm._l(_vm.data, function (s) {
+  }, [_vm._m(5), _vm._v(" "), _vm._l(_vm.dati, function (s) {
     return _c("tr", {
       key: s.id,
       attrs: {
@@ -2168,13 +2254,10 @@ var render = function render() {
       staticClass: "d-flex align-items-center justify-content-center border-0"
     }, [_c("a", {
       attrs: {
-        href: "#"
+        href: "/".concat(_vm.type, "/elimina/").concat(s.id)
       },
       on: {
-        click: function click($event) {
-          $event.preventDefault();
-          return _vm.elimina(s.id);
-        }
+        click: _vm.elimina
       }
     }, [_c("i", {
       staticClass: "fa-solid fa-trash mx-1 text-danger mt-2"
@@ -2184,10 +2267,18 @@ var render = function render() {
       directives: [{
         name: "model",
         rawName: "v-model",
+<<<<<<< HEAD
         value: s.categorie_id,
         expression: "s.categorie_id"
+=======
+        value: s[_vm.selectedCategory],
+        expression: "s[selectedCategory]"
+>>>>>>> eae543d0cd15aceaf298ce0e0dc6130ff680e6b0
       }],
       staticClass: "form-control",
+      attrs: {
+        name: "".concat(_vm.type, "[").concat(s.id, "][categorie").concat(_vm.type, "]")
+      },
       on: {
         change: function change($event) {
           var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
@@ -2196,7 +2287,11 @@ var render = function render() {
             var val = "_value" in o ? o._value : o.value;
             return val;
           });
+<<<<<<< HEAD
           _vm.$set(s, "categorie_id", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
+=======
+          _vm.$set(s, _vm.selectedCategory, $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
+>>>>>>> eae543d0cd15aceaf298ce0e0dc6130ff680e6b0
         }
       }
     }, _vm._l(_vm.cat_opt, function (label, value) {
@@ -2217,7 +2312,8 @@ var render = function render() {
       }],
       staticClass: "form-control",
       attrs: {
-        type: "date"
+        type: "date",
+        name: "".concat(_vm.type, "[").concat(s.id, "][data]")
       },
       domProps: {
         value: s.data
@@ -2243,7 +2339,8 @@ var render = function render() {
       attrs: {
         type: "number",
         step: "0.01",
-        min: "0.00"
+        min: "0.00",
+        name: "".concat(_vm.type, "[").concat(s.id, "][importo]")
       },
       domProps: {
         value: s.importo
@@ -2264,6 +2361,9 @@ var render = function render() {
         expression: "s.tipologia_id"
       }],
       staticClass: "form-control",
+      attrs: {
+        name: "".concat(_vm.type, "[").concat(s.id, "][tipologia]")
+      },
       on: {
         change: function change($event) {
           var $$selectedVal = Array.prototype.filter.call($event.target.options, function (o) {
@@ -2326,12 +2426,6 @@ var render = function render() {
     staticClass: "btn btn-primary float-right mr-5 px-5 mb-5",
     attrs: {
       type: "submit"
-    },
-    on: {
-      click: function click($event) {
-        $event.preventDefault();
-        return _vm.salvaForm.apply(null, arguments);
-      }
     }
   }, [_vm._v("\r\n                Salva\r\n            ")])]), _vm._v(" "), _c("pagination", {
     attrs: {
@@ -2391,7 +2485,8 @@ var staticRenderFns = [function () {
   return _c("td", [_c("input", {
     staticClass: "form-control add",
     attrs: {
-      type: "date"
+      type: "date",
+      name: "data_add"
     }
   })]);
 }, function () {
@@ -2403,7 +2498,8 @@ var staticRenderFns = [function () {
       type: "number",
       step: "0.01",
       min: "0.01",
-      placeholder: "0.00"
+      placeholder: "0.00",
+      name: "importo_add"
     }
   })]);
 }, function () {
@@ -2486,6 +2582,81 @@ var staticRenderFns = [function () {
   }, [_c("span", {
     staticClass: "input-group-text"
   }, [_vm._v("€")])]);
+}];
+render._withStripped = true;
+
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/ConfirmModal.vue?vue&type=template&id=23992138&":
+/*!*********************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib/loaders/templateLoader.js??ref--6!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/ConfirmModal.vue?vue&type=template&id=23992138& ***!
+  \*********************************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function render() {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _vm._m(0);
+};
+var staticRenderFns = [function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", [_c("div", {
+    staticClass: "modal fade",
+    attrs: {
+      id: "exampleModal",
+      tabindex: "-1",
+      role: "dialog",
+      "aria-labelledby": "exampleModalLabel",
+      "aria-hidden": "true"
+    }
+  }, [_c("div", {
+    staticClass: "modal-dialog",
+    attrs: {
+      role: "document"
+    }
+  }, [_c("div", {
+    staticClass: "modal-content"
+  }, [_c("div", {
+    staticClass: "modal-header"
+  }, [_c("h5", {
+    staticClass: "modal-title",
+    attrs: {
+      id: "exampleModalLabel"
+    }
+  }, [_vm._v("Modal title")]), _vm._v(" "), _c("button", {
+    staticClass: "close",
+    attrs: {
+      type: "button",
+      "data-dismiss": "modal",
+      "aria-label": "Close"
+    }
+  }, [_c("span", {
+    attrs: {
+      "aria-hidden": "true"
+    }
+  }, [_vm._v("×")])])]), _vm._v(" "), _c("div", {
+    staticClass: "modal-body"
+  }, [_vm._v("\r\n                    ...\r\n                ")]), _vm._v(" "), _c("div", {
+    staticClass: "modal-footer"
+  }, [_c("button", {
+    staticClass: "btn btn-secondary",
+    attrs: {
+      type: "button",
+      "data-dismiss": "modal"
+    }
+  }, [_vm._v("Close")]), _vm._v(" "), _c("button", {
+    staticClass: "btn btn-primary",
+    attrs: {
+      type: "button"
+    }
+  }, [_vm._v("Save changes")])])])])])]);
 }];
 render._withStripped = true;
 
@@ -6954,6 +7125,25 @@ render._withStripped = true;
 
 }));
 //# sourceMappingURL=bootstrap.js.map
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/ConfirmModal.vue?vue&type=style&index=0&id=23992138&lang=css&":
+/*!******************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/ConfirmModal.vue?vue&type=style&index=0&id=23992138&lang=css& ***!
+  \******************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "\r\n/* Aggiungi qui lo stile per la tua modale */\r\n", ""]);
+
+// exports
 
 
 /***/ }),
@@ -38123,6 +38313,36 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/ConfirmModal.vue?vue&type=style&index=0&id=23992138&lang=css&":
+/*!**********************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/ConfirmModal.vue?vue&type=style&index=0&id=23992138&lang=css& ***!
+  \**********************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../node_modules/css-loader??ref--6-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--6-2!../../../node_modules/vue-loader/lib??vue-loader-options!./ConfirmModal.vue?vue&type=style&index=0&id=23992138&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/ConfirmModal.vue?vue&type=style&index=0&id=23992138&lang=css&");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+
 /***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/DatePicker.vue?vue&type=style&index=0&id=fa816ef2&scoped=true&lang=css&":
 /*!********************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/DatePicker.vue?vue&type=style&index=0&id=fa816ef2&scoped=true&lang=css& ***!
@@ -51450,6 +51670,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_BudgetFormComponent_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/BudgetFormComponent.vue */ "./resources/js/components/BudgetFormComponent.vue");
 /* harmony import */ var vue_pagination_2__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vue-pagination-2 */ "./node_modules/vue-pagination-2/compiled/main.js");
 /* harmony import */ var vue_pagination_2__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(vue_pagination_2__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _components_ConfirmModal_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/ConfirmModal.vue */ "./resources/js/components/ConfirmModal.vue");
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
@@ -51474,10 +51695,12 @@ window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.
 
 
 
+
 Vue.component('example-component', _components_ExampleComponent_vue__WEBPACK_IMPORTED_MODULE_1__["default"]);
 Vue.component('Datepicker', _components_DatePicker_vue__WEBPACK_IMPORTED_MODULE_0__["default"]);
 Vue.component('budget-form-component', _components_BudgetFormComponent_vue__WEBPACK_IMPORTED_MODULE_2__["default"]);
 Vue.component('pagination', vue_pagination_2__WEBPACK_IMPORTED_MODULE_3___default.a);
+Vue.component('confirm-modal', _components_ConfirmModal_vue__WEBPACK_IMPORTED_MODULE_4__["default"]);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -51652,6 +51875,93 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ref_6_node_modules_vue_loader_lib_index_js_vue_loader_options_BudgetFormComponent_vue_vue_type_template_id_2ddf1939___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ref_6_node_modules_vue_loader_lib_index_js_vue_loader_options_BudgetFormComponent_vue_vue_type_template_id_2ddf1939___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/ConfirmModal.vue":
+/*!**************************************************!*\
+  !*** ./resources/js/components/ConfirmModal.vue ***!
+  \**************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _ConfirmModal_vue_vue_type_template_id_23992138___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ConfirmModal.vue?vue&type=template&id=23992138& */ "./resources/js/components/ConfirmModal.vue?vue&type=template&id=23992138&");
+/* harmony import */ var _ConfirmModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ConfirmModal.vue?vue&type=script&lang=js& */ "./resources/js/components/ConfirmModal.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _ConfirmModal_vue_vue_type_style_index_0_id_23992138_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ConfirmModal.vue?vue&type=style&index=0&id=23992138&lang=css& */ "./resources/js/components/ConfirmModal.vue?vue&type=style&index=0&id=23992138&lang=css&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+  _ConfirmModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _ConfirmModal_vue_vue_type_template_id_23992138___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _ConfirmModal_vue_vue_type_template_id_23992138___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/ConfirmModal.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/ConfirmModal.vue?vue&type=script&lang=js&":
+/*!***************************************************************************!*\
+  !*** ./resources/js/components/ConfirmModal.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ConfirmModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./ConfirmModal.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/ConfirmModal.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ConfirmModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/ConfirmModal.vue?vue&type=style&index=0&id=23992138&lang=css&":
+/*!***********************************************************************************************!*\
+  !*** ./resources/js/components/ConfirmModal.vue?vue&type=style&index=0&id=23992138&lang=css& ***!
+  \***********************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ConfirmModal_vue_vue_type_style_index_0_id_23992138_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader!../../../node_modules/css-loader??ref--6-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--6-2!../../../node_modules/vue-loader/lib??vue-loader-options!./ConfirmModal.vue?vue&type=style&index=0&id=23992138&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/ConfirmModal.vue?vue&type=style&index=0&id=23992138&lang=css&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ConfirmModal_vue_vue_type_style_index_0_id_23992138_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ConfirmModal_vue_vue_type_style_index_0_id_23992138_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ConfirmModal_vue_vue_type_style_index_0_id_23992138_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ConfirmModal_vue_vue_type_style_index_0_id_23992138_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+
+
+/***/ }),
+
+/***/ "./resources/js/components/ConfirmModal.vue?vue&type=template&id=23992138&":
+/*!*********************************************************************************!*\
+  !*** ./resources/js/components/ConfirmModal.vue?vue&type=template&id=23992138& ***!
+  \*********************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ref_6_node_modules_vue_loader_lib_index_js_vue_loader_options_ConfirmModal_vue_vue_type_template_id_23992138___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??ref--6!../../../node_modules/vue-loader/lib??vue-loader-options!./ConfirmModal.vue?vue&type=template&id=23992138& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/ConfirmModal.vue?vue&type=template&id=23992138&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ref_6_node_modules_vue_loader_lib_index_js_vue_loader_options_ConfirmModal_vue_vue_type_template_id_23992138___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_loaders_templateLoader_js_ref_6_node_modules_vue_loader_lib_index_js_vue_loader_options_ConfirmModal_vue_vue_type_template_id_23992138___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

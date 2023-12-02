@@ -14,7 +14,7 @@ class CategorieSpese extends Model
 
    protected $table = 'categorie_spese';
    protected $fillable = [
-      'nome', 'attivo', 
+      'nome', 'attivo',
   ];
 
 

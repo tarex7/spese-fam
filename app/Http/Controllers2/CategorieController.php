@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Categorie;
+use App\Models\CategorieSpese;
 use App\Models\Tipologia;
 use Illuminate\Http\Request;
 
 class CategorieController extends Controller
 {
     // public function index() {
-    //    $categorie = new Categorie();
+    //    $categorie = new CategorieSpese();
 
     //    $x = $categorie->list();
 
@@ -20,7 +20,7 @@ class CategorieController extends Controller
     public function index()
     {
 
-        $categorie = categorie::select('categorie.*')
+        $categorie = CategorieSpese::select('categorie.*')
             ->where('categorie.attivo', 1)
 
             ->select('categorie.*')
@@ -50,7 +50,7 @@ class CategorieController extends Controller
 
         foreach ($categorie as $s) {
 
-            categorie::where('id', $s['id'])
+            CategorieSpese::where('id', $s['id'])
                 ->update([
                     'nome' => $s['nome'],
                     'modificato' => date('Y-m-d H:i:s'),
@@ -92,12 +92,12 @@ class CategorieController extends Controller
         dd($request->all());
         if ($request->nome_add != '') {
 
-            $create = Categorie::create([
+            $create = CategorieSpese::create([
 
                 'nome' => $request->nome_add,
                 'attivo' => 1,
             ]);
-            $categorie = new Categorie();
+            $categorie = new CategorieSpese();
             $categorie->list();
 
 
@@ -122,7 +122,7 @@ class CategorieController extends Controller
     public function elimina($id)
     {
         //dd($id);
-        Categorie::where('id', $id)->update([
+        CategorieSpese::where('id', $id)->update([
             'attivo' => 0,
         ]);
 

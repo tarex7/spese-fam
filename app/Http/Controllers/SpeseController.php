@@ -32,7 +32,7 @@ class SpeseController extends Controller
         $spese = $this->SpeseQuery()
             // ->whereMonth('data', '=', date('n'))
             // ->whereYear('data', '=', date('Y'))
-            
+
             ->get();
 
         $totale = $spese->sum('importo');
@@ -43,15 +43,16 @@ class SpeseController extends Controller
             ->with('mese', $mese_sel)
             ->with('years', Spese::getYearsOptions())
             ->with('mesi', Spese::getMesiOptions())
-            ->with('cat', Spese::getCategorieOptions())
+            ->with('cat', Spese::getCategorieSpeseOptions())
             ->with('tip', Spese::getTipologiaOptions())
             ->with('spese_id', null)
             ->with('totale', $totale);
     }
 
 
-    public function aggiungi(AddSpesaRequest $request)
+    public function aggiungi(AddSpesaRequest  $request)
     {
+       // dd($request->all());
         Spese::creaDaRichiesta($request);
         return redirect()->route('spese')->with('success', 'Spesa Aggiunta 👍');
     }
@@ -60,14 +61,14 @@ class SpeseController extends Controller
     public function salva(EditSpesaRequest $request)
     {
 
-        // dd($request->all());
         foreach ($request->spese as $k => $s) {
+          // dd($s);
 
             Spese::where('id', $k)
                 ->update([
                     'data' => $s['data'],
                     'importo' => $s['importo'],
-                    'categorie_id' => $s['categorie'],
+                    'categoriespese_id' => $s['categoriespese'],
                     'tipologia_id' => $s['tipologia'],
                     'modificato' => now(),
                     'modificatore' => Auth::user()->name,
@@ -99,7 +100,7 @@ class SpeseController extends Controller
         $anno = $request->anno ?? 0;
         $page = $request->page ?? 1;
         $limit = $request->limit ?? 10;
-    
+
         $spese = $this->SpeseQuery()
             ->when($mese != 0, function ($query) use ($mese) {
                 return $query->whereMonth('data', '=', $mese);
@@ -107,12 +108,12 @@ class SpeseController extends Controller
             ->when($anno != 0, function ($query) use ($anno) {
                 return $query->whereYear('data', '=', $anno);
             });
-    
+
         return $spese->paginate($limit, ['*'], 'page', $page);
     }
 
 
-    
+
     public function calcolaSpeseMensili($year)
     {
         return Spese::where('attivo', 1)
@@ -142,9 +143,9 @@ class SpeseController extends Controller
             ->pluck('totale', 'mese');
 
 
-        $spesePerCategoria = Spese::join('categorie', 'spese.categorie_id', '=', 'categorie.id')
-            ->select('categorie.nome as categoria', DB::raw('MONTH(data) as mese'), DB::raw('SUM(importo) as importo'))
-            ->groupBy('categorie.nome', 'mese')
+        $spesePerCategoria = Spese::join('categoriespese', 'spese.categoriespese_id', '=', 'categoriespese.id')
+            ->select('categoriespese.nome as categoria', DB::raw('MONTH(data) as mese'), DB::raw('SUM(importo) as importo'))
+            ->groupBy('categoriespese.nome', 'mese')
             ->whereYear('data', $year)
             ->get();
 
@@ -186,7 +187,7 @@ class SpeseController extends Controller
         $file = $request->file('excel_file');
         $data = Excel::toCollection([], $file);
 
-        $categorieEsistenti = CategorieSpese::where('attivo', 1)->pluck('nome')->all();
+        $categoriespeseEsistenti = CategorieSpese::where('attivo', 1)->pluck('nome')->all();
         $mesi = array_flip(['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']);
 
         foreach ($data as $sheet) {
@@ -196,14 +197,14 @@ class SpeseController extends Controller
                     $mese = $mesi[$i] ?? '01';
                     $categoria = strtolower($row[0]);
 
-                    if (!in_array($categoria, $categorieEsistenti)) {
+                    if (!in_array($categoria, $categoriespeseEsistenti)) {
                         $cat = CategorieSpese::create([
                             'nome' => $categoria,
                             'attivo' => 1,
                             'creatore' => Auth::user()->name,
                             'creato' => date('Y-m-d'),
                         ]);
-                        $categorieEsistenti[] = $categoria;
+                        $categoriespeseEsistenti[] = $categoria;
                         $cat_id = $cat->id;
                     } else {
                         $cat_id = CategorieSpese::where('nome', $categoria)->first()->id;
@@ -212,7 +213,7 @@ class SpeseController extends Controller
                     Spese::create([
                         'nome' => $categoria,
                         'importo' => $row[$i],
-                        'categorie_id' => $cat_id,
+                        'categoriespese_id' => $cat_id,
                         'data' => $anno . '-' . $mese . '-01',
                         'attivo' => 1,
                         'creatore' => Auth::user()->name,

@@ -42,10 +42,10 @@ Route::middleware(['auth'])->group(function () {
     Route::any('/entrate/importa', 'EntrateController@importa')->name('entrate/importa');
     Route::any('/entrate/carica_file', 'EntrateController@carica_file')->name('entrate/carica_file');
     //CATEGORIE
-    Route::get('/categorie', 'CategorieController@index')->name('categorie');
+    Route::get('/categorie', 'CategorieSpeseController@index')->name('categorie');
     Route::any('/categorie/elimina/{id}', 'categorieController@elimina')->name('categorie/elimina');
-    Route::any('/categorie/salva', 'CategorieController@salva')->name('categorie/salva');
-    Route::any('/categorie/aggiungi', 'CategorieController@aggiungi')->name('categorie/aggiungi');
+    Route::any('/categorie/salva', 'CategorieSpeseController@salva')->name('categorie/salva');
+    Route::any('/categorie/aggiungi', 'CategorieSpeseController@aggiungi')->name('categorie/aggiungi');
 
     //CATEGORIE ENTRATE
     Route::get('/categorie_entrate', 'CategorieEntrateController@index')->name('categorie_entrate');

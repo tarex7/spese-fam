@@ -6,9 +6,9 @@ use App\Models\CategorieSpese;
 use App\Models\Tipologia;
 use Illuminate\Http\Request;
 
-class CategorieController extends Controller
+class CategorieSpeseController extends Controller
 {
-    
+
 
     public function index()
     {
@@ -38,11 +38,11 @@ class CategorieController extends Controller
     {
 
         //dd($request->all());
-        $categorie = Categorie::where('attivo', 1)->get();
+        $categorie = CategorieSpese::where('attivo', 1)->get();
 
         // dd($categorie);
         if ($request->nome_add != '') {
-            Categorie::create([
+            CategorieSpese::create([
                 'nome' => $request->nome_add,
                 'attivo' => 1,
                 'creato' => date('Y-m-d H:i:s'),
@@ -70,7 +70,7 @@ class CategorieController extends Controller
 
         foreach ($request->categorie as $k => $c) {
 
-            Categorie::where('id', $k)->update([
+            CategorieSpese::where('id', $k)->update([
                 'nome' => $c,
                 'modificatore' => auth()->user()->name,
                 'modificato' => date('Y-m-d'),
@@ -78,7 +78,7 @@ class CategorieController extends Controller
             ]);
         }
 
-        $categorie = Categorie::where('attivo', 1)->get();
+        $categorie = CategorieSpese::where('attivo', 1)->get();
 
 
         return view('categorie.categorie')
@@ -99,7 +99,7 @@ class CategorieController extends Controller
     public function elimina($id)
     {
         //dd($id);
-        Categorie::where('id', $id)->update([
+        CategorieSpese::where('id', $id)->update([
             'attivo' => 0,
         ]);
 
