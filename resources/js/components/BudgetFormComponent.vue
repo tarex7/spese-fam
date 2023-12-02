@@ -107,7 +107,7 @@
                         <th scope="col"></th>
                     </tr>
 
-                    <tr v-for="s in data" :key="s.id" :id="data_id === s.id ? 'nome_add' : ''">
+                    <tr v-for="s in data" :key="s.id" :id="s.id === s.id ? 'nome_add' : ''">
                         <td class="d-flex align-items-center justify-content-center border-0">
                             <a @click.prevent="elimina(s.id)" href="#">
                                 <i class="fa-solid fa-trash mx-1 text-danger mt-2"></i>
@@ -115,7 +115,7 @@
                         </td>
 
                         <td class="border-0">
-                            <select v-model="s.categorieentrate_id" class="form-control">
+                            <select v-model="s.categorie_id" class="form-control">
                                 <option v-for="(label, value) in cat_opt" :key="value" :value="value">{{ label }}</option>
                             </select>
                         </td>
@@ -203,7 +203,7 @@ export default {
         months_opt: [Object],
         cat_opt: [Array, Object],
         tip_opt: [Array, Object],
-        url:[String]
+        url: [String]
     },
     data() {
         return {
@@ -238,8 +238,8 @@ export default {
             axios.post(this.url, formData)
                 .then(
                     res => {
-                        console.log(res.data)
-                        this.spese = res.data.data;
+                        this.data = res.data.data;
+                        console.log(this.data)
                         this.totalRecords = res.data.total
                     }
                 )

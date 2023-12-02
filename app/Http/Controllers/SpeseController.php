@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Spese;
-use App\Models\Categorie;
+use App\Models\CategorieSpese;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -186,7 +186,7 @@ class SpeseController extends Controller
         $file = $request->file('excel_file');
         $data = Excel::toCollection([], $file);
 
-        $categorieEsistenti = Categorie::where('attivo', 1)->pluck('nome')->all();
+        $categorieEsistenti = CategorieSpese::where('attivo', 1)->pluck('nome')->all();
         $mesi = array_flip(['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']);
 
         foreach ($data as $sheet) {
@@ -197,7 +197,7 @@ class SpeseController extends Controller
                     $categoria = strtolower($row[0]);
 
                     if (!in_array($categoria, $categorieEsistenti)) {
-                        $cat = Categorie::create([
+                        $cat = CategorieSpese::create([
                             'nome' => $categoria,
                             'attivo' => 1,
                             'creatore' => Auth::user()->name,
@@ -206,7 +206,7 @@ class SpeseController extends Controller
                         $categorieEsistenti[] = $categoria;
                         $cat_id = $cat->id;
                     } else {
-                        $cat_id = Categorie::where('nome', $categoria)->first()->id;
+                        $cat_id = CategorieSpese::where('nome', $categoria)->first()->id;
                     }
 
                     Spese::create([

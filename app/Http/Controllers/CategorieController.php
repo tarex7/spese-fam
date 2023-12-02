@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Categorie;
+use App\Models\CategorieSpese;
 use App\Models\Tipologia;
 use Illuminate\Http\Request;
 
@@ -13,9 +13,9 @@ class CategorieController extends Controller
     public function index()
     {
 
-        $categorie = categorie::select('categorie.*')
-            ->where('categorie.attivo', 1)
-            ->select('categorie.*')
+        $categorie = CategorieSpese::select('categorie.*')
+            ->where('categorie_spese.attivo', 1)
+            ->select('categorie_spese.*')
             ->get();
 
             //dd($categorie)
@@ -23,7 +23,7 @@ class CategorieController extends Controller
 
 
         // dd($categorie);
-        return view('categorie.categorie')
+        return view('categorie_spese.categorie')
             ->with('categorie', $categorie)
             ->with('categorie_id', null);
     }

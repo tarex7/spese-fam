@@ -1951,8 +1951,8 @@ __webpack_require__.r(__webpack_exports__);
         limit: this.itemsPerPage
       };
       axios.post(this.url, formData).then(function (res) {
-        console.log(res.data);
-        _this.spese = res.data.data;
+        _this.data = res.data.data;
+        console.log(_this.data);
         _this.totalRecords = res.data.total;
       });
     },
@@ -2162,7 +2162,7 @@ var render = function render() {
     return _c("tr", {
       key: s.id,
       attrs: {
-        id: _vm.data_id === s.id ? "nome_add" : ""
+        id: s.id === s.id ? "nome_add" : ""
       }
     }, [_c("td", {
       staticClass: "d-flex align-items-center justify-content-center border-0"
@@ -2184,8 +2184,8 @@ var render = function render() {
       directives: [{
         name: "model",
         rawName: "v-model",
-        value: s.categorieentrate_id,
-        expression: "s.categorieentrate_id"
+        value: s.categorie_id,
+        expression: "s.categorie_id"
       }],
       staticClass: "form-control",
       on: {
@@ -2196,7 +2196,7 @@ var render = function render() {
             var val = "_value" in o ? o._value : o.value;
             return val;
           });
-          _vm.$set(s, "categorieentrate_id", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
+          _vm.$set(s, "categorie_id", $event.target.multiple ? $$selectedVal : $$selectedVal[0]);
         }
       }
     }, _vm._l(_vm.cat_opt, function (label, value) {
