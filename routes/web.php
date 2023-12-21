@@ -23,24 +23,29 @@ Route::middleware(['auth'])->group(function () {
 
 
     //SPESE
-    Route::get('/', 'SpeseController@index')->name('spese');
+
     Route::any('/spese/salva', 'SpeseController@salva')->name('spese/salva');
     Route::any('/spese/aggiungi', 'SpeseController@aggiungi')->name('spese/aggiungi');
     Route::any('/spese/elimina/{id}', 'SpeseController@elimina')->name('spese/elimina');
     Route::any('/spese/filtra/{month?}', 'SpeseController@filtra')->name('spese/filtra');
     Route::any('/spese/elenco/{year?}', 'SpeseController@elenco')->name('spese/elenco');
+    Route::any('/spese/getelenco/{year?}', 'SpeseController@getElenco')->name('spese/getelenco');
     Route::any('/spese/importa', 'SpeseController@importa')->name('spese/importa');
     Route::any('/spese/carica_file', 'SpeseController@carica_file')->name('spese/carica_file');
+    Route::get('/spese/{anno?}', 'SpeseController@index')->name('spese');
 
     //ENTRATE
-    Route::get('entrate', 'EntrateController@index')->name('entrate');
     Route::any('/entrate/salva', 'EntrateController@salva')->name('entrate/salva');
     Route::any('/entrate/aggiungi', 'EntrateController@aggiungi')->name('entrate/aggiungi');
     Route::any('/entrate/elimina/{id}', 'EntrateController@elimina')->name('entrate/elimina');
     Route::any('/entrate/filtra/{month?}', 'EntrateController@filtra')->name('entrate/filtra');
     Route::any('/entrate/elenco/{year?}', 'EntrateController@elenco')->name('entrate/elenco');
+    Route::any('/entrate/getelenco/{year?}', 'EntrateController@getElenco')->name('entrate/getelenco');
+
     Route::any('/entrate/importa', 'EntrateController@importa')->name('entrate/importa');
     Route::any('/entrate/carica_file', 'EntrateController@carica_file')->name('entrate/carica_file');
+    Route::get('entrate/{anno?}', 'EntrateController@index')->name('entrate');
+
     //CATEGORIE
     Route::get('/categorie', 'CategorieSpeseController@index')->name('categorie');
     Route::any('/categorie/elimina/{id}', 'categorieController@elimina')->name('categorie/elimina');

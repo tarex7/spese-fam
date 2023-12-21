@@ -27,6 +27,7 @@ import ExampleComponent from './components/ExampleComponent.vue'
 import BudgetForm from './components/BudgetFormComponent.vue'
 import Pagination from 'vue-pagination-2';
 import ConfirmModal from './components/ConfirmModal.vue'
+import Elenco from './components/ElencoComponent.vue'
 
 Vue.component('example-component', ExampleComponent);
 
@@ -35,6 +36,7 @@ Vue.component('Datepicker', DatePicker);
 Vue.component('budget-form-component', BudgetForm);
 Vue.component('pagination', Pagination);
 Vue.component('confirm-modal', ConfirmModal);
+Vue.component('elenco-component', Elenco);
 
 
 

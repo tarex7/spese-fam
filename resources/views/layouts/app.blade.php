@@ -35,7 +35,7 @@
 <body>
     <div id="app">
         @if (session('success'))
-            <div class="alert alert-success">
+            <div class="alert alert-success rounded-0">
                 {{ session('success') }}
             </div>
         @endif
@@ -47,7 +47,7 @@
         @endif
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
+                <a class="navbar-brand" href="{{ url('/spese') }}">
                     {{ config('app.name', 'Laravel') }}
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse"

@@ -11,7 +11,7 @@
             </ul>
         </div>
     @endif
-{{$anno}}
+    
     <budget-form-component
     title="Entrate 💵" 
     type="entrate" 

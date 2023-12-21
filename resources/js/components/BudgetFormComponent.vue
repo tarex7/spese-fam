@@ -12,7 +12,7 @@
             <form :action="`${type}/filtra`" method="get">
                 <div class="d-flex float-right my-4">
 
-                    <a class="btn btn-primary  mr-5" href="">Elenco</a>
+                    <a class="btn btn-primary  mr-5" :href="`/${type}/elenco/${anno}`">Elenco</a>
 
                     <select class="form-control mx-1" v-model="anno" @change="filtra">
                         <option v-for="(label, value) in years_opt" :key="value" :value="value">
@@ -27,8 +27,6 @@
                         </option>
                     </select>
 
-                    <!-- <a class="btn btn-success  mx-2" @click.prevent="filtra">Filtra</a>
-                    <a class="btn btn-danger  mx-2" href="">Rimuovi</a> -->
                 </div>
             </form>
 
@@ -110,7 +108,6 @@
                     </tr>
                     <tr v-for="s in dati" :key="s.id" :id="s.id === s.id ? 'nome_add' : ''">
 
-                    <tr v-for="s in data" :key="s.id" :id="s.id === s.id ? 'nome_add' : ''">
                         <td class="d-flex align-items-center justify-content-center border-0">
                             <a @click="elimina" :href="`/${type}/elimina/${s.id}`">
                                 <i class="fa-solid fa-trash mx-1 text-danger mt-2"></i>

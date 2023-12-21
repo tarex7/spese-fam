@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\entrate;
-use App\Models\CategorieSpese;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -11,34 +10,29 @@ use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\AddSpesaRequest;
 use App\Http\Requests\EditEntrateRequest;
+use App\Models\CategorieEntrate;
 
 class entrateController extends Controller
 {
 
-    private function entrateQuery()
+    private function EntrateQuery()
     {
-        return entrate::with(['categorie_entrate', 'tipologia'])
+        return Entrate::with(['categorie_entrate', 'tipologia'])
             ->where('attivo', 1)
-            ->where('importo','>',0)
-            ;
+            ->where('importo', '>', 0);
     }
 
 
-
-
-
-    public function index()
+    public function index($anno = null)
     {
+        
         $now = Carbon::now();
-
-        $anno_sel = $now->year;
+        $anno_sel = $anno ?? $now->year;
         $mese_sel = $now->month;
 
-        $entrate = $this->entrateQuery()
-            // ->whereMonth('data', '=', date('n'))
-            // ->whereYear('data', '=', date('Y'))
-            ->get();
-
+        $entrate = $this->EntrateQuery()
+        ->with('categorie_entrate', 'tipologia')
+        ->get();
 
         $totale = $entrate->sum('importo');
 
@@ -57,31 +51,35 @@ class entrateController extends Controller
 
     public function aggiungi(AddSpesaRequest $request)
     {
-       // dd($request->all());
+        // dd($request->all());
         entrate::creaDaRichiesta($request);
-        return redirect()->route('entrate')->with('success', 'Spesa Aggiunta 👍');
+        return redirect()->route('entrate')->with('success', 'Entrata Aggiunta 👍');
     }
 
 
     public function salva(EditEntrateRequest $request)
     {
-
        // dd($request->all());
-        foreach ($request->entrate as $k => $s) {
+        DB::transaction(function () use ($request) {
+            foreach ($request->entrate as $id => $data) {
+                $entrata = Entrate::find($id);
 
-            entrate::where('id', $k)
-                ->update([
-                    'data' => $s['data'],
-                    'importo' => $s['importo'],
-                    'categorieentrate_id' => $s['categorieentrate'],
-                    'tipologia_id' => $s['tipologia'],
-                    'modificato' => now(),
-                    'modificatore' => Auth::user()->name,
-                ]);
-        }
-        return redirect()->route('entrate')
-        ->with('anno',$request->anno_sel)
-        ->with('success', 'Modifica salvata!');
+                if ($entrata) {
+                    $entrata->update([
+                        'data' => $data['data'],
+                        'importo' => $data['importo'],
+                        'categorieentrate_id' => $data['categorieentrate'],
+                        'tipologia_id' => $data['tipologia'],
+                        'modificato' => now(),
+                        'modificatore' => Auth::user()->name,
+                    ]);
+                }
+            };
+        });
+
+      
+        return redirect()->route('entrate', ['anno' => $request->anno_sel])
+            ->with('success', 'Modifica salvata!');
     }
 
 
@@ -94,7 +92,7 @@ class entrateController extends Controller
         ]);
 
         return redirect()->route('entrate')
-            ->with('success', 'Spesa eliminata! 😁👍');
+            ->with('success', 'Entrata eliminata! 😁👍');
     }
 
 
@@ -133,40 +131,38 @@ class entrateController extends Controller
 
 
 
-    public function elenco(Request $request)
+    public function elenco($year)
     {
         //dd($request->all());
 
         // Ottiene l'anno dalla request o usa l'anno corrente
-        $year = $request->anno ?? date('Y');
-
-        $entrateMensili = entrate::where('attivo', 1)
-            ->whereYear('data', $year)
-            ->groupBy(DB::raw('MONTH(data)'))
-            ->select(DB::raw('MONTH(data) as mese'), DB::raw('SUM(importo) as totale'))
-            ->pluck('totale', 'mese');
-
-
-        $entratePerCategoria = entrate::join('categorie', 'entrate.categorie_id', '=', 'categorie.id')
-            ->select('categorie.nome as categoria', DB::raw('MONTH(data) as mese'), DB::raw('SUM(importo) as importo'))
-            ->groupBy('categorie.nome', 'mese')
-            ->whereYear('data', $year)
-            ->get();
+        $year = $year ?? date('Y');
 
         $years = range(date('Y') - 10, date('Y') + 10);
         $years = [0 => 'Seleziona'] + array_combine($years, $years);
 
-        $entrateRaggruppate = $entratePerCategoria->groupBy('categoria')
-            ->mapWithKeys(function ($item, $key) {
-                return [$key => $item->pluck('importo', 'mese')->all() + array_fill(1, 12, 0)];
-            });
-
         return view('entrate.elenco', [
             'years' => $years,
-            'anno_sel' => $year,
-            'entrateRaggruppate' => $entrateRaggruppate,
-            'entrate_mensili' => $entrateMensili->toArray()
+            'anno' => $year,
         ]);
+    }
+
+    public function getElenco($year)
+    {
+
+        $entratePerCategoria = Entrate::join('categorie_entrate', 'entrate.categorieentrate_id', '=', 'categorie_entrate.id')
+            ->select('categorie_entrate.nome as categoria', DB::raw('MONTH(data) as mese'), DB::raw('SUM(importo) as importo'))
+            ->groupBy('categorie_entrate.nome', 'mese')
+            ->whereYear('data', $year)
+            ->get();
+
+        $entrateRaggruppate = $entratePerCategoria->groupBy('categoria')
+            ->mapWithKeys(function ($item, $key) {
+                $total = $item->sum('importo');
+                return [$key => ['importi_mensili' => $item->pluck('importo', 'mese')->all() + array_fill(1, 12, 0), 'total' => $total]];
+            });
+
+        return $entrateRaggruppate;
     }
 
 
@@ -178,108 +174,60 @@ class entrateController extends Controller
     }
 
 
-
-
-
     public function carica_file(Request $request)
-{
-    $anno = $request->anno;
-    $request->validate([
-        'excel_file' => 'required|mimes:xls,xlsx',
-    ]);
+    {
+       // dd($request->all());
 
-    $file = $request->file('excel_file');
-    $data = Excel::toCollection([], $file);
+        $anno = $request->anno;
+        $request->validate([
+            'excel_file' => 'required|mimes:xls,xlsx',
+            'anno' => 'required'
+        ],
+        [
+            'excel_file.required' => 'Il file Excel è obbligatorio.',
+            'excel_file.mimes' => 'Il file deve essere un documento di tipo Excel (xls o xlsx).',
+            'anno.required' => 'L\'anno è un campo obbligatorio.'
+        ]);
 
-    $categorieEsistenti = CategorieSpese::where('attivo', 1)->pluck('nome')->all();
-    $mesi = array_flip(['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']);
+        $file = $request->file('excel_file');
+        $data = Excel::toCollection([], $file);
 
-    foreach ($data as $sheet) {
-        foreach ($sheet as $row) {
-            for ($i = 1; $i < count($row); $i++) {
-                $row[$i] = $row[$i] ?? 0.00;
-                $mese = $mesi[$i] ?? '01';
-                $categoria = strtolower($row[0]);
+        $categorieentrateEsistenti = Categorieentrate::where('attivo', 1)->pluck('nome')->all();
+        $mesi = array_flip(['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']);
 
-                if (!in_array($categoria, $categorieEsistenti)) {
-                    $cat = CategorieSpese::create([
+        foreach ($data as $sheet) {
+            foreach ($sheet as $row) {
+                for ($i = 1; $i < count($row); $i++) {
+                    $row[$i] = $row[$i] ?? 0.00;
+                    $mese = $mesi[$i] ?? '01';
+                    $categoria = strtolower($row[0]);
+
+                    if (!in_array($categoria, $categorieentrateEsistenti)) {
+                        $cat = Categorieentrate::create([
+                            'nome' => $categoria,
+                            'attivo' => 1,
+                            'creatore' => Auth::user()->name,
+                            'creato' => date('Y-m-d'),
+                        ]);
+                        $categorieentrateEsistenti[] = $categoria;
+                        $cat_id = $cat->id;
+                    } else {
+                        $cat_id = Categorieentrate::where('nome', $categoria)->first()->id;
+                    }
+
+                    entrate::create([
                         'nome' => $categoria,
+                        'importo' => $row[$i],
+                        'categorieentrate_id' => $cat_id,
+                        'data' => $anno . '-' . $mese . '-01',
                         'attivo' => 1,
                         'creatore' => Auth::user()->name,
                         'creato' => date('Y-m-d'),
                     ]);
-                    $categorieEsistenti[] = $categoria;
-                    $cat_id = $cat->id;
-                } else {
-                    $cat_id = CategorieSpese::where('nome', $categoria)->first()->id;
                 }
-
-                entrate::create([
-                    'nome' => $categoria,
-                    'importo' => $row[$i],
-                    'categorie_id' => $cat_id,
-                    'data' => $anno . '-' . $mese . '-01',
-                    'attivo' => 1,
-                    'creatore' => Auth::user()->name,
-                    'creato' => date('Y-m-d'),
-                ]);
             }
         }
+
+        return redirect()->route('entrate/importa')->with('success', 'File Excel elaborato con successo');
     }
-
-    return redirect()->route('entrate/importa')->with('success', 'File Excel elaborato con successo');
 }
-}
-
-/*
-public function carica_file(Request $request)
-{
-    $anno = $request->anno;
-    $request->validate([
-        'excel_file' => 'required|mimes:xls,xlsx',
-    ]);
-
-    $file = $request->file('excel_file');
-    $data = Excel::toCollection([], $file);
-
-    $categorieEsistenti = CategorieSpese::where('attivo', 1)->pluck('nome')->all();
-    $mesi = array_flip(['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']);
-
-    foreach ($data as $sheet) {
-        foreach ($sheet as $row) {
-            for ($i = 1; $i < count($row); $i++) {
-                $row[$i] = $row[$i] ?? 0.00;
-                $mese = $mesi[$i] ?? '01';
-                $categoria = strtolower($row[0]);
-
-                if (!in_array($categoria, $categorieEsistenti)) {
-                    $cat = CategorieSpese::create([
-                        'nome' => $categoria,
-                        'attivo' => 1,
-                        'creatore' => Auth::user()->name,
-                        'creato' => date('Y-m-d'),
-                    ]);
-                    $categorieEsistenti[] = $categoria;
-                    $cat_id = $cat->id;
-                } else {
-                    $cat_id = CategorieSpese::where('nome', $categoria)->first()->id;
-                }
-
-                entrate::create([
-                    'nome' => $categoria,
-                    'importo' => $row[$i],
-                    'categorie_id' => $cat_id,
-                    'data' => $anno . '-' . $mese . '-01',
-                    'attivo' => 1,
-                    'creatore' => Auth::user()->name,
-                    'creato' => date('Y-m-d'),
-                ]);
-            }
-        }
-    }
-
-    return redirect()->route('entrate/importa')->with('success', 'File Excel elaborato con successo');
-}
-
-*/
-

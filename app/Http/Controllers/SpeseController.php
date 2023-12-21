@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Spese;
-use App\Models\CategorieSpese;
 use Illuminate\Http\Request;
+use App\Models\CategorieSpese;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\AddSpesaRequest;
 use App\Http\Requests\EditSpesaRequest;
@@ -21,19 +22,15 @@ class SpeseController extends Controller
     }
 
 
-
-    public function index()
+    public function index($anno = null)
     {
         $now = Carbon::now();
-
-        $anno_sel = $now->year;
+        $anno_sel = $anno ?? $now->year;
         $mese_sel = $now->month;
 
         $spese = $this->SpeseQuery()
-            // ->whereMonth('data', '=', date('n'))
-            // ->whereYear('data', '=', date('Y'))
-
-            ->get();
+        ->with('categoria', 'tipologia')
+        ->get();
 
         $totale = $spese->sum('importo');
 
@@ -52,7 +49,7 @@ class SpeseController extends Controller
 
     public function aggiungi(AddSpesaRequest  $request)
     {
-       // dd($request->all());
+        // dd($request->all());
         Spese::creaDaRichiesta($request);
         return redirect()->route('spese')->with('success', 'Spesa Aggiunta 👍');
     }
@@ -60,22 +57,29 @@ class SpeseController extends Controller
 
     public function salva(EditSpesaRequest $request)
     {
+       // dd($request->all());
+        DB::transaction(function () use ($request) {
+            foreach ($request->spese as $id => $data) {
+                $spesa = Spese::find($id);
 
-        foreach ($request->spese as $k => $s) {
-          // dd($s);
+                if ($spesa) {
+                    $spesa->update([
+                        'data' => $data['data'],
+                        'importo' => $data['importo'],
+                        'categoriespese_id' => $data['categoriespese'],
+                        'tipologia_id' => $data['tipologia'],
+                        'modificato' => now(),
+                        'modificatore' => Auth::user()->name,
+                    ]);
+                }
+            };
+        });
 
-            Spese::where('id', $k)
-                ->update([
-                    'data' => $s['data'],
-                    'importo' => $s['importo'],
-                    'categoriespese_id' => $s['categoriespese'],
-                    'tipologia_id' => $s['tipologia'],
-                    'modificato' => now(),
-                    'modificatore' => Auth::user()->name,
-                ]);
-        }
-        return redirect()->route('spese')->with('success', 'Modifica salvata!');
+      
+        return redirect()->route('spese', ['anno' => $request->anno_sel])
+            ->with('success', 'Modifica salvata!');
     }
+
 
 
     public function elimina($id)
@@ -129,40 +133,38 @@ class SpeseController extends Controller
 
 
 
-    public function elenco(Request $request)
+    public function elenco($year)
     {
         //dd($request->all());
 
         // Ottiene l'anno dalla request o usa l'anno corrente
-        $year = $request->anno ?? date('Y');
-
-        $speseMensili = Spese::where('attivo', 1)
-            ->whereYear('data', $year)
-            ->groupBy(DB::raw('MONTH(data)'))
-            ->select(DB::raw('MONTH(data) as mese'), DB::raw('SUM(importo) as totale'))
-            ->pluck('totale', 'mese');
-
-
-        $spesePerCategoria = Spese::join('categoriespese', 'spese.categoriespese_id', '=', 'categoriespese.id')
-            ->select('categoriespese.nome as categoria', DB::raw('MONTH(data) as mese'), DB::raw('SUM(importo) as importo'))
-            ->groupBy('categoriespese.nome', 'mese')
-            ->whereYear('data', $year)
-            ->get();
+        $year = $year ?? date('Y');
 
         $years = range(date('Y') - 10, date('Y') + 10);
         $years = [0 => 'Seleziona'] + array_combine($years, $years);
 
-        $speseRaggruppate = $spesePerCategoria->groupBy('categoria')
-            ->mapWithKeys(function ($item, $key) {
-                return [$key => $item->pluck('importo', 'mese')->all() + array_fill(1, 12, 0)];
-            });
-
         return view('spese.elenco', [
             'years' => $years,
-            'anno_sel' => $year,
-            'speseRaggruppate' => $speseRaggruppate,
-            'spese_mensili' => $speseMensili->toArray()
+            'anno' => $year,
         ]);
+    }
+
+    public function getElenco($year)
+    {
+
+        $spesePerCategoria = Spese::join('categorie_spese', 'spese.categoriespese_id', '=', 'categorie_spese.id')
+            ->select('categorie_spese.nome as categoria', DB::raw('MONTH(data) as mese'), DB::raw('SUM(importo) as importo'))
+            ->groupBy('categorie_spese.nome', 'mese')
+            ->whereYear('data', $year)
+            ->get();
+
+        $speseRaggruppate = $spesePerCategoria->groupBy('categoria')
+            ->mapWithKeys(function ($item, $key) {
+                $total = $item->sum('importo');
+                return [$key => ['importi_mensili' => $item->pluck('importo', 'mese')->all() + array_fill(1, 12, 0), 'total' => $total]];
+            });
+
+        return $speseRaggruppate;
     }
 
 
@@ -174,14 +176,19 @@ class SpeseController extends Controller
     }
 
 
-
-
-
     public function carica_file(Request $request)
     {
+       // dd($request->all());
+
         $anno = $request->anno;
         $request->validate([
             'excel_file' => 'required|mimes:xls,xlsx',
+            'anno' => 'required'
+        ],
+        [
+            'excel_file.required' => 'Il file Excel è obbligatorio.',
+            'excel_file.mimes' => 'Il file deve essere un documento di tipo Excel (xls o xlsx).',
+            'anno.required' => 'L\'anno è un campo obbligatorio.'
         ]);
 
         $file = $request->file('excel_file');
