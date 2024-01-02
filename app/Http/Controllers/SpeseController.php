@@ -119,17 +119,26 @@ class SpeseController extends Controller
 
 
     public function calcolaSpeseMensili($year)
-    {
-        return Spese::where('attivo', 1)
-            ->whereYear('data', $year)
-            ->get()
-            ->groupBy(function ($data) {
-                return Carbon::parse($data->data)->format('m'); // raggruppa per mese
-            })
-            ->mapWithKeys(function ($item, $key) {
-                return [$key => $item->sum('importo')]; // calcola la somma per ogni mese
-            });
-    }
+{
+    $speseMensili = Spese::where('attivo', 1)
+        ->whereYear('data', $year)
+        ->get()
+        ->groupBy(function ($data) {
+            return Carbon::parse($data->data)->format('m'); // raggruppa per mese
+        })
+        ->mapWithKeys(function ($item, $key) {
+            return [$key => $item->sum('importo')]; // calcola la somma per ogni mese
+        })
+        ->toArray(); // Converte la collection in un array
+
+        $formatted = array_map(function($item){
+            return number_format($item,2,'.','');
+        },$speseMensili);
+
+    return array_values($formatted); // Riformatta come array numerico
+}
+
+
 
 
 

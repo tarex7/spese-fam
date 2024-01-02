@@ -33,6 +33,7 @@ Route::middleware(['auth'])->group(function () {
     Route::any('/spese/importa', 'SpeseController@importa')->name('spese/importa');
     Route::any('/spese/carica_file', 'SpeseController@carica_file')->name('spese/carica_file');
     Route::get('/spese/{anno?}', 'SpeseController@index')->name('spese');
+    Route::any('/spese/spesemensili/{anno?}', 'SpeseController@calcolaSpeseMensili')->name('spese/spesemensili');
 
     //ENTRATE
     Route::any('/entrate/salva', 'EntrateController@salva')->name('entrate/salva');

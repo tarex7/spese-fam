@@ -20,6 +20,8 @@
 
         </div>
         <div class="col-12">
+        <apexchart-componentt :year="anno" :years_opt="this.years_opt" />
+
             <table class="table table-striped">
 
                 <thead class="thead-dark">
@@ -60,25 +62,23 @@
 </template>
 
 <script>
+import ApexchartComponentt from './ApexchartComponentt.vue'
 export default {
+  components: { ApexchartComponentt },
     data() {
         return {
             dati: {},
+            anno:null
         }
     },
     methods: {
         filtra() {
-            const formData = {
 
-                anno: this.anno,
-                // page: this.currentPage,
-                // limit: this.itemsPerPage,
-            }
             axios.get(`${this.getdataurl}/${this.anno}`)
                 .then(
                     res => {
                         this.dati = res.data;
-                        console.log(this.dati)
+                        //console.log(this.dati)
                         this.totalRecords = res.data.total
                     }
                 )
@@ -86,6 +86,12 @@ export default {
         formatCurrency(value) {
             // Implement your currency formatting logic here
             return value.toFixed(2); // For now, just returning the value
+        },
+        getData() {
+            console.log('ok')
+            axios.get(`spese/spesemensili/${this.anno}`).then(
+               res => console.log(res.data)
+            )
         }
 
     },
@@ -96,10 +102,11 @@ export default {
         years_opt: [Object],
         getdataurl: [String],
         type: [String],
-        anno: [String, Number],
+         anno: [String, Number],
     },
     beforeMount() {
         this.filtra()
+        //this.getData()
     },
 }
 </script>
