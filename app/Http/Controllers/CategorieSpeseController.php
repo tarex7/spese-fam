@@ -81,7 +81,7 @@ class CategorieSpeseController extends Controller
         $categorie = CategorieSpese::where('attivo', 1)->get();
 
 
-        return view('categorie.categorie')
+        return view('categorie_spese.categorie')
             ->with('success', 'Categoria aggiunta!')
             ->with('categorie', $categorie)
             ;

@@ -5,8 +5,9 @@
             {{ label  }}
         </option>
     </select> -->
-    <apexchart width="100%" height="300px"  type="bar" :options="options" :series="series"></apexchart>
-    
+    <h1>{{anno}}</h1>
+    <apexchart width="100%" height="300px" type="bar" :options="options" :series="series"></apexchart>
+
 </div>
 </template>
 
@@ -28,13 +29,13 @@ export default {
                 data: []
             }],
             years: this.years_opt,
-            
+            anno: this.year
 
         }
     },
     props: {
         years_opt: [Object],
-        year:[String,Number]
+        year: [String, Number]
     },
     methods: {
         getData() {
@@ -42,23 +43,23 @@ export default {
             axios.get(`/spese/spesemensili/${this.year}`).then(
                 res => {
                     this.series[0].data = []
-
-                    console.log(this.year)
+                    this.anno = this.year
+                    console.log(`/spese/spesemensili/${this.year}`)
                     this.series[0].data = res.data
-                   // console.log(this.series[0].data)
+                    // console.log(this.series[0].data)
                 }
             )
         }
     },
-    watch: { 
+    watch: {
         year() {
             console.log(`ora il valore di anno è ${this.year}`)
             this.getData()
-            console.log('dati del grafico',this.series[0].data)
+            console.log('dati del grafico', this.series[0].data)
 
         }
     },
-    
+
     beforeMount() {
         this.getData()
 

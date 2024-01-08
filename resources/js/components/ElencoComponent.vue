@@ -9,7 +9,7 @@
             <form :action="`${type}/filtra`" method="get">
                 <div class="d-flex float-right my-4 ">
 
-                    <select class="form-control mx-1" v-model="anno" @change="filtra">
+                    <select class="form-control mx-1" v-model="localyear" @change="filtra">
                         <option v-for="(label, value) in years_opt" :key="value" :value="value">
                             {{ label  }}
                         </option>
@@ -20,8 +20,9 @@
 
         </div>
         <div class="col-12">
-        <apexchart-componentt :year="anno" :years_opt="this.years_opt" />
-
+          
+           
+            <apexchart width="100%" height="300px" type="bar" :options="options" :series="series"></apexchart>
             <table class="table table-striped">
 
                 <thead class="thead-dark">
@@ -61,48 +62,87 @@
 </div>
 </template>
 
+    
 <script>
 import ApexchartComponentt from './ApexchartComponentt.vue'
 export default {
-  components: { ApexchartComponentt },
+    components: {
+        ApexchartComponentt
+    },
     data() {
         return {
             dati: {},
-            anno:null
+            localyear: this.anno,
+            options: {
+                chart: {
+                    id: 'vuechart-example'
+                },
+                xaxis: {
+                    categories: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic']
+
+                }
+            },
+            series: [{
+                name: 'spese',
+                data: []
+            }],
+            years: this.years_opt,
+            //anno:this.year
         }
     },
     methods: {
         filtra() {
 
-            axios.get(`${this.getdataurl}/${this.anno}`)
+            axios.get(`${this.getdataurl}/${this.localyear}`)
                 .then(
                     res => {
                         this.dati = res.data;
-                        //console.log(this.dati)
+                        //console.log(`${this.getdataurl}/${this.localyear}`)
                         this.totalRecords = res.data.total
+                        //this.series[0].data = res.data
+                       // console.log(res.data)
                     }
-                )
+            )
+
+            axios.get(`/spese/spesemensili/${this.localyear}`).then(
+                res => {
+                   this.series[0].data = []
+                   // this.anno = this.year
+                    console.log('spese')
+                    this.series[0].data = res.data
+                    console.log(res.data)
+                    console.log( this.series[0].data)
+
+                }
+            )
         },
         formatCurrency(value) {
             // Implement your currency formatting logic here
             return value.toFixed(2); // For now, just returning the value
         },
         getData() {
-            console.log('ok')
-            axios.get(`spese/spesemensili/${this.anno}`).then(
-               res => console.log(res.data)
-            )
+            // console.log('ok')
+            // axios.get(`spese/spesemensili/${this.localyear}`).then(
+            //    res => console.log(res.data)
+            // )
+
+         
         }
 
     },
     watch: {
-
+        localyear(newval) {
+            this.localyear = newval
+            this.filtra()
+            //console.log(this.localyear)
+        }
     },
     props: {
         years_opt: [Object],
         getdataurl: [String],
         type: [String],
-         anno: [String, Number],
+        anno: [String, Number],
+        year: [String, Number]
     },
     beforeMount() {
         this.filtra()
@@ -111,6 +151,7 @@ export default {
 }
 </script>
 
+    
 <style>
 
-</style>
+    </style>

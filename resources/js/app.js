@@ -33,6 +33,9 @@ import VueApexCharts from 'vue-apexcharts';
 
 Vue.component('example-component', ExampleComponent);
 
+import VueCompositionApi from '@vue/composition-api';
+
+Vue.use(VueCompositionApi);
 
 Vue.component('Datepicker', DatePicker);
 Vue.component('budget-form-component', BudgetForm);
