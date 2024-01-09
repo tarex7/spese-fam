@@ -29,8 +29,8 @@ class SpeseController extends Controller
         $mese_sel = $now->month;
 
         $spese = $this->SpeseQuery()
-        ->with('categoria', 'tipologia')
-        ->get();
+            ->with('categoria', 'tipologia')
+            ->get();
 
         $totale = $spese->sum('importo');
 
@@ -57,7 +57,7 @@ class SpeseController extends Controller
 
     public function salva(EditSpesaRequest $request)
     {
-       // dd($request->all());
+        // dd($request->all());
         DB::transaction(function () use ($request) {
             foreach ($request->spese as $id => $data) {
                 $spesa = Spese::find($id);
@@ -75,7 +75,7 @@ class SpeseController extends Controller
             };
         });
 
-      
+
         return redirect()->route('spese', ['anno' => $request->anno_sel])
             ->with('success', 'Modifica salvata!');
     }
@@ -118,25 +118,34 @@ class SpeseController extends Controller
 
 
 
-    public function calcolaSpeseMensili($year)
-{
-    $speseMensili = Spese::where('attivo', 1)
-        ->whereYear('data', $year)
-        ->get()
-        ->groupBy(function ($data) {
-            return Carbon::parse($data->data)->format('m'); // raggruppa per mese
-        })
-        ->mapWithKeys(function ($item, $key) {
-            return [$key => $item->sum('importo')]; // calcola la somma per ogni mese
-        })
-        ->toArray(); // Converte la collection in un array
-
-        $formatted = array_map(function($item){
-            return number_format($item,2,'.','');
-        },$speseMensili);
-
-    return array_values($formatted); // Riformatta come array numerico
-}
+    public function calcolaSpeseMensili($year) {
+        $speseMensili = Spese::where('attivo', 1)
+            ->whereYear('data', $year)
+            ->get()
+            ->groupBy(function ($data) {
+                return Carbon::parse($data->data)->format('m'); // raggruppa per mese
+            })
+            ->mapWithKeys(function ($item, $key) {
+                return [$key => $item->sum('importo')]; // calcola la somma per ogni mese
+            })
+            ->toArray(); // Converte la collection in un array
+    
+        $formatted = array_map(function($item) {
+            return number_format($item, 2, '.', '');
+        }, $speseMensili);
+    
+        // Inizializza un array con 12 elementi (tutti zero)
+        $result = array_fill(1, 12, 0);
+    
+        // Sostituisce i valori calcolati nei mesi corrispondenti
+        foreach ($formatted as $month => $value) {
+            $result[intval($month)] = $value;
+        }
+    
+        // Assicurati che il risultato sia sempre un array numerico con 12 elementi
+        return array_values($result);
+    }
+    
 
 
 
@@ -187,18 +196,20 @@ class SpeseController extends Controller
 
     public function carica_file(Request $request)
     {
-       // dd($request->all());
+        // dd($request->all());
 
         $anno = $request->anno;
-        $request->validate([
-            'excel_file' => 'required|mimes:xls,xlsx',
-            'anno' => 'required'
-        ],
-        [
-            'excel_file.required' => 'Il file Excel è obbligatorio.',
-            'excel_file.mimes' => 'Il file deve essere un documento di tipo Excel (xls o xlsx).',
-            'anno.required' => 'L\'anno è un campo obbligatorio.'
-        ]);
+        $request->validate(
+            [
+                'excel_file' => 'required|mimes:xls,xlsx',
+                'anno' => 'required'
+            ],
+            [
+                'excel_file.required' => 'Il file Excel è obbligatorio.',
+                'excel_file.mimes' => 'Il file deve essere un documento di tipo Excel (xls o xlsx).',
+                'anno.required' => 'L\'anno è un campo obbligatorio.'
+            ]
+        );
 
         $file = $request->file('excel_file');
         $data = Excel::toCollection([], $file);

@@ -1,12 +1,7 @@
 <template>
 <div>
-    <!-- <select class="form-control mx-1" v-model="year">
-        <option v-for="(label, value) in years_opt" :key="value" :value="value">
-            {{ label  }}
-        </option>
-    </select> -->
-    <h1>{{anno}}</h1>
-    <apexchart width="100%" height="300px" type="bar" :options="options" :series="series"></apexchart>
+
+    <apexchart ref="apexChart" width="100%" height="300px" type="bar" :options="options" :series="series"></apexchart>
 
 </div>
 </template>
@@ -29,34 +24,44 @@ export default {
                 data: []
             }],
             years: this.years_opt,
-            anno: this.year
+            anno: this.year,
 
         }
     },
     props: {
         years_opt: [Object],
-        year: [String, Number]
+        year: [String, Number],
     },
     methods: {
         getData() {
-            console.log('okapex')
+
             axios.get(`/spese/spesemensili/${this.year}`).then(
                 res => {
-                    this.series[0].data = []
+                    console.log( res.data)
                     this.anno = this.year
-                    console.log(`/spese/spesemensili/${this.year}`)
                     this.series[0].data = res.data
-                    // console.log(this.series[0].data)
                 }
             )
+        },
+        updateChart(newSeries) {
+            if (this.$refs.apexChart) {
+                this.$refs.apexChart.updateSeries(newSeries, true);
+            }
         }
     },
     watch: {
-        year() {
-            console.log(`ora il valore di anno è ${this.year}`)
-            this.getData()
-            console.log('dati del grafico', this.series[0].data)
+        year(newYear) {
 
+            this.anno = newYear;
+            this.getData();
+
+        },
+        series: {
+            deep: true,
+            handler(newSeries) {
+                console.log('newseiers', newSeries)
+                this.updateChart(newSeries);
+            }
         }
     },
 
@@ -65,7 +70,8 @@ export default {
 
     },
     mounted() {
-        //console.log(this.years)
+
+        // this.$refs.apexChart = this.$el.querySelector('.apexcharts-canvas');
     }
 }
 </script>

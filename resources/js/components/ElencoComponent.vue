@@ -20,9 +20,9 @@
 
         </div>
         <div class="col-12">
-          
-           
-            <apexchart width="100%" height="300px" type="bar" :options="options" :series="series"></apexchart>
+
+            <!-- <apexchart :key="graphKey" width="100%" height="300px" type="bar" :options="options" :series="series"></apexchart> -->
+            <apexchart-componentt :year="localyear" />
             <table class="table table-striped">
 
                 <thead class="thead-dark">
@@ -54,6 +54,17 @@
                             {{ importiMensili.total.toFixed(2) }} €
                         </td>
                     </tr>
+
+                    <tr class="font-weight-bold bg-secondary text-white">
+                        <td class="font-weight-bold bg-secondary text-white">Totale</td>
+
+                        <td class="tots" v-for=" (tot,idx) in totPerMese" :key="idx">
+                            {{ tot }} €
+                        </td>
+
+                        <td class="font-weight-bold bg-secondary text-white">{{sommaArray}} €</td>
+
+                    </tr>
                 </tbody>
 
             </table>
@@ -62,7 +73,6 @@
 </div>
 </template>
 
-    
 <script>
 import ApexchartComponentt from './ApexchartComponentt.vue'
 export default {
@@ -72,62 +82,40 @@ export default {
     data() {
         return {
             dati: {},
+            graphKey: 0,
             localyear: this.anno,
-            options: {
-                chart: {
-                    id: 'vuechart-example'
-                },
-                xaxis: {
-                    categories: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic']
+            totPerMese: [],
 
-                }
-            },
-            series: [{
-                name: 'spese',
-                data: []
-            }],
             years: this.years_opt,
-            //anno:this.year
+
         }
     },
     methods: {
         filtra() {
+            this.graphKey++;
 
             axios.get(`${this.getdataurl}/${this.localyear}`)
                 .then(
                     res => {
                         this.dati = res.data;
-                        //console.log(`${this.getdataurl}/${this.localyear}`)
+
                         this.totalRecords = res.data.total
-                        //this.series[0].data = res.data
-                       // console.log(res.data)
+
                     }
-            )
+                )
 
             axios.get(`/spese/spesemensili/${this.localyear}`).then(
                 res => {
-                   this.series[0].data = []
-                   // this.anno = this.year
-                    console.log('spese')
-                    this.series[0].data = res.data
-                    console.log(res.data)
-                    console.log( this.series[0].data)
+
+                    this.totPerMese = res.data
 
                 }
             )
         },
         formatCurrency(value) {
-            // Implement your currency formatting logic here
-            return value.toFixed(2); // For now, just returning the value
-        },
-        getData() {
-            // console.log('ok')
-            // axios.get(`spese/spesemensili/${this.localyear}`).then(
-            //    res => console.log(res.data)
-            // )
 
-         
-        }
+            return value;
+        },
 
     },
     watch: {
@@ -135,6 +123,16 @@ export default {
             this.localyear = newval
             this.filtra()
             //console.log(this.localyear)
+        }
+    },
+    computed: {
+        sommaArray() {
+            let somma = 0;
+            for (let mese of this.totPerMese) {
+                somma += Number(mese);
+            }
+            return somma.toFixed(2);
+
         }
     },
     props: {
@@ -146,12 +144,15 @@ export default {
     },
     beforeMount() {
         this.filtra()
-        //this.getData()
+
     },
+    mounted() {
+        const tots = document.querySelectorAll('.tots');
+        console.log(tots)
+    }
 }
 </script>
 
-    
 <style>
 
     </style>
