@@ -12,6 +12,8 @@
     <div class="container card mt-5 p-4">
 
         <h2 class="mb-5">Importa file spese</h1>
+            <div><p>Caricare file Excel con estensione .xls</p></div>
+
 
             {!! Form::open(['url' => 'spese/carica_file', 'files' => true]) !!}
 

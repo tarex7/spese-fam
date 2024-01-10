@@ -9,6 +9,12 @@
             <form :action="`${type}/filtra`" method="get">
                 <div class="d-flex float-right my-4 ">
 
+                    <select class="form-control mx-1" v-model="chartType">
+                        <option value="bar">Bar</option>
+                        <option value="line">Line</option>
+                        <option value="area">Area</option>
+                    </select>
+
                     <select class="form-control mx-1" v-model="localyear" @change="filtra">
                         <option v-for="(label, value) in years_opt" :key="value" :value="value">
                             {{ label  }}
@@ -19,12 +25,15 @@
             </form>
 
         </div>
+
+        <div class="me-2 col-1"></div>
+        <div class="ms-5 col-10">
+            <div class="col-1"></div>
+            <apexchart-componentt :year="localyear" :chartType="chartType" />
+        </div>
+
         <div class="col-12">
-
-            <!-- <apexchart :key="graphKey" width="100%" height="300px" type="bar" :options="options" :series="series"></apexchart> -->
-            <apexchart-componentt :year="localyear" />
             <table class="table table-striped">
-
                 <thead class="thead-dark">
                     <tr>
                         <th scope="col">Spesa</th>
@@ -56,9 +65,9 @@
                     </tr>
 
                     <tr class="font-weight-bold bg-secondary text-white">
-                        <td class="font-weight-bold bg-secondary text-white">Totale</td>
+                        <td class="font-weight-bold bg-dark text-white">Totale</td>
 
-                        <td class="tots" v-for=" (tot,idx) in totPerMese" :key="idx">
+                        <td class="tots bg-dark text-white" v-for=" (tot,idx) in totPerMese" :key="idx">
                             {{ tot }} €
                         </td>
 
@@ -85,7 +94,7 @@ export default {
             graphKey: 0,
             localyear: this.anno,
             totPerMese: [],
-
+            chartType: 'bar',
             years: this.years_opt,
 
         }
@@ -104,17 +113,14 @@ export default {
                     }
                 )
 
-            axios.get(`/spese/spesemensili/${this.localyear}`).then(
+            axios.get(`/${this.type}/${this.type}mensili/${this.localyear}`).then(
                 res => {
-
+                    console.log(`/${this.type}/${this.type}mensili/${this.localyear}`)
+                    console.log('res.data', res.data)
                     this.totPerMese = res.data
 
                 }
             )
-        },
-        formatCurrency(value) {
-
-            return value;
         },
 
     },
@@ -122,14 +128,16 @@ export default {
         localyear(newval) {
             this.localyear = newval
             this.filtra()
-            //console.log(this.localyear)
+
         }
     },
     computed: {
         sommaArray() {
             let somma = 0;
-            for (let mese of this.totPerMese) {
-                somma += Number(mese);
+            if (Array.isArray(this.totPerMese)) {
+                for (let mese of this.totPerMese) {
+                    somma += Number(mese);
+                }
             }
             return somma.toFixed(2);
 
@@ -146,10 +154,7 @@ export default {
         this.filtra()
 
     },
-    mounted() {
-        const tots = document.querySelectorAll('.tots');
-        console.log(tots)
-    }
+    mounted() {}
 }
 </script>
 
