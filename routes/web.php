@@ -23,6 +23,7 @@ Route::middleware(['auth'])->group(function () {
 
 
     //SPESE
+    Route::redirect('/', '/spese');
 
     Route::any('/spese/salva', 'SpeseController@salva')->name('spese/salva');
     Route::any('/spese/aggiungi', 'SpeseController@aggiungi')->name('spese/aggiungi');

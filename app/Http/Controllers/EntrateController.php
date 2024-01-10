@@ -16,37 +16,46 @@ class entrateController extends Controller
 {
 
     private function EntrateQuery()
-    {
-        return Entrate::with(['categorie_entrate', 'tipologia'])
-            ->where('attivo', 1)
-            ->where('importo', '>', 0);
-    }
+{
+    // Questa funzione restituisce una query base per le entrate.
+    // Include le relazioni 'categorie_entrate' e 'tipologia'.
+    // Filtra per le entrate attive e con un importo maggiore di zero.
+    return Entrate::with(['categorie_entrate', 'tipologia'])
+        ->where('attivo', 1)
+        ->where('importo', '>', 0);
+}
 
+public function index($anno = null)
+{
+    // Utilizza Carbon per ottenere la data e l'ora attuali.
+    $now = Carbon::now();
 
-    public function index($anno = null)
-    {
-        
-        $now = Carbon::now();
-        $anno_sel = $anno ?? $now->year;
-        $mese_sel = $now->month;
+    // Imposta l'anno selezionato all'anno fornito, o usa l'anno corrente se non specificato.
+    $anno_sel = $anno ?? $now->year;
 
-        $entrate = $this->EntrateQuery()
-        ->with('categorie_entrate', 'tipologia')
-        ->get();
+    // Imposta il mese selezionato al mese corrente.
+    $mese_sel = $now->month;
 
-        $totale = $entrate->sum('importo');
+    // Esegue la query predefinita delle entrate (definita in EntrateQuery).
+    // Include le relazioni 'categorie_entrate' e 'tipologia'.
+    $entrate = $this->EntrateQuery()->get();
 
-        return view('entrate.entrate')
-            ->with('entrate', $entrate)
-            ->with('anno', $anno_sel)
-            ->with('mese', $mese_sel)
-            ->with('years', Entrate::getYearsOptions())
-            ->with('mesi', Entrate::getMesiOptions())
-            ->with('cat', entrate::getCategorieOptions())
-            ->with('tip', entrate::getTipologiaOptions())
-            ->with('entrate_id', null)
-            ->with('totale', $totale);
-    }
+    // Calcola il totale delle entrate sommando l'importo di ogni entrata.
+    $totale = $entrate->sum('importo');
+
+    
+    return view('entrate.entrate')
+        ->with('entrate', $entrate) // passa le entrate alla vista
+        ->with('anno', $anno_sel) // passa l'anno selezionato
+        ->with('mese', $mese_sel) // passa il mese selezionato
+        ->with('years', Entrate::getYearsOptions()) // passa le opzioni degli anni disponibili
+        ->with('mesi', Entrate::getMesiOptions()) // passa le opzioni dei mesi disponibili
+        ->with('cat', Entrate::getCategorieOptions()) // passa le opzioni delle categorie di entrate
+        ->with('tip', Entrate::getTipologiaOptions()) // passa le opzioni delle tipologie di entrate
+        ->with('entrate_id', null) // passa un identificativo per le entrate (null in questo caso)
+        ->with('totale', $totale); // passa il totale delle entrate
+}
+
 
 
     public function aggiungi(AddSpesaRequest $request)
