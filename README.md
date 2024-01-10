@@ -1,3 +1,39 @@
+
+# Documentazione per il Caricamento del File Excel per la Gestione delle Spese
+
+## Panoramica
+Questa documentazione fornisce linee guida dettagliate su come preparare e caricare un file Excel per l'importazione delle spese nell'applicazione di gestione delle spese familiari. Il file Excel deve essere strutturato in un formato specifico per garantire un caricamento e un'elaborazione corretti dei dati delle spese.
+
+## Formato del File Excel
+Il file Excel deve seguire lo schema sottostante per assicurare la corretta interpretazione dei dati:
+
+### Intestazioni delle Colonne:
+- La prima riga del foglio Excel deve contenere le intestazioni delle colonne.
+- La prima colonna deve contenere i nomi delle categorie di spese.
+- Le colonne successive devono rappresentare i mesi dell'anno, da Gennaio a Dicembre.
+
+### Dati delle Spese:
+- Ogni riga successiva alla prima deve rappresentare una categoria di spesa specifica.
+- Nella prima colonna di ciascuna riga deve essere indicato il nome della categoria di spesa.
+- Nelle colonne da 2 a 13 (corrispondenti ai mesi da Gennaio a Dicembre), devono essere inseriti gli importi delle spese per ogni mese.
+
+### Formato dei Mesi:
+- I mesi devono essere rappresentati in formato numerico con due cifre (01 per Gennaio, 02 per Febbraio, ecc.).
+
+### Valori delle Spese:
+- Gli importi delle spese devono essere inseriti nelle rispettive colonne mensili.
+- Se non ci sono spese per un determinato mese, lasciare la cella vuota o inserire 0.00.
+
+### Anno di Riferimento:
+- L'anno di riferimento per le spese deve essere fornito separatamente al momento del caricamento del file.
+
+### Formato del File:
+- Il file deve essere in formato `.xls` o `.xlsx`.
+
+## Esempio del Layout del File Excel
+
+
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
 
 <p align="center">
