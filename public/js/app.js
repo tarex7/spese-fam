@@ -4281,7 +4281,8 @@ __webpack_require__.r(__webpack_exports__);
   },
   props: {
     years_opt: [Object],
-    year: [String, Number]
+    year: [String, Number],
+    chartType: [String]
   },
   methods: {
     getData: function getData() {
@@ -4291,6 +4292,10 @@ __webpack_require__.r(__webpack_exports__);
         _this.anno = _this.year;
         _this.series[0].data = res.data;
       });
+    },
+    updateChartType: function updateChartType(newType) {
+      this.options.chart.type = newType;
+      this.updateChart();
     },
     updateChart: function updateChart(newSeries) {
       if (this.$refs.apexChart) {
@@ -4309,6 +4314,9 @@ __webpack_require__.r(__webpack_exports__);
         console.log('newseiers', newSeries);
         this.updateChart(newSeries);
       }
+    },
+    chartType: function chartType(newType) {
+      this.updateChartType(newType);
     }
   },
   beforeMount: function beforeMount() {
@@ -4815,6 +4823,15 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -4827,6 +4844,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       graphKey: 0,
       localyear: this.anno,
       totPerMese: [],
+      chartType: 'bar',
       years: this.years_opt
     };
   },
@@ -4838,36 +4856,35 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         _this.dati = res.data;
         _this.totalRecords = res.data.total;
       });
-      axios.get("/spese/spesemensili/".concat(this.localyear)).then(function (res) {
+      axios.get("/".concat(this.type, "/").concat(this.type, "mensili/").concat(this.localyear)).then(function (res) {
+        console.log("/".concat(_this.type, "/").concat(_this.type, "mensili/").concat(_this.localyear));
+        console.log('res.data', res.data);
         _this.totPerMese = res.data;
       });
-    },
-    formatCurrency: function formatCurrency(value) {
-      return value;
     }
   },
   watch: {
     localyear: function localyear(newval) {
       this.localyear = newval;
       this.filtra();
-      //console.log(this.localyear)
     }
   },
-
   computed: {
     sommaArray: function sommaArray() {
       var somma = 0;
-      var _iterator = _createForOfIteratorHelper(this.totPerMese),
-        _step;
-      try {
-        for (_iterator.s(); !(_step = _iterator.n()).done;) {
-          var mese = _step.value;
-          somma += Number(mese);
+      if (Array.isArray(this.totPerMese)) {
+        var _iterator = _createForOfIteratorHelper(this.totPerMese),
+          _step;
+        try {
+          for (_iterator.s(); !(_step = _iterator.n()).done;) {
+            var mese = _step.value;
+            somma += Number(mese);
+          }
+        } catch (err) {
+          _iterator.e(err);
+        } finally {
+          _iterator.f();
         }
-      } catch (err) {
-        _iterator.e(err);
-      } finally {
-        _iterator.f();
       }
       return somma.toFixed(2);
     }
@@ -4882,10 +4899,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   beforeMount: function beforeMount() {
     this.filtra();
   },
-  mounted: function mounted() {
-    var tots = document.querySelectorAll('.tots');
-    console.log(tots);
-  }
+  mounted: function mounted() {}
 });
 
 /***/ }),
@@ -41411,10 +41425,11 @@ var render = function () {
     [
       _c("apexchart", {
         ref: "apexChart",
+        staticClass: "ms-3",
         attrs: {
-          width: "100%",
+          width: "95%",
           height: "300px",
-          type: "bar",
+          type: _vm.chartType,
           options: _vm.options,
           series: _vm.series,
         },
@@ -42321,6 +42336,47 @@ var render = function () {
                       {
                         name: "model",
                         rawName: "v-model",
+                        value: _vm.chartType,
+                        expression: "chartType",
+                      },
+                    ],
+                    staticClass: "form-control mx-1",
+                    on: {
+                      change: function ($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function (o) {
+                            return o.selected
+                          })
+                          .map(function (o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.chartType = $event.target.multiple
+                          ? $$selectedVal
+                          : $$selectedVal[0]
+                      },
+                    },
+                  },
+                  [
+                    _c("option", { attrs: { value: "bar" } }, [_vm._v("Bar")]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "line" } }, [
+                      _vm._v("Line"),
+                    ]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "area" } }, [
+                      _vm._v("Area"),
+                    ]),
+                  ]
+                ),
+                _vm._v(" "),
+                _c(
+                  "select",
+                  {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
                         value: _vm.localyear,
                         expression: "localyear",
                       },
@@ -42366,117 +42422,120 @@ var render = function () {
         ]
       ),
       _vm._v(" "),
+      _c("div", { staticClass: "me-2 col-1" }),
+      _vm._v(" "),
       _c(
         "div",
-        { staticClass: "col-12" },
+        { staticClass: "ms-5 col-10" },
         [
-          _c("apexchart-componentt", { attrs: { year: _vm.localyear } }),
+          _c("div", { staticClass: "col-1" }),
           _vm._v(" "),
-          _c("table", { staticClass: "table table-striped" }, [
-            _vm._m(0),
-            _vm._v(" "),
-            _c(
-              "tbody",
-              [
-                _vm._l(_vm.dati, function (importiMensili, categoria) {
-                  return _c(
-                    "tr",
-                    { key: categoria },
-                    [
-                      _c(
-                        "td",
-                        {
-                          staticClass:
-                            "font-weight-bold bg-secondary text-white",
-                        },
-                        [_vm._v(_vm._s(categoria))]
-                      ),
-                      _vm._v(" "),
-                      _vm._l(
-                        Array.from({ length: 12 }, function (_, i) {
-                          return i + 1
-                        }),
-                        function (mese) {
-                          return _c(
-                            "td",
-                            {
-                              key: mese,
-                              class: {
-                                "text-muted": importiMensili[mese] === 0,
-                              },
-                            },
-                            [
-                              _vm._v(
-                                "\r\n                            " +
-                                  _vm._s(
-                                    importiMensili.importi_mensili[
-                                      mese
-                                    ].toFixed(2)
-                                  ) +
-                                  " €\r\n                        "
-                              ),
-                            ]
-                          )
-                        }
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "td",
-                        {
-                          staticClass: "font-weight-bold bg-warning text-dark",
-                        },
-                        [
-                          _vm._v(
-                            "\r\n                            " +
-                              _vm._s(importiMensili.total.toFixed(2)) +
-                              " €\r\n                        "
-                          ),
-                        ]
-                      ),
-                    ],
-                    2
-                  )
-                }),
-                _vm._v(" "),
-                _c(
+          _c("apexchart-componentt", {
+            attrs: { year: _vm.localyear, chartType: _vm.chartType },
+          }),
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c("div", { staticClass: "col-12" }, [
+        _c("table", { staticClass: "table table-striped" }, [
+          _vm._m(0),
+          _vm._v(" "),
+          _c(
+            "tbody",
+            [
+              _vm._l(_vm.dati, function (importiMensili, categoria) {
+                return _c(
                   "tr",
-                  { staticClass: "font-weight-bold bg-secondary text-white" },
+                  { key: categoria },
                   [
                     _c(
                       "td",
                       {
                         staticClass: "font-weight-bold bg-secondary text-white",
                       },
-                      [_vm._v("Totale")]
+                      [_vm._v(_vm._s(categoria))]
                     ),
                     _vm._v(" "),
-                    _vm._l(_vm.totPerMese, function (tot, idx) {
-                      return _c("td", { key: idx, staticClass: "tots" }, [
+                    _vm._l(
+                      Array.from({ length: 12 }, function (_, i) {
+                        return i + 1
+                      }),
+                      function (mese) {
+                        return _c(
+                          "td",
+                          {
+                            key: mese,
+                            class: { "text-muted": importiMensili[mese] === 0 },
+                          },
+                          [
+                            _vm._v(
+                              "\r\n                            " +
+                                _vm._s(
+                                  importiMensili.importi_mensili[mese].toFixed(
+                                    2
+                                  )
+                                ) +
+                                " €\r\n                        "
+                            ),
+                          ]
+                        )
+                      }
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "td",
+                      { staticClass: "font-weight-bold bg-warning text-dark" },
+                      [
+                        _vm._v(
+                          "\r\n                            " +
+                            _vm._s(importiMensili.total.toFixed(2)) +
+                            " €\r\n                        "
+                        ),
+                      ]
+                    ),
+                  ],
+                  2
+                )
+              }),
+              _vm._v(" "),
+              _c(
+                "tr",
+                { staticClass: "font-weight-bold bg-secondary text-white" },
+                [
+                  _c(
+                    "td",
+                    { staticClass: "font-weight-bold bg-dark text-white" },
+                    [_vm._v("Totale")]
+                  ),
+                  _vm._v(" "),
+                  _vm._l(_vm.totPerMese, function (tot, idx) {
+                    return _c(
+                      "td",
+                      { key: idx, staticClass: "tots bg-dark text-white" },
+                      [
                         _vm._v(
                           "\r\n                            " +
                             _vm._s(tot) +
                             " €\r\n                        "
                         ),
-                      ])
-                    }),
-                    _vm._v(" "),
-                    _c(
-                      "td",
-                      {
-                        staticClass: "font-weight-bold bg-secondary text-white",
-                      },
-                      [_vm._v(_vm._s(_vm.sommaArray) + " €")]
-                    ),
-                  ],
-                  2
-                ),
-              ],
-              2
-            ),
-          ]),
-        ],
-        1
-      ),
+                      ]
+                    )
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "td",
+                    { staticClass: "font-weight-bold bg-secondary text-white" },
+                    [_vm._v(_vm._s(_vm.sommaArray) + " €")]
+                  ),
+                ],
+                2
+              ),
+            ],
+            2
+          ),
+        ]),
+      ]),
     ]),
   ])
 }
