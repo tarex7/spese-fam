@@ -1,3 +1,58 @@
+# Documentazione Applicazione di Gestione Spese ed Entrate
+
+## Panoramica
+Questa applicazione è progettata per aiutare gli utenti nella gestione delle loro spese ed entrate familiari. Consente di tracciare le spese e le entrate, creare categorie personalizzate, visualizzare i dati in vari formati e importare dati tramite file Excel.
+
+## Funzionalità dell'Applicazione
+
+### 1. Gestione delle Spese e delle Entrate
+- Gli utenti possono registrare le spese e le entrate, specificando l'importo, la data, e associandole a una categoria.
+- È possibile modificare o eliminare voci esistenti.
+
+### 2. Creazione di Nuove Categorie di Spese/Entrate
+- Gli utenti hanno la possibilità di creare nuove categorie per organizzare meglio le spese e le entrate.
+- Ogni categoria può essere personalizzata in base alle esigenze dell'utente.
+
+### 3. Visualizzazione Elenco Spese/Entrate
+- L'applicazione offre una visualizzazione dettagliata delle spese e delle entrate.
+- Gli utenti possono visualizzare i dati in una tabella che include dettagli come importo, data, e categoria.
+
+### 4. Grafici e Analisi
+- Per una migliore comprensione delle tendenze di spesa e entrata, l'applicazione fornisce grafici.
+- I grafici aiutano a visualizzare la distribuzione delle spese e delle entrate per categoria o periodo di tempo.
+
+### 5. Importazione Dati da File Excel
+- Gli utenti possono importare dati di spese e entrate da un file Excel.
+- Il file deve seguire un formato specifico per garantire una corretta importazione.
+
+## Utilizzo dell'Applicazione
+
+### Registrazione di una Spesa/Entrata
+- Selezionare l'opzione "Aggiungi Spesa/Entrata" dall'interfaccia principale.
+- Compilare il form con i dettagli necessari e salvare.
+
+### Creazione di una Nuova Categoria
+- Accedere alla sezione "Categorie".
+- Utilizzare l'opzione "Crea Nuova Categoria" per aggiungere una nuova categoria.
+
+### Visualizzazione Dati
+- Nella sezione "Elenco Spese/Entrate", gli utenti possono vedere tutte le voci registrate.
+- Utilizzare i filtri per personalizzare la visualizzazione.
+
+### Analisi Grafica
+- Accedere alla sezione "Grafici" per una visualizzazione grafica dei dati.
+- Scegliere tra diversi tipi di grafici per analizzare le tendenze.
+
+### Importazione da Excel
+- Nella sezione "Importa", caricare un file Excel seguendo il formato specificato nella documentazione.
+- Verificare e confermare l'importazione dei dati.
+
+## Note Importanti
+- È consigliato eseguire un backup dei dati regolarmente per prevenire la perdita di dati.
+- Assicurarsi che il file Excel per l'importazione segua il formato corretto come descritto nella documentazione specifica.
+- Le categorie aiutano a organizzare meglio i dati e a ottenere analisi più precise.
+
+Per ulteriori dettagli o supporto, consultare la sezione FAQ o contattare l'assistenza clienti.
 
 # Documentazione per il Caricamento del File Excel per la Gestione delle Spese
 
