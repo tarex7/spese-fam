@@ -31,6 +31,11 @@ Il file Excel deve seguire lo schema sottostante per assicurare la corretta inte
 - Il file deve essere in formato `.xls` o `.xlsx`.
 
 ## Esempio del Layout del File Excel
+Categoria	01	02	03	...	12
+Alimentari	250	200	300	...	150
+Abbigliamento	100	50	75	...	20
+Intrattenimento	150	120	90	...	200
+...	...	...	...	...	...
 
 
 
