@@ -38,6 +38,18 @@ Intrattenimento	150	120	90	...	200
 ...	...	...	...	...	...
 
 
+## Istruzioni per il Caricamento
+
+- Assicurati che il file Excel rispetti il formato descritto sopra.
+- Nella pagina di importazione dell'applicazione, seleziona l'anno di riferimento per le spese.
+- Carica il file Excel seguendo le istruzioni fornite nell'interfaccia dell'applicazione.
+
+## Note Importanti
+
+- Assicurati che i nomi delle categorie di spese nel file Excel corrispondano a quelle esistenti nell'applicazione. Se una categoria non esiste, verrà creata automaticamente.
+- I dati esistenti per le categorie e i mesi specificati non verranno sovrascritti. Ogni riga nel file Excel aggiungerà nuove informazioni alle spese esistenti.
+- È consigliabile fare un backup dei dati correnti prima di procedere con il caricamento di nuove informazioni.
+
 
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
 
