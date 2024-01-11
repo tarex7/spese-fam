@@ -12,7 +12,7 @@
                 <form :action="`${type}/filtra`" method="get">
                     <div class="d-flex float-right my-4">
     
-                        <a class="btn btn-primary  mr-5" :href="`/${type}/elenco/${anno}`">Elenco</a>
+                        <a class="btn btn-primary  mr-5" :href="`/${type}/elenco/${year}`">Elenco</a>
     
                         <select class="form-control mx-1" v-model="year" @change="filtra">
                             <option v-for="(label, value) in years_opt" :key="value" :value="value">
