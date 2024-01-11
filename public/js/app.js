@@ -4251,6 +4251,10 @@ module.exports = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
 //
 //
 //
@@ -4262,17 +4266,136 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
+    var _xaxis;
     return {
       options: {
-        chart: {
-          id: 'vuechart-example'
+        dataLabels: {
+          enabled: false,
+          style: {
+            fontSize: '12px',
+            // Riduci la dimensione del font delle etichette
+            colors: ["#000"]
+          }
         },
-        xaxis: {
-          categories: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic']
-        }
+        chart: {
+          type: "bar" // Default chart type
+        },
+
+        plotOptions: {
+          bar: {
+            dataLabels: {
+              position: 'top' // Posizione le etichette sopra le barre
+            }
+          }
+        },
+
+        xaxis: (_xaxis = {
+          categories: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'],
+          type: 'category'
+        }, _defineProperty(_xaxis, "categories", []), _defineProperty(_xaxis, "tickAmount", undefined), _defineProperty(_xaxis, "tickPlacement", 'on'), _defineProperty(_xaxis, "min", undefined), _defineProperty(_xaxis, "max", undefined), _defineProperty(_xaxis, "range", undefined), _defineProperty(_xaxis, "floating", false), _defineProperty(_xaxis, "decimalsInFloat", undefined), _defineProperty(_xaxis, "overwriteCategories", undefined), _defineProperty(_xaxis, "position", 'bottom'), _defineProperty(_xaxis, "labels", {
+          show: true,
+          rotate: -45,
+          rotateAlways: false,
+          hideOverlappingLabels: true,
+          showDuplicates: false,
+          trim: false,
+          minHeight: undefined,
+          maxHeight: 120,
+          style: {
+            colors: [],
+            fontSize: '12px',
+            fontFamily: 'Helvetica, Arial, sans-serif',
+            fontWeight: 400,
+            cssClass: 'apexcharts-xaxis-label'
+          },
+          offsetX: 0,
+          offsetY: 0,
+          format: undefined,
+          formatter: undefined,
+          datetimeUTC: true,
+          datetimeFormatter: {
+            year: 'yyyy',
+            month: "MMM 'yy",
+            day: 'dd MMM',
+            hour: 'HH:mm'
+          }
+        }), _defineProperty(_xaxis, "group", {
+          groups: [],
+          style: {
+            colors: [],
+            fontSize: '12px',
+            fontWeight: 400,
+            fontFamily: undefined,
+            cssClass: ''
+          }
+        }), _defineProperty(_xaxis, "axisBorder", {
+          show: true,
+          color: '#78909C',
+          height: 1,
+          width: '100%',
+          offsetX: 0,
+          offsetY: 0
+        }), _defineProperty(_xaxis, "axisTicks", {
+          show: true,
+          borderType: 'solid',
+          color: '#78909C',
+          height: 6,
+          offsetX: 0,
+          offsetY: 0
+        }), _defineProperty(_xaxis, "title", {
+          text: undefined,
+          offsetX: 0,
+          offsetY: 0,
+          style: {
+            color: undefined,
+            fontSize: '12px',
+            fontFamily: 'Helvetica, Arial, sans-serif',
+            fontWeight: 600,
+            cssClass: 'apexcharts-xaxis-title'
+          }
+        }), _defineProperty(_xaxis, "crosshairs", {
+          show: true,
+          width: 1,
+          position: 'back',
+          opacity: 0.9,
+          stroke: {
+            color: '#b6b6b6',
+            width: 0,
+            dashArray: 0
+          },
+          fill: {
+            type: 'solid',
+            color: '#B1B9C4',
+            gradient: {
+              colorFrom: '#D8E3F0',
+              colorTo: '#BED1E6',
+              stops: [0, 100],
+              opacityFrom: 0.4,
+              opacityTo: 0.5
+            }
+          },
+          dropShadow: {
+            enabled: false,
+            top: 0,
+            left: 0,
+            blur: 1,
+            opacity: 0.4
+          }
+        }), _defineProperty(_xaxis, "tooltip", {
+          enabled: true,
+          formatter: undefined,
+          offsetY: 0,
+          style: {
+            fontSize: 0,
+            fontFamily: 0
+          }
+        }), _xaxis)
       },
       series: [{
-        name: 'spese',
+        name: "spese ".concat(this.year[0]),
+        data: []
+      }, {
+        name: "",
         data: []
       }],
       years: this.years_opt,
@@ -4281,16 +4404,21 @@ __webpack_require__.r(__webpack_exports__);
   },
   props: {
     years_opt: [Object],
-    year: [String, Number],
+    year: [Array],
+    type: [String],
     chartType: [String]
   },
   methods: {
     getData: function getData() {
       var _this = this;
-      axios.get("/spese/spesemensili/".concat(this.year)).then(function (res) {
-        console.log(res.data);
-        _this.anno = _this.year;
-        _this.series[0].data = res.data;
+      console.log(this.year);
+      // Itera sui anni selezionati e ottieni i dati per ciascuno
+      this.year.forEach(function (year) {
+        axios.get("/".concat(_this.type, "/").concat(_this.type, "mensili/").concat(year)).then(function (res) {
+          // Assumi che l'indice 0 sia per il primo anno e l'indice 1 per il secondo
+          var index = _this.year.indexOf(year);
+          _this.series[index].data = res.data;
+        });
       });
     },
     updateChartType: function updateChartType(newType) {
@@ -4305,13 +4433,16 @@ __webpack_require__.r(__webpack_exports__);
   },
   watch: {
     year: function year(newYear) {
-      this.anno = newYear;
+      this.series[1].name = 'spese ' + this.year[1];
+      console.log('this.year', this.year);
+      this.anno = this.year[0];
+      console.log(this.anno);
       this.getData();
     },
     series: {
       deep: true,
       handler: function handler(newSeries) {
-        console.log('newseiers', newSeries);
+        console.log('newSeries', newSeries);
         this.updateChart(newSeries);
       }
     },
@@ -4832,6 +4963,13 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -4843,29 +4981,36 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       dati: {},
       graphKey: 0,
       localyear: this.anno,
+      localyear2: null,
       totPerMese: [],
       chartType: 'bar',
-      years: this.years_opt
+      years: this.years_opt,
+      selectedYears: [] // Anni selezionati per il confronto
     };
   },
+
   methods: {
     filtra: function filtra() {
       var _this = this;
       this.graphKey++;
+      this.selectedYears[0] = this.localyear;
+      this.selectedYears.splice(1, 1, this.localyear2);
       axios.get("".concat(this.getdataurl, "/").concat(this.localyear)).then(function (res) {
         _this.dati = res.data;
         _this.totalRecords = res.data.total;
       });
       axios.get("/".concat(this.type, "/").concat(this.type, "mensili/").concat(this.localyear)).then(function (res) {
-        console.log("/".concat(_this.type, "/").concat(_this.type, "mensili/").concat(_this.localyear));
-        console.log('res.data', res.data);
+        //  console.log(`/${this.type}/${this.type}mensili/${this.localyear}`)
+        // console.log('res.data', res.data)
         _this.totPerMese = res.data;
       });
     }
   },
   watch: {
     localyear: function localyear(newval) {
-      this.localyear = newval;
+      // console.log(this.selectedYears)
+      // this.localyear = newval
+
       this.filtra();
     }
   },
@@ -4899,7 +5044,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   beforeMount: function beforeMount() {
     this.filtra();
   },
-  mounted: function mounted() {}
+  mounted: function mounted() {
+    // console.log('this.anno elenco', this.localyear)
+    // console.log(this.selectedYears)
+  }
 });
 
 /***/ }),
@@ -41427,8 +41575,8 @@ var render = function () {
         ref: "apexChart",
         staticClass: "ms-3",
         attrs: {
-          width: "95%",
-          height: "300px",
+          width: "100%",
+          height: "350px",
           type: _vm.chartType,
           options: _vm.options,
           series: _vm.series,
@@ -41486,7 +41634,7 @@ var render = function () {
                     "a",
                     {
                       staticClass: "btn btn-primary  mr-5",
-                      attrs: { href: "/" + _vm.type + "/elenco/" + _vm.anno },
+                      attrs: { href: "/" + _vm.type + "/elenco/" + _vm.year },
                     },
                     [_vm._v("Elenco")]
                   ),
@@ -42416,22 +42564,69 @@ var render = function () {
                   }),
                   0
                 ),
+                _vm._v(" "),
+                _c(
+                  "select",
+                  {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.localyear2,
+                        expression: "localyear2",
+                      },
+                    ],
+                    staticClass: "form-control mx-1",
+                    on: {
+                      change: [
+                        function ($event) {
+                          var $$selectedVal = Array.prototype.filter
+                            .call($event.target.options, function (o) {
+                              return o.selected
+                            })
+                            .map(function (o) {
+                              var val = "_value" in o ? o._value : o.value
+                              return val
+                            })
+                          _vm.localyear2 = $event.target.multiple
+                            ? $$selectedVal
+                            : $$selectedVal[0]
+                        },
+                        _vm.filtra,
+                      ],
+                    },
+                  },
+                  _vm._l(_vm.years_opt, function (label, value) {
+                    return _c(
+                      "option",
+                      { key: value, domProps: { value: value } },
+                      [
+                        _vm._v(
+                          "\r\n                            " +
+                            _vm._s(label) +
+                            "\r\n                        "
+                        ),
+                      ]
+                    )
+                  }),
+                  0
+                ),
               ]),
             ]
           ),
         ]
       ),
       _vm._v(" "),
-      _c("div", { staticClass: "me-2 col-1" }),
-      _vm._v(" "),
       _c(
         "div",
-        { staticClass: "ms-5 col-10" },
+        { staticClass: " col-12" },
         [
-          _c("div", { staticClass: "col-1" }),
-          _vm._v(" "),
           _c("apexchart-componentt", {
-            attrs: { year: _vm.localyear, chartType: _vm.chartType },
+            attrs: {
+              year: _vm.selectedYears,
+              chartType: _vm.chartType,
+              type: _vm.type,
+            },
           }),
         ],
         1
