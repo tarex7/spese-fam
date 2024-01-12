@@ -4392,7 +4392,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
         }), _xaxis)
       },
       series: [{
-        name: "spese ".concat(this.year[0]),
+        name: "".concat(this.type, " ").concat(this.year[0]),
         data: []
       }, {
         name: "",
@@ -4411,13 +4411,14 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
   methods: {
     getData: function getData() {
       var _this = this;
-      console.log(this.year);
       // Itera sui anni selezionati e ottieni i dati per ciascuno
       this.year.forEach(function (year) {
         axios.get("/".concat(_this.type, "/").concat(_this.type, "mensili/").concat(year)).then(function (res) {
+          console.log('dati axios', res.data);
           // Assumi che l'indice 0 sia per il primo anno e l'indice 1 per il secondo
           var index = _this.year.indexOf(year);
           _this.series[index].data = res.data;
+          console.log('series', _this.series);
         });
       });
     },
@@ -4432,17 +4433,14 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
     }
   },
   watch: {
-    year: function year(newYear) {
-      this.series[1].name = 'spese ' + this.year[1];
-      console.log('this.year', this.year);
+    year: function year() {
+      this.series[1].name = this.type + ' ' + this.year[1];
       this.anno = this.year[0];
-      console.log(this.anno);
       this.getData();
     },
     series: {
       deep: true,
       handler: function handler(newSeries) {
-        console.log('newSeries', newSeries);
         this.updateChart(newSeries);
       }
     },
@@ -4453,10 +4451,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
   beforeMount: function beforeMount() {
     this.getData();
   },
-  mounted: function mounted() {
-
-    // this.$refs.apexChart = this.$el.querySelector('.apexcharts-canvas');
-  }
+  mounted: function mounted() {}
 });
 
 /***/ }),
@@ -4970,6 +4965,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -4981,7 +4977,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       dati: {},
       graphKey: 0,
       localyear: this.anno,
-      localyear2: null,
+      localyear2: 0,
       totPerMese: [],
       chartType: 'bar',
       years: this.years_opt,
@@ -5000,17 +4996,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         _this.totalRecords = res.data.total;
       });
       axios.get("/".concat(this.type, "/").concat(this.type, "mensili/").concat(this.localyear)).then(function (res) {
-        //  console.log(`/${this.type}/${this.type}mensili/${this.localyear}`)
-        // console.log('res.data', res.data)
         _this.totPerMese = res.data;
       });
     }
   },
   watch: {
     localyear: function localyear(newval) {
-      // console.log(this.selectedYears)
-      // this.localyear = newval
-
       this.filtra();
     }
   },
@@ -5044,10 +5035,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   beforeMount: function beforeMount() {
     this.filtra();
   },
-  mounted: function mounted() {
-    // console.log('this.anno elenco', this.localyear)
-    // console.log(this.selectedYears)
-  }
+  mounted: function mounted() {}
 });
 
 /***/ }),
@@ -42489,6 +42477,7 @@ var render = function () {
                       },
                     ],
                     staticClass: "form-control mx-1",
+                    attrs: { id: "chartType" },
                     on: {
                       change: function ($event) {
                         var $$selectedVal = Array.prototype.filter
