@@ -152,7 +152,7 @@ export default {
                 },
             },
             series: [{
-                name: `spese ${this.year[0]}`,
+                name: `${this.type} ${this.year[0]}`,
                 data: []
             }, {
                 name: ``,
@@ -171,13 +171,15 @@ export default {
     },
     methods: {
         getData() {
-            console.log(this.year)
+           
             // Itera sui anni selezionati e ottieni i dati per ciascuno
             this.year.forEach(year => {
                 axios.get(`/${this.type}/${this.type}mensili/${year}`).then(res => {
+                    console.log('dati axios',res.data)
                     // Assumi che l'indice 0 sia per il primo anno e l'indice 1 per il secondo
                     const index = this.year.indexOf(year);
                     this.series[index].data = res.data;
+                    console.log('series',this.series)
                 });
             });
         },
@@ -192,11 +194,11 @@ export default {
         }
     },
     watch: {
-        year(newYear) {
-            this.series[1].name = 'spese ' + this.year[1]
-            console.log('this.year', this.year)
+        year() {
+            this.series[1].name = this.type + ' ' + this.year[1]
+          
             this.anno = this.year[0];
-            console.log(this.anno)
+           
             this.getData();
 
         },
@@ -204,7 +206,7 @@ export default {
         series: {
             deep: true,
             handler(newSeries) {
-                console.log('newSeries', newSeries)
+              
                 this.updateChart(newSeries);
             }
         },
@@ -221,7 +223,7 @@ export default {
     },
     mounted() {
 
-        // this.$refs.apexChart = this.$el.querySelector('.apexcharts-canvas');
+       
     }
 }
 </script>

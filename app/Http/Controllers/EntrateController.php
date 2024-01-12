@@ -127,7 +127,7 @@ public function index($anno = null)
 
     public function calcolaentrateMensili($year)
     {
-        return entrate::where('attivo', 1)
+        $entrateMensili = Entrate::where('attivo', 1)
             ->whereYear('data', $year)
             ->get()
             ->groupBy(function ($data) {
@@ -135,7 +135,23 @@ public function index($anno = null)
             })
             ->mapWithKeys(function ($item, $key) {
                 return [$key => $item->sum('importo')]; // calcola la somma per ogni mese
-            });
+            })
+            ->toArray(); // Converte la collection in un array
+
+        $formatted = array_map(function ($item) {
+            return number_format($item, 2, '.', '');
+        }, $entrateMensili);
+
+        // Inizializza un array con 12 elementi (tutti zero)
+        $result = array_fill(1, 12, 0);
+
+        // Sostituisce i valori calcolati nei mesi corrispondenti
+        foreach ($formatted as $month => $value) {
+            $result[intval($month)] = $value;
+        }
+
+        // Assicurati che il risultato sia sempre un array numerico con 12 elementi
+        return array_values($result);
     }
 
 

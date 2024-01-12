@@ -9,7 +9,8 @@
             <form :action="`${type}/filtra`" method="get">
                 <div class="d-flex float-right my-4 ">
 
-                    <select class="form-control mx-1" v-model="chartType">
+                  
+                    <select id="chartType" class="form-control mx-1" v-model="chartType">
                         <option value="bar">Bar</option>
                         <option value="line">Line</option>
                         <option value="area">Area</option>
@@ -22,6 +23,7 @@
                     </select>
 
                     <select class="form-control mx-1" v-model="localyear2" @change="filtra">
+                      
                         <option v-for="(label, value) in years_opt" :key="value" :value="value">
                             {{ label  }}
                         </option>
@@ -33,9 +35,8 @@
 
         </div>
 
-       
         <div class=" col-12">
-           
+
             <apexchart-componentt :year="selectedYears" :chartType="chartType" :type="type" />
         </div>
 
@@ -100,7 +101,7 @@ export default {
             dati: {},
             graphKey: 0,
             localyear: this.anno,
-            localyear2: null,
+            localyear2: 0,
             totPerMese: [],
             chartType: 'bar',
             years: this.years_opt,
@@ -110,7 +111,7 @@ export default {
     methods: {
         filtra() {
             this.graphKey++;
-            
+
             this.selectedYears[0] = this.localyear
             this.selectedYears.splice(1, 1, this.localyear2)
 
@@ -126,8 +127,7 @@ export default {
 
             axios.get(`/${this.type}/${this.type}mensili/${this.localyear}`).then(
                 res => {
-                    //  console.log(`/${this.type}/${this.type}mensili/${this.localyear}`)
-                    // console.log('res.data', res.data)
+                   
                     this.totPerMese = res.data
 
                 }
@@ -137,9 +137,7 @@ export default {
     },
     watch: {
         localyear(newval) {
-            // console.log(this.selectedYears)
-            // this.localyear = newval
-
+          
             this.filtra()
 
         }
@@ -168,8 +166,7 @@ export default {
 
     },
     mounted() {
-        // console.log('this.anno elenco', this.localyear)
-        // console.log(this.selectedYears)
+       
     }
 }
 </script>
