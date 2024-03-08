@@ -4466,6 +4466,14 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ConfirmModal_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ConfirmModal.vue */ "./resources/js/components/ConfirmModal.vue");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+//
+//
 //
 //
 //
@@ -4678,13 +4686,28 @@ __webpack_require__.r(__webpack_exports__);
     "delete": [String],
     type: [String],
     vmodel: [String],
-    anno: [String, Number]
+    anno: [String, Number],
+    oldData: {
+      type: [Array, Object],
+      "default": function _default() {
+        return {};
+      }
+    }
   },
   data: function data() {
     return {
       categorie_add: "--Seleziona--",
       year: this.anno,
       mese: new Date().getMonth() + 1,
+      // Inizializzazione dell'oggetto form con i campi che saranno utilizzati nel form
+      form: {
+        categoria: '',
+        data: '',
+        importo: 0,
+        tipologia: ""
+        // Aggiungi altri campi a seconda delle necessità del tuo form
+      },
+
       dati: {},
       totale: 0,
       currentPage: 1,
@@ -4695,6 +4718,9 @@ __webpack_require__.r(__webpack_exports__);
   computed: {
     selectedCategory: function selectedCategory() {
       return 'categorie' + this.type + '_id';
+    },
+    selectedCategoryOld: function selectedCategoryOld() {
+      return 'categorie' + this.type + '_add';
     }
   },
   watch: {
@@ -4709,9 +4735,8 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
-    filtra: function filtra() {
+    fetchData: function fetchData() {
       var _this = this;
-      console.log('qui');
       var formData = {
         mese: this.mese,
         anno: this.year,
@@ -4720,7 +4745,7 @@ __webpack_require__.r(__webpack_exports__);
       };
       axios.post(this.getdataurl, formData).then(function (res) {
         _this.dati = res.data.data;
-        console.log(_this.dati);
+        console.log("data", res.data.data);
         _this.totalRecords = res.data.total;
       });
     },
@@ -4734,7 +4759,7 @@ __webpack_require__.r(__webpack_exports__);
     handlePageChange: function handlePageChange(page) {
       console.log();
       this.currentPage = page;
-      this.filtra(); // Richiama il metodo di filtraggio per ottenere i dati della nuova pagina
+      this.fetchData(); // Richiama il metodo di filtraggio per ottenere i dati della nuova pagina
     },
     elimina: function elimina(id, e) {
       if (!confirm('eliminare?')) {
@@ -4743,10 +4768,14 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   beforeMount: function beforeMount() {
-    this.filtra();
+    this.fetchData();
   },
   mounted: function mounted() {
-    console.log(this.anno);
+    console.log("oldData", this.oldData);
+    if (this.oldData && Object.keys(this.oldData).length > 0) {
+      this.form = _objectSpread({}, this.oldData);
+      console.log("olfForm", this.form);
+    }
   }
 });
 
@@ -41654,24 +41683,30 @@ var render = function () {
                               ? $$selectedVal
                               : $$selectedVal[0]
                           },
-                          _vm.filtra,
+                          _vm.fetchData,
                         ],
                       },
                     },
-                    _vm._l(_vm.years_opt, function (label, value) {
-                      return _c(
-                        "option",
-                        { key: value, domProps: { value: value } },
-                        [
-                          _vm._v(
-                            "\n                            " +
-                              _vm._s(label) +
-                              "\n                        "
-                          ),
-                        ]
-                      )
-                    }),
-                    0
+                    [
+                      _c("option", { attrs: { value: "0" } }, [
+                        _vm._v("--Seleziona--"),
+                      ]),
+                      _vm._v(" "),
+                      _vm._l(_vm.years_opt, function (label, value) {
+                        return _c(
+                          "option",
+                          { key: value, domProps: { value: value } },
+                          [
+                            _vm._v(
+                              "\r\n                            " +
+                                _vm._s(label) +
+                                "\r\n                        "
+                            ),
+                          ]
+                        )
+                      }),
+                    ],
+                    2
                   ),
                   _vm._v(" "),
                   _c(
@@ -41701,12 +41736,14 @@ var render = function () {
                               ? $$selectedVal
                               : $$selectedVal[0]
                           },
-                          _vm.filtra,
+                          _vm.fetchData,
                         ],
                       },
                     },
                     [
-                      _c("option", [_vm._v("--Seleziona--")]),
+                      _c("option", { attrs: { value: "0" } }, [
+                        _vm._v("--Seleziona--"),
+                      ]),
                       _vm._v(" "),
                       _vm._l(_vm.months_opt, function (label, value) {
                         return _c(
@@ -41714,9 +41751,9 @@ var render = function () {
                           { key: value, domProps: { value: value } },
                           [
                             _vm._v(
-                              "\n                            " +
+                              "\r\n                            " +
                                 _vm._s(label) +
-                                "\n                        "
+                                "\r\n                        "
                             ),
                           ]
                         )
@@ -41751,8 +41788,35 @@ var render = function () {
                         _c(
                           "select",
                           {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form[_vm.selectedCategoryOld],
+                                expression: "form[selectedCategoryOld]",
+                              },
+                            ],
                             staticClass: "form-control add",
                             attrs: { name: "categorie" + _vm.type + "_add" },
+                            on: {
+                              change: function ($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function (o) {
+                                    return o.selected
+                                  })
+                                  .map(function (o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.$set(
+                                  _vm.form,
+                                  _vm.selectedCategoryOld,
+                                  $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
+                                )
+                              },
+                            },
                           },
                           [
                             _c("option", { attrs: { value: "0" } }, [
@@ -41765,9 +41829,9 @@ var render = function () {
                                 { key: value, domProps: { value: value } },
                                 [
                                   _vm._v(
-                                    "\n                                        " +
+                                    "\r\n                                        " +
                                       _vm._s(label) +
-                                      "\n                                    "
+                                      "\r\n                                    "
                                   ),
                                 ]
                               )
@@ -41777,16 +41841,101 @@ var render = function () {
                         ),
                       ]),
                       _vm._v(" "),
-                      _vm._m(2),
+                      _c("td", [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.form.data_add,
+                              expression: "form.data_add",
+                            },
+                          ],
+                          staticClass: "form-control add",
+                          attrs: { type: "date", name: "data_add" },
+                          domProps: { value: _vm.form.data_add },
+                          on: {
+                            input: function ($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.form,
+                                "data_add",
+                                $event.target.value
+                              )
+                            },
+                          },
+                        }),
+                      ]),
                       _vm._v(" "),
-                      _vm._m(3),
+                      _c("td", [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.form.importo_add,
+                              expression: "form.importo_add",
+                            },
+                          ],
+                          staticClass: "form-control add",
+                          attrs: {
+                            type: "number",
+                            step: "0.01",
+                            min: "0.01",
+                            placeholder: "0.00",
+                            name: "importo_add",
+                          },
+                          domProps: { value: _vm.form.importo_add },
+                          on: {
+                            input: function ($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.form,
+                                "importo_add",
+                                $event.target.value
+                              )
+                            },
+                          },
+                        }),
+                      ]),
                       _vm._v(" "),
                       _c("td", [
                         _c(
                           "select",
                           {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form.tipologia_add,
+                                expression: "form.tipologia_add",
+                              },
+                            ],
                             staticClass: "form-control add",
                             attrs: { name: "tipologia_add" },
+                            on: {
+                              change: function ($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function (o) {
+                                    return o.selected
+                                  })
+                                  .map(function (o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.$set(
+                                  _vm.form,
+                                  "tipologia_add",
+                                  $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
+                                )
+                              },
+                            },
                           },
                           [
                             _c("option", { attrs: { value: "0" } }, [
@@ -41835,13 +41984,13 @@ var render = function () {
           }),
           _vm._v(" "),
           _c("table", { staticClass: "table table-striped" }, [
-            _vm._m(4),
+            _vm._m(2),
             _vm._v(" "),
             _c(
               "tbody",
               { attrs: { id: "" + _vm.type } },
               [
-                _vm._m(5),
+                _vm._m(3),
                 _vm._v(" "),
                 _vm._l(_vm.dati, function (s) {
                   return _c(
@@ -41958,7 +42107,7 @@ var render = function () {
                       _vm._v(" "),
                       _c("td", { staticClass: "border-0" }, [
                         _c("div", { staticClass: "input-group" }, [
-                          _vm._m(6, true),
+                          _vm._m(4, true),
                           _vm._v(" "),
                           _c("input", {
                             directives: [
@@ -42047,7 +42196,7 @@ var render = function () {
             "table",
             { staticClass: "table table-striped bg-light rounded " },
             [
-              _vm._m(7),
+              _vm._m(5),
               _vm._v(" "),
               _c("tr", [
                 _c("td"),
@@ -42058,7 +42207,7 @@ var render = function () {
                 _vm._v(" "),
                 _c("td", [
                   _c("div", { staticClass: "input-group" }, [
-                    _vm._m(8),
+                    _vm._m(6),
                     _vm._v(" "),
                     _c("input", {
                       directives: [
@@ -42100,7 +42249,7 @@ var render = function () {
               staticClass: "btn btn-primary float-right mr-5 px-5 mb-5",
               attrs: { type: "submit" },
             },
-            [_vm._v("\n                Salva\n            ")]
+            [_vm._v("\r\n                Salva\r\n            ")]
           ),
         ]),
         _vm._v(" "),
@@ -42130,7 +42279,7 @@ var staticRenderFns = [
       { staticClass: "btn btn-primary mb-3", attrs: { type: "submit" } },
       [
         _c("i", { staticClass: "fa-solid fa-square-plus mr-2 fa-lg" }),
-        _vm._v(" Aggiungi spesa\n                "),
+        _vm._v(" Aggiungi spesa\r\n                "),
       ]
     )
   },
@@ -42150,34 +42299,6 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Tipologia")]),
       ]),
-    ])
-  },
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("td", [
-      _c("input", {
-        staticClass: "form-control add",
-        attrs: { type: "date", name: "data_add" },
-      }),
-    ])
-  },
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("td", [
-      _c("input", {
-        staticClass: "form-control add",
-        attrs: {
-          type: "number",
-          step: "0.01",
-          min: "0.01",
-          placeholder: "0.00",
-          name: "importo_add",
-        },
-      }),
     ])
   },
   function () {
@@ -56359,8 +56480,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\laravel\spese-fam-2\spese-fam\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\laravel\spese-fam-2\spese-fam\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\laravel\SF\spese-fam\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\laravel\SF\spese-fam\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

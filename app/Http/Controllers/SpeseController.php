@@ -141,14 +141,15 @@ class SpeseController extends Controller
         // Avvia la query predefinita delle spese (definita in SpeseQuery).
         $spese = $this->SpeseQuery()
             // Applica il filtro del mese se è stato fornito un mese diverso da 0.
-            ->when($mese != 0, function ($query) use ($mese) {
-                return $query->whereMonth('data', '=', $mese);
+            ->when($mese != 0, function ($spese) use ($mese) {
+                $spese->whereMonth('data', '=', $mese);
             })
             // Applica il filtro dell'anno se è stato fornito un anno diverso da 0.
-            ->when($anno != 0, function ($query) use ($anno) {
-                return $query->whereYear('data', '=', $anno);
+            ->when($anno != 0, function ($spese) use ($anno) {
+                 $spese->whereYear('data', '=', $anno);
             });
 
+            //dd($spese->toSql(), $spese->getBindings());
 
         return $spese->paginate($limit, ['*'], 'page', $page);
     }
