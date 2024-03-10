@@ -59,10 +59,9 @@ Route::middleware(['auth'])->group(function () {
     //CATEGORIE ENTRATE
     Route::get('/categorie/entrate', 'CategorieEntrateController@index')->name('categorie/entrate');
     Route::any('/categorie/entrate/elenco', 'CategorieEntrateController@elenco')->name('categorie/entrate/elenco');
-
     Route::any('/categorie/entrate/elimina/{id}', 'CategorieEntrateController@elimina')->name('categorie/entrate/elimina');
     Route::any('/categorie/entrate/salva', 'CategorieEntrateController@salva')->name('categorie/entrate/salva');
-    Route::any('/categorie/entrate/aggiungi', 'CategorieEntrateController@aggiungi')->name('categorie/entrate/aggiungi');
+    Route::any('/categorie/entrate/aggiungi/{nome}', 'CategorieEntrateController@aggiungi')->name('categorie/entrate/aggiungi');
 
 
     //TIPOLOGIA

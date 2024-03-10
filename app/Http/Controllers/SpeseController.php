@@ -281,7 +281,8 @@ class SpeseController extends Controller
                     $row[$i] = $row[$i] ?? 0.00;
 
                     // Determina il mese corrispondente alla cella
-                    $mese = $mesi[$i] ?? '01';
+                   $mese = $mesi[$i] ?? '01';
+                   // $mese = isset($mesi[sprintf("%02d", $i + 1)]) ? $mesi[sprintf("%02d", $i + 1)] : '01';
 
                     // La categoria è la prima cella della riga, convertita in minuscolo
                     $categoria = strtolower($row[0]);
@@ -302,15 +303,18 @@ class SpeseController extends Controller
                     }
 
                     // Crea un nuovo record di spesa con i dati estratti
-                    Spese::create([
-                        'nome' => $categoria,
-                        'importo' => $row[$i],
-                        'categoriespese_id' => $cat_id,
-                        'data' => $anno . '-' . $mese . '-01',
-                        'attivo' => 1,
-                        'creatore' => Auth::user()->name,
-                        'creato' => date('Y-m-d'),
-                    ]);
+                    if( $row[$i] > 0) {
+                        Spese::create([
+                            'nome' => $categoria,
+                            'importo' => $row[$i],
+                            'categoriespese_id' => $cat_id,
+                            'data' => $anno . '-' . $mese . '-01',
+                            'attivo' => 1,
+                            'creatore' => Auth::user()->name,
+                            'creato' => date('Y-m-d'),
+                        ]);
+                    }
+                  
                 }
             }
         }

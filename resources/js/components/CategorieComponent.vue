@@ -17,7 +17,7 @@
                     <tr>
                         <th style="width:15%"></th>
                         <th>
-                            <label>Nome</label>
+                            <label >Nome</label>
                             <input type="text" v-model="nomeAdd" class="form-control add w-50">
                         </th>
                     </tr>
@@ -94,6 +94,7 @@ export default {
     methods: {
         elimina() {
             if (this.itemTodelete !== null) {
+                console.log(`/categorie/${this.type}/elimina/${this.itemTodelete}`)
                 axios.post(`/categorie/${this.type}/elimina/${this.itemTodelete}`)
                     .then(() => {
                         this.fetchData(); // Aggiorna l'elenco delle categorie
@@ -116,6 +117,7 @@ export default {
         },
 
         aggiungiCategoria() {
+            console.log(`/categorie/${this.type}/aggiungi/${this.nomeAdd}`)
             axios.post(`/categorie/${this.type}/aggiungi/${this.nomeAdd}`)
                 .then(response => {
 

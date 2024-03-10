@@ -4923,6 +4923,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     elimina: function elimina() {
       var _this = this;
       if (this.itemTodelete !== null) {
+        console.log("/categorie/".concat(this.type, "/elimina/").concat(this.itemTodelete));
         axios.post("/categorie/".concat(this.type, "/elimina/").concat(this.itemTodelete)).then(function () {
           _this.fetchData(); // Aggiorna l'elenco delle categorie
         })["catch"](function (error) {
@@ -4942,6 +4943,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     },
     aggiungiCategoria: function aggiungiCategoria() {
       var _this3 = this;
+      console.log("/categorie/".concat(this.type, "/aggiungi/").concat(this.nomeAdd));
       axios.post("/categorie/".concat(this.type, "/aggiungi/").concat(this.nomeAdd)).then(function (response) {
         _this3.nomeAdd = ''; // Resetta il campo input dopo l'invio
       })["catch"](function (error) {

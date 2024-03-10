@@ -76,12 +76,10 @@ class CategorieSpeseController extends Controller
 
     public function elimina($id)
     {
-        //dd($id);
+       
         CategorieSpese::where('id', $id)->update([
             'attivo' => 0,
         ]);
 
-        return redirect()->route('categorie')
-            ->with('success', 'Categoria eliminata! 😁👍');
     }
 }

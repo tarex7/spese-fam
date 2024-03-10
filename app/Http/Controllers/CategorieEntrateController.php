@@ -33,32 +33,26 @@ class CategorieEntrateController extends Controller
     }
 
 
-    public function aggiungi(Request $request)
+    public function aggiungi($nome)
     {
 
-       //dd($request->all());
+        //dd($request->all());
 
-         //dd( $categorie_entrate);
-        // dd($categorie_entrate);
-
-        if ($request->nome_add != '') {
-           // dd($request->all());
-
+        // dd($categorie);
+        if ($nome != '') {
             CategorieEntrate::create([
-                'nome' => $request->nome_add,
+                'nome' => $nome,
                 'attivo' => 1,
                 'creato' => date('Y-m-d H:i:s'),
                 'creatore' => auth()->user()->name,
             ]);
-            $categorie_entrate = CategorieEntrate::where('attivo', 1)->get();
 
-            return redirect()->back()
-                ->with('categorie_entrate',$categorie_entrate)
-                ->with('success', 'Categoria aggiunta!');
-        } else {
-            return redirect()->route('categorie_entrate')->with('error', 'Inserisci un nome valido!');
+            // return view('categorie_entrate.categorie')
+
+            //     ->with('categorie_id', null);
         }
     }
+
 
 
     public function salva(Request $request)
@@ -93,7 +87,6 @@ class CategorieEntrateController extends Controller
             'attivo' => 0,
         ]);
 
-        return redirect()->route('categorie_entrate')
-            ->with('success', 'Categoria eliminata! 😁👍');
+        
     }
 }
