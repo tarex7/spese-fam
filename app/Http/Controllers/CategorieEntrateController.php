@@ -22,6 +22,16 @@ class CategorieEntrateController extends Controller
            // ->with('categorie_entrate_id', null);
     }
 
+    public function elenco()
+    {
+        $categorie = CategorieEntrate::select('categorie.*')
+            ->where('categorie_entrate.attivo', 1)
+            ->select('categorie_entrate.*')
+            ->get();
+
+        return $categorie;;
+    }
+
 
     public function aggiungi(Request $request)
     {
