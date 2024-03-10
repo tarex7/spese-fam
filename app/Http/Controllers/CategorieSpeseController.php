@@ -50,18 +50,10 @@ class CategorieSpeseController extends Controller
     }
 
 
-
-
-
-
-
     public function salva(Request $request)
     {
 
         //  dd($request->all());
-
-
-
         foreach ($request->categorie as $k => $c) {
 
             CategorieSpese::where('id', $k)->update([

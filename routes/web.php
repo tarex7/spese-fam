@@ -53,7 +53,7 @@ Route::middleware(['auth'])->group(function () {
     Route::any('/categorie/spese', 'CategorieSpeseController@index')->name('categorie');
     Route::any('/categorie/spese/elenco', 'CategorieSpeseController@elenco')->name('categorie/spese/elenco');
     Route::any('/categorie/spese/elimina/{id}', 'categorieSpeseController@elimina')->name('categorie/elimina');
-    Route::any('/categorie/salva', 'CategorieSpeseController@salva')->name('categorie/salva');
+    Route::any('/categorie/spese/salva', 'CategorieSpeseController@salva')->name('categorie/salva');
     Route::any('/categorie/spese/aggiungi/{nome}', 'CategorieSpeseController@aggiungi')->name('categorie/aggiungi');
 
     //CATEGORIE ENTRATE

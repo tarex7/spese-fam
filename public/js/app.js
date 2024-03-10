@@ -4918,6 +4918,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         console.error(error);
       });
       this.fetchData();
+    },
+    modifica: function modifica() {
+      axios.post('/categorie/spese/salva');
     }
   },
   mounted: function mounted() {
@@ -42630,7 +42633,7 @@ var render = function () {
                                   _vm._v(
                                     "Eliminare categoria " +
                                       _vm._s(_vm.type) +
-                                      "  ?"
+                                      " ?"
                                   ),
                                 ]),
                               ]),

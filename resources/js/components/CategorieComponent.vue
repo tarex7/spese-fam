@@ -41,9 +41,9 @@
 
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
-                                       
+
                                         <div class="modal-body">
-                                            <p>Eliminare categoria {{ type }}  ?</p>
+                                            <p>Eliminare categoria {{ type }} ?</p>
                                         </div>
                                         <div class="modal-footer">
                                             <button @click="elimina" type="button" data-dismiss="modal" class="btn btn-primary">Elimina</button>
@@ -77,7 +77,7 @@ export default {
         return {
             nomeAdd: '',
             categorie: {},
-            itemTodelete: null, 
+            itemTodelete: null,
         };
     },
     props: {
@@ -105,7 +105,7 @@ export default {
         },
 
         prepareDelete(id) {
-            this.itemTodelete = id;  // Imposta l'ID selezionato
+            this.itemTodelete = id; // Imposta l'ID selezionato
         },
 
         fetchData() {
@@ -128,6 +128,10 @@ export default {
 
             this.fetchData();
 
+        },
+
+        modifica() {
+            axios.post('/categorie/spese/salva')
         }
     },
     mounted() {
