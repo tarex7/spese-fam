@@ -28,7 +28,8 @@ import BudgetForm from './components/BudgetFormComponent.vue'
 import Pagination from 'vue-pagination-2';
 import ConfirmModal from './components/ConfirmModal.vue'
 import Elenco from './components/ElencoComponent.vue'
-//import ApexCharts from 'apexcharts'
+import Categorie from './components/CategorieComponent.vue'
+
 import VueApexCharts from 'vue-apexcharts';
 
 Vue.component('example-component', ExampleComponent);
@@ -42,6 +43,7 @@ Vue.component('budget-form-component', BudgetForm);
 Vue.component('pagination', Pagination);
 Vue.component('confirm-modal', ConfirmModal);
 Vue.component('elenco-component', Elenco);
+Vue.component('categorie-component', Categorie);
 
 Vue.use(VueApexCharts)
 
@@ -83,7 +85,9 @@ if (document.getElementById('spese')) {
         data() {
             return {
                 categoria_id: this.categoria_id,
-                meseSelezionato: null
+                meseSelezionato: null,
+                showModal: false,
+                deleteUrl: null,  // Memorizza l'URL di eliminazione
             }
         },
         mounted() {

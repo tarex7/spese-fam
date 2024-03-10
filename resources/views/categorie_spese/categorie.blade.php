@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
-    <div id="spese" class="d-flex  w-100"
+    {{-- <div id="spese" class="d-flex  w-100"
         @if (isset($categorie_id)) data-categoria_id="$categoria_id" @endif>
 
         <div class="row w-100">
@@ -54,7 +54,7 @@
                                         class="fa-solid fa-trash mx-1 text-danger mt-2"></i>
                                 </a>
                             </td>
-                            {{-- {!! Form::hidden('categorie[spesa_' . $s->id . '][id]', $s->id) !!} --}}
+                          
 
                             <td>{!! Form::text("categorie[{$s->id}]", $s->nome, ['class' => 'form-control']) !!}</td>
                         </tr>
@@ -66,5 +66,6 @@
             {!! Form::close() !!}
         </div>
 
-    </div>
+    </div> --}}
+    <categorie-component  type="spese" header-title="Categorie Spese"></categorie-component>
 @endsection

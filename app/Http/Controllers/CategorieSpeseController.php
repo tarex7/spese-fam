@@ -13,45 +13,39 @@ class CategorieSpeseController extends Controller
     public function index()
     {
 
+        return view('categorie_spese.categorie')
+
+            ->with('categorie_id', null);
+    }
+
+    public function elenco()
+    {
         $categorie = CategorieSpese::select('categorie.*')
             ->where('categorie_spese.attivo', 1)
             ->select('categorie_spese.*')
             ->get();
 
-            //dd($categorie)
-        ;
-
-
-        // dd($categorie);
-        return view('categorie_spese.categorie')
-            ->with('categorie', $categorie)
-            ->with('categorie_id', null);
+        return $categorie;;
     }
 
 
-
-
-
-
-
-    public function aggiungi(Request $request)
+    public function aggiungi($nome)
     {
 
         //dd($request->all());
-        $categorie = CategorieSpese::where('attivo', 1)->get();
 
         // dd($categorie);
-        if ($request->nome_add != '') {
+        if ($nome != '') {
             CategorieSpese::create([
-                'nome' => $request->nome_add,
+                'nome' => $nome,
                 'attivo' => 1,
                 'creato' => date('Y-m-d H:i:s'),
                 'creatore' => auth()->user()->name,
             ]);
 
-            return redirect()->route('categorie')->with('success', 'Categoria aggiunta!');
-        } else {
-            return redirect()->route('categorie')->with('error', 'Inserisci un nome valido!');
+            return view('categorie_spese.categorie')
+
+                ->with('categorie_id', null);
         }
     }
 
@@ -64,7 +58,7 @@ class CategorieSpeseController extends Controller
     public function salva(Request $request)
     {
 
-       //  dd($request->all());
+        //  dd($request->all());
 
 
 
@@ -83,16 +77,8 @@ class CategorieSpeseController extends Controller
 
         return view('categorie_spese.categorie')
             ->with('success', 'Categoria aggiunta!')
-            ->with('categorie', $categorie)
-            ;
+            ->with('categorie', $categorie);
     }
-
-
-
-
-
-
-
 
 
 

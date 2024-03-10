@@ -9,7 +9,6 @@
             <form :action="`${type}/filtra`" method="get">
                 <div class="d-flex float-right my-4 ">
 
-                  
                     <select id="chartType" class="form-control mx-1" v-model="chartType">
                         <option value="bar">Bar</option>
                         <option value="line">Line</option>
@@ -22,13 +21,14 @@
                         </option>
                     </select>
 
-                    <select class="form-control mx-1" v-model="localyear2" @change="filtra">
-                      
+                   <div style="width: 400px;">
+                    <select class="form-control mx-1" v-model="localyear2" @change="filtra" >
                         <option v-for="(label, value) in years_opt" :key="value" :value="value">
-                            {{ label  }}
+                            {{ label }}
                         </option>
                     </select>
-
+                    <label for="localyear2" style="font-size: 9px; display: block; margin: 6px;">Seleziona anno da confrontare</label>
+                   </div>
                 </div>
 
             </form>
@@ -127,7 +127,7 @@ export default {
 
             axios.get(`/${this.type}/${this.type}mensili/${this.localyear}`).then(
                 res => {
-                   
+
                     this.totPerMese = res.data
 
                 }
@@ -137,7 +137,7 @@ export default {
     },
     watch: {
         localyear(newval) {
-          
+
             this.filtra()
 
         }
@@ -166,7 +166,7 @@ export default {
 
     },
     mounted() {
-       
+
     }
 }
 </script>
