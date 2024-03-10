@@ -224,7 +224,9 @@ class entrateController extends Controller
             foreach ($sheet as $row) {
                 for ($i = 1; $i < count($row); $i++) {
                     $row[$i] = $row[$i] ?? 0.00;
-                    $mese = $mesi[$i] ?? '01';
+                    //$mese = $mesi[$i] ?? '01';
+                   $mese = isset($mesi[sprintf("%02d", $i + 1)]) ? $mesi[sprintf("%02d", $i + 1)] : '01';
+
                     $categoria = strtolower($row[0]);
 
                     if (!in_array($categoria, $categorieentrateEsistenti)) {
@@ -240,15 +242,18 @@ class entrateController extends Controller
                         $cat_id = Categorieentrate::where('nome', $categoria)->first()->id;
                     }
 
-                    entrate::create([
-                        'nome' => $categoria,
-                        'importo' => $row[$i],
-                        'categorieentrate_id' => $cat_id,
-                        'data' => $anno . '-' . $mese . '-01',
-                        'attivo' => 1,
-                        'creatore' => Auth::user()->name,
-                        'creato' => date('Y-m-d'),
-                    ]);
+                    if($row[$i] > 0) { //se l'importo è maggiore di zero
+                        entrate::create([
+                            'nome' => $categoria,
+                            'importo' => $row[$i],
+                            'categorieentrate_id' => $cat_id,
+                            'data' => $anno . '-' . $mese . '-01',
+                            'attivo' => 1,
+                            'creatore' => Auth::user()->name,
+                            'creato' => date('Y-m-d'),
+                        ]);
+                    }
+                    
                 }
             }
         }

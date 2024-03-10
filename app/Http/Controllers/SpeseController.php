@@ -281,8 +281,8 @@ class SpeseController extends Controller
                     $row[$i] = $row[$i] ?? 0.00;
 
                     // Determina il mese corrispondente alla cella
-                   $mese = $mesi[$i] ?? '01';
-                   // $mese = isset($mesi[sprintf("%02d", $i + 1)]) ? $mesi[sprintf("%02d", $i + 1)] : '01';
+                  // $mese = $mesi[$i] ?? '01';
+                   $mese = isset($mesi[sprintf("%02d", $i + 1)]) ? $mesi[sprintf("%02d", $i + 1)] : '01';
 
                     // La categoria è la prima cella della riga, convertita in minuscolo
                     $categoria = strtolower($row[0]);
