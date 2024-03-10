@@ -4668,6 +4668,22 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 //import Pagination from 'vue-pagination-2';
@@ -4712,7 +4728,8 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       totale: 0,
       currentPage: 1,
       itemsPerPage: 10,
-      totalRecords: 0
+      totalRecords: 0,
+      itemTodelete: null
     };
   },
   computed: {
@@ -4761,10 +4778,24 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       this.currentPage = page;
       this.fetchData(); // Richiama il metodo di filtraggio per ottenere i dati della nuova pagina
     },
-    elimina: function elimina(id, e) {
-      if (!confirm('eliminare?')) {
-        e.preventDefault();
+    // elimina(id, e) {
+    //     if (!confirm('eliminare?')) {
+    //         e.preventDefault();
+    //     }
+    // }
+    elimina: function elimina() {
+      var _this2 = this;
+      if (this.itemTodelete !== null) {
+        console.log("".concat(this.type, "/elimina/").concat(this.itemTodelete));
+        axios.post("".concat(this.type, "/elimina/").concat(this.itemTodelete)).then(function (res) {
+          _this2.fetchData(); // Aggiorna l'elenco delle categorie
+        })["catch"](function (error) {
+          console.error(error);
+        });
       }
+    },
+    prepareDelete: function prepareDelete(id) {
+      this.itemTodelete = id; // Imposta l'ID selezionato
     }
   },
   beforeMount: function beforeMount() {
@@ -41919,16 +41950,30 @@ var render = function () {
         _c("div", [
           _c(
             "form",
-            { attrs: { action: _vm.type + "/aggiungi", method: "get" } },
+            { attrs: { action: "/" + _vm.type + "/aggiungi", method: "get" } },
             [
-              _vm._m(0),
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-primary mb-3",
+                  attrs: { type: "submit" },
+                },
+                [
+                  _c("i", {
+                    staticClass: "fa-solid fa-square-plus mr-2 fa-lg",
+                  }),
+                  _vm._v(
+                    " Aggiungi " + _vm._s(_vm.type) + "\r\n                "
+                  ),
+                ]
+              ),
               _vm._v(" "),
               _c("div", { staticClass: "border bg-primary p-3 mb-3 rounded" }, [
                 _c(
                   "table",
                   { staticClass: "table table-striped bg-light rounded " },
                   [
-                    _vm._m(1),
+                    _vm._m(0),
                     _vm._v(" "),
                     _c("tr", [
                       _c("td"),
@@ -42133,13 +42178,13 @@ var render = function () {
           }),
           _vm._v(" "),
           _c("table", { staticClass: "table table-striped" }, [
-            _vm._m(2),
+            _vm._m(1),
             _vm._v(" "),
             _c(
               "tbody",
               { attrs: { id: "" + _vm.type } },
               [
-                _vm._m(3),
+                _vm._m(2),
                 _vm._v(" "),
                 _vm._l(_vm.dati, function (s) {
                   return _c(
@@ -42157,12 +42202,76 @@ var render = function () {
                         },
                         [
                           _c(
+                            "div",
+                            {
+                              staticClass: "modal",
+                              attrs: {
+                                tabindex: "-1",
+                                role: "dialog",
+                                id: "modal",
+                              },
+                            },
+                            [
+                              _c(
+                                "div",
+                                {
+                                  staticClass: "modal-dialog",
+                                  attrs: { role: "document" },
+                                },
+                                [
+                                  _c("div", { staticClass: "modal-content" }, [
+                                    _c("div", { staticClass: "modal-body" }, [
+                                      _c("p", [
+                                        _vm._v(
+                                          "Eliminare " + _vm._s(_vm.type) + " ?"
+                                        ),
+                                      ]),
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("div", { staticClass: "modal-footer" }, [
+                                      _c(
+                                        "button",
+                                        {
+                                          staticClass: "btn btn-primary",
+                                          attrs: {
+                                            type: "button",
+                                            "data-dismiss": "modal",
+                                          },
+                                          on: { click: _vm.elimina },
+                                        },
+                                        [_vm._v("Elimina")]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "button",
+                                        {
+                                          staticClass: "btn btn-secondary",
+                                          attrs: {
+                                            type: "button",
+                                            "data-dismiss": "modal",
+                                          },
+                                        },
+                                        [_vm._v("Chiudi")]
+                                      ),
+                                    ]),
+                                  ]),
+                                ]
+                              ),
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c(
                             "a",
                             {
                               attrs: {
-                                href: "/" + _vm.type + "/elimina/" + s.id,
+                                "data-toggle": "modal",
+                                "data-target": "#modal",
                               },
-                              on: { click: _vm.elimina },
+                              on: {
+                                click: function ($event) {
+                                  return _vm.prepareDelete(s.id)
+                                },
+                              },
                             },
                             [
                               _c("i", {
@@ -42256,7 +42365,7 @@ var render = function () {
                       _vm._v(" "),
                       _c("td", { staticClass: "border-0" }, [
                         _c("div", { staticClass: "input-group" }, [
-                          _vm._m(4, true),
+                          _vm._m(3, true),
                           _vm._v(" "),
                           _c("input", {
                             directives: [
@@ -42345,7 +42454,7 @@ var render = function () {
             "table",
             { staticClass: "table table-striped bg-light rounded " },
             [
-              _vm._m(5),
+              _vm._m(4),
               _vm._v(" "),
               _c("tr", [
                 _c("td"),
@@ -42356,7 +42465,7 @@ var render = function () {
                 _vm._v(" "),
                 _c("td", [
                   _c("div", { staticClass: "input-group" }, [
-                    _vm._m(6),
+                    _vm._m(5),
                     _vm._v(" "),
                     _c("input", {
                       directives: [
@@ -42419,19 +42528,6 @@ var render = function () {
   ])
 }
 var staticRenderFns = [
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "button",
-      { staticClass: "btn btn-primary mb-3", attrs: { type: "submit" } },
-      [
-        _c("i", { staticClass: "fa-solid fa-square-plus mr-2 fa-lg" }),
-        _vm._v(" Aggiungi spesa\r\n                "),
-      ]
-    )
-  },
   function () {
     var _vm = this
     var _h = _vm.$createElement

@@ -36,10 +36,10 @@
 
         <!-- AGGIUNGI -->
         <div>
-            <form :action="`${type}/aggiungi`" method="get">
+            <form :action="`/${type}/aggiungi`" method="get">
 
                 <button class="btn btn-primary mb-3" type="submit">
-                    <i class="fa-solid fa-square-plus mr-2 fa-lg"></i> Aggiungi spesa
+                    <i class="fa-solid fa-square-plus mr-2 fa-lg"></i> Aggiungi {{ type }}
                 </button>
 
                 <div class="border bg-primary p-3 mb-3 rounded">
@@ -111,7 +111,23 @@
                     <tr v-for="s in dati" :key="s.id" :id="s.id === s.id ? 'nome_add' : ''">
 
                         <td class="d-flex align-items-center justify-content-center border-0">
-                            <a @click="elimina" :href="`/${type}/elimina/${s.id}`">
+                            <div class="modal" tabindex="-1" role="dialog" id="modal">
+
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+
+                                        <div class="modal-body">
+                                            <p>Eliminare {{ type }} ?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button @click="elimina" type="button" data-dismiss="modal" class="btn btn-primary">Elimina</button>
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <a @click="prepareDelete(s.id)" data-toggle="modal" data-target="#modal">
                                 <i class="fa-solid fa-trash mx-1 text-danger mt-2"></i>
                             </a>
                         </td>
@@ -238,6 +254,7 @@ export default {
             currentPage: 1,
             itemsPerPage: 10,
             totalRecords: 0,
+            itemTodelete: null,
 
         }
     },
@@ -292,12 +309,31 @@ export default {
             this.currentPage = page;
             this.fetchData(); // Richiama il metodo di filtraggio per ottenere i dati della nuova pagina
         },
-        elimina(id, e) {
-            if (!confirm('eliminare?')) {
-                e.preventDefault();
 
+        // elimina(id, e) {
+        //     if (!confirm('eliminare?')) {
+        //         e.preventDefault();
+
+        //     }
+        // }
+
+        elimina() {
+            if (this.itemTodelete !== null) {
+                console.log(`${this.type}/elimina/${this.itemTodelete}`)
+                axios.post(`${this.type}/elimina/${this.itemTodelete}`)
+                    .then((res) => {
+                        this.fetchData(); // Aggiorna l'elenco delle categorie
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
             }
-        }
+        },
+
+        prepareDelete(id) {
+            this.itemTodelete = id; // Imposta l'ID selezionato
+          
+        },
     },
     beforeMount() {
         this.fetchData()

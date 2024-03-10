@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
-    <div id="spese" class="d-flex justify-content-center w-100 border"
+    {{-- <div id="spese" class="d-flex justify-content-center w-100 border"
         @if (isset($categorie_entrate_id)) data-categoria_id="$categoria_id" @endif>
 
 
@@ -64,5 +64,7 @@
             {!! Form::close() !!}
         </div>
 
-    </div>
+    </div> --}}
+    <categorie-component  type="entrate" header-title="Categorie Entrate"></categorie-component>
+
 @endsection

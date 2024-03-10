@@ -22,12 +22,12 @@
                 <div class="collapse" id="categorieDropdown">
                     <ul class="nav flex-column pl-4">
                         <li class="nav-item">
-                            <a class="nav-link active text-white" href="{{route('categorie')}}">
+                            <a class="nav-link active text-white" href="{{route('categorie/spese')}}">
                                 <i class="fa-solid fa-circle fa-2xs mr-1"></i> Spese
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active text-white" href="{{route('categorie_entrate')}}">
+                            <a class="nav-link active text-white" href="{{route('categorie/entrate')}}">
                                 <i class="fa-solid fa-circle fa-2xs mr-1"></i> Entrate
                             </a>
                         </li>

@@ -50,17 +50,19 @@ Route::middleware(['auth'])->group(function () {
     Route::any('/entrate/entratemensili/{anno?}', 'EntrateController@calcolaentrateMensili')->name('entrate/entratemensili');
 
     //CATEGORIE
-    Route::any('/categorie/spese', 'CategorieSpeseController@index')->name('categorie');
+    Route::any('/categorie/spese', 'CategorieSpeseController@index')->name('categorie/spese');
     Route::any('/categorie/spese/elenco', 'CategorieSpeseController@elenco')->name('categorie/spese/elenco');
     Route::any('/categorie/spese/elimina/{id}', 'categorieSpeseController@elimina')->name('categorie/elimina');
-    Route::any('/categorie/spese/salva', 'CategorieSpeseController@salva')->name('categorie/salva');
+    Route::any('/categorie/salva', 'CategorieSpeseController@salva')->name('categorie/salva');
     Route::any('/categorie/spese/aggiungi/{nome}', 'CategorieSpeseController@aggiungi')->name('categorie/aggiungi');
 
     //CATEGORIE ENTRATE
-    Route::get('/categorie_entrate', 'CategorieEntrateController@index')->name('categorie_entrate');
-    Route::any('/categorie_entrate/elimina/{id}', 'CategorieEntrateController@elimina')->name('categorie_entrate/elimina');
-    Route::any('/categorie_entrate/salva', 'CategorieEntrateController@salva')->name('categorie_entrate/salva');
-    Route::any('/categorie_entrate/aggiungi', 'CategorieEntrateController@aggiungi')->name('categorie_entrate/aggiungi');
+    Route::get('/categorie/entrate', 'CategorieEntrateController@index')->name('categorie/entrate');
+    Route::any('/categorie/entrate/elenco', 'CategorieEntrateController@elenco')->name('categorie/entrate/elenco');
+
+    Route::any('/categorie/entrate/elimina/{id}', 'CategorieEntrateController@elimina')->name('categorie/entrate/elimina');
+    Route::any('/categorie/entrate/salva', 'CategorieEntrateController@salva')->name('categorie/entrate/salva');
+    Route::any('/categorie/entrate/aggiungi', 'CategorieEntrateController@aggiungi')->name('categorie/entrate/aggiungi');
 
 
     //TIPOLOGIA
